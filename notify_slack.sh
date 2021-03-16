@@ -59,28 +59,27 @@ if [ "$GITHUB_EVENT_NAME" == 'pull_request' ]; then
 else
   BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr / -)
 fi
-BRANCH_NAME="test_branch_name"
 echo "$BRANCH_NAME / $GITHUB_EVENT_NAME"
 
 #* json post 
 if [ "$1" == "-s" ]; then
   echo " -- secc mode -- "
 curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action]\n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_JOB"'"}]}' \
+  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_JOB"'"}]}' \
   "$SLACK_URL"
 fi
 
 if [ "$1" == "-f" ]; then
   echo " -- fail mode -- "
 curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#EA0000","pretext":"[Github Action]\n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_JOB"'"}]}' \
+  --data '{"attachments":[{"color":"#EA0000","pretext":"[Github Action] Fail \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_JOB"'"}]}' \
   "$SLACK_URL"
 fi
 
 if [ "$1" == "-a" ]; then
   echo " -- ab mode -- "
 curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action]\n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_JOB"'"},{"color":"#FFBB77","pretext":"AB Test","title":" A/B WEB-Link ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
+  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_JOB"'"},{"color":"#FFBB77","pretext":"AB Test","title":" A/B WEB-Link ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
   "$SLACK_URL"
 fi
 

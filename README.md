@@ -27,6 +27,38 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/shell_util/main/notify_sla
 
 ```
 
+```yaml
+      - name: ⚙️ Initialize Google Cloud SDK
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master  
+        with:
+          project_id: jkf-servers
+          service_account_email: "github-ci@jkf-servers.iam.gserviceaccount.com"
+          service_account_key: ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
+          export_default_credentials: true
+      - name: ⚙️ login Google Cloud SDK
+        run: |
+          # This client-secret.json is converted by GCP_SA_KEY.
+          echo '${{ secrets.GCP_SA_KEY_GITHUB_CI }}' > client-secret.json
+          gcloud auth activate-service-account github-ci@jkf-servers.iam.gserviceaccount.com --key-file=client-secret.json
+          gcloud config set project jkf-servers
+
+ ...
+
+      - name: Slack Notification on Success (O)
+        if: success()
+        run: |
+          echo "run slack on Success (O)"
+          curl -LJO https://raw.githubusercontent.com/lctech-tw/shell_util/main/notify_slack.sh 
+          bash ./notify_slack.sh -s 
+
+      - name: Slack Notification on Failure (X)
+        if: failure()
+        run: |
+          echo "run slack on fail (X)"
+          curl -LJO https://raw.githubusercontent.com/lctech-tw/shell_util/main/notify_slack.sh 
+          bash ./notify_slack.sh -f 
+```
+
 ## Some other util
 
 [csv2md - csv 轉成 md table](https://www.convertcsv.com/csv-to-markdown.htm)
