@@ -18,10 +18,11 @@ Description:
   由原本 jenkins tesk3.sh 調整
 USAGE:
   SHELL.sh 
-  - a , --AB   AB test mode
-  - s , --succ 
-  - f , --fail
-  - t , --test
+  - a AB test mode
+  - s succ mode
+  - f fail mode
+  - t test mode
+  - c check mode
   - x bool [true] github mode
 EXAMPLE
   [github action]
@@ -85,6 +86,12 @@ curl -X POST -H 'Content-type: application/json' \
   "$SLACK_URL"
 fi
 
+if [ "$1" == "-c" ]; then
+  echo " -- check mode -- "
+curl -X POST -H 'Content-type: application/json' \
+  --data '{"attachments":[{"color":"#0B6FFF","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","callback_id":"confirmaction","text":"Are you sure to confirm deployment to GA?","attachment_type":"default","actions":[{"name":"reject","text":"Reject","type":"button","style":"danger","value":"rejectaction"},{"name":"ga","text":"GA","type":"button","style":"primary","value":"confirmaction"}]}]}' \
+  "$SLACK_URL"
+fi
 
 #* TEMPLATE
 # {
@@ -106,6 +113,23 @@ fi
 # 		}
 #     ]
 # }
+#? # GA button
+# {
+#     "attachments": [
+#         {
+#             "color": "#0B6FFF",
+#             "pretext": "[Github Action]\n $BRANCH_NAME / $GITHUB_EVENT_NAME ",
+#             "callback_id": "confirmaction",
+# 			      "text": "Are you sure to confirm deployment to GA?",
+#             "attachment_type": "default",
+#             "actions": [
+# 			        {"name": "reject", "text": "Reject", "type": "button", "style": "danger", "value": "rejectaction"}, 
+# 		        	{"name": "ga", "text": "GA", "type": "button", "style": "primary", "value": "confirmaction"}
+#             ]
+#         }
+#     ]
+# }
+
 
 #* ORIGN SHELL
 # curl -X POST -H 'Content-type: application/json' \
