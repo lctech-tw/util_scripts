@@ -9,7 +9,7 @@ GITHUB_ACTIONS_MODE=true
 # GITHUB_EVENT_NAME="test_event_name"
 # GITHUB_ACTOR="test_actor"
 # GITHUB_JOB="test_job_name"
-# AB_LINK="https://jkf.net"
+# AB_LINK="https://abc.net"
 # AB_HEADER="teststest"
 
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
@@ -51,7 +51,7 @@ if "$GITHUB_ACTIONS_MODE"; then
     echo "🐥 Not from github action"
     exit 1
     else
-    # slack url -> jkf-servers / secrets
+    # slack url -> gcp / secrets
     SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
   fi
 fi
