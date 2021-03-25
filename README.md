@@ -2,13 +2,14 @@
 
 |Path|Name|Desc|
 |-|-|-|
-|-|notify_slack.sh|通知slack|
-|-|gcp_sm_get_slack.py|from secret-manager get slack to sysenv |
+|-|notify_slack.sh|通知 slack|
+|-|modify_version.sh|update package.json|
 |-|-|-|
 |sigma|gcp_iam_get_all.sh|list gcp auth fo .csv|
 |sigma|gcp_gcr_rm_image.sh| rm gcr images|
 |sigma|gcp_gcr_rm_all.sh|forloop rm gcr|
 |-|-|-|
+|proto|build-protoc.sh|build code|
 
 ## How to use
 
@@ -16,16 +17,20 @@
 # 直接調用
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh)"
 
-# 先下載在調用
+# 先下載再調用
 # -L → --location
 # -J → --remote-header-name
 # -O → --remote-name
 curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
+# ex
 ./notify_slack.sh -h
-./notify_slack.sh -s 
 ...
 
 ```
+
+## Demo use scripts by github actions
+
+### notify_slack.sh
 
 ```yaml
       - name: ⚙️ Initialize Google Cloud SDK
@@ -42,7 +47,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           gcloud auth activate-service-account "github-ci@email" --key-file=client-secret.json
           gcloud config set project $GCPproject_id
 
- ...
+ # ... some actions
 
       - name: Slack Notification on Success (O)
         if: success()
@@ -50,13 +55,21 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           echo "run slack on Success (O)"
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
           bash ./notify_slack.sh -s 
-
       - name: Slack Notification on Failure (X)
         if: failure()
         run: |
           echo "run slack on fail (X)"
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
           bash ./notify_slack.sh -f 
+```
+
+## complie.sh / build-protoc.sh
+
+```yaml
+      - name: Use scripts
+        run: |
+          echo "Use scripts"
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/complie.sh)"
 ```
 
 ## Some other util

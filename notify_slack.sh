@@ -4,7 +4,7 @@
 
 GITHUB_ACTIONS_MODE=true
 
-# mock test
+# mock testing
 # BRANCH_NAME="test_branch_name"
 # GITHUB_EVENT_NAME="test_event_name"
 # GITHUB_ACTOR="test_actor"
