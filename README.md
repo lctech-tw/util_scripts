@@ -2,13 +2,12 @@
 
 |Path|Name|Desc|
 |-|-|-|
-|-|notify_slack.sh|通知 slack|
+|-|notify_slack.sh|Notify slack use|
 |-|modify_version.sh|update package.json|
-|-|-|-|
+|-|yq.sh|yaml edit tool|
 |sigma|gcp_iam_get_all.sh|list gcp auth fo .csv|
 |sigma|gcp_gcr_rm_image.sh| rm gcr images|
 |sigma|gcp_gcr_rm_all.sh|forloop rm gcr|
-|-|-|-|
 |proto|build-protoc.sh|build code|
 
 ## How to use
@@ -63,13 +62,27 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           bash ./notify_slack.sh -f 
 ```
 
-## complie.sh / build-protoc.sh
+### complie.sh / build-protoc.sh
 
 ```yaml
       - name: Use scripts
         run: |
           echo "Use scripts"
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/complie.sh)"
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/complie.sh)"
+```
+
+### yq.sh
+
+```yaml
+      - name: Use scripts
+        run: |
+          echo "Use scripts"
+          curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/yq.sh 
+          bash ./notify_slack.sh -f 
+          # get
+          cat a.yaml | sh yq.sh e '.metadata.name' - 
+          # edit
+          cat a.yaml | sh yq.sh e '.metadata.name'="123" - 
 ```
 
 ## Some other util
