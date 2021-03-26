@@ -33,6 +33,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
 
 ```yaml
       - name: ⚙️ Initialize Google Cloud SDK
+        if: allways()
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master  
         with:
           project_id: #$GCPproject_id
@@ -60,6 +61,15 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           echo "run slack on fail (X)"
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
           bash ./notify_slack.sh -f 
+```
+
+### modify_version
+
+```yaml
+      - name: Use scripts
+        run: |
+          echo "Use scripts"
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/modify_version.sh)"
 ```
 
 ### complie.sh / build-protoc.sh
