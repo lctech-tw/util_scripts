@@ -69,7 +69,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
       - name: Use scripts
         run: |
           echo "Use scripts"
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/modify_version.sh)"
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/modify_version.sh)"
 ```
 
 ### complie.sh / build-protoc.sh
