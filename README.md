@@ -40,13 +40,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           service_account_email: #"github-ci@email"
           service_account_key: ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
           export_default_credentials: true
-      - name: ⚙️ login Google Cloud SDK
-        run: |
-          # This client-secret.json is converted by GCP_SA_KEY.
-          echo '${{ secrets.GCP_SA_KEY_GITHUB_CI }}' > client-secret.json
-          gcloud auth activate-service-account "github-ci@email" --key-file=client-secret.json
-          gcloud config set project $GCPproject_id
-
+          
  # ... some actions
 
       - name: Slack Notification on Success (O)
