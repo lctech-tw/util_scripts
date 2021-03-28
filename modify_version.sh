@@ -13,9 +13,9 @@ function Update() {
     VERSION_NEW=$(echo "$VERSION_OLD" | cut -f1,2 -d".")'.'"$VERSION_NEW_LAST"'"'
     echo "🐥 Update Version : $VERSION_OLD_LAST ---> $VERSION_NEW_LAST"
     echo "🐥 New Version : $VERSION_NEW"
-    echo "TAG_VERSION="v"$(jq -r <package.json '.version')" >> "$GITHUB_ENV"
     cat origin.package.json | jq '.version'=$VERSION_NEW >package.json
-    rm origin.package.jsonc
+    rm origin.package.json
+    echo "TAG_VERSION="v"$(jq -r <package.json '.version')" >> "$GITHUB_ENV"
 }
 
 Update
