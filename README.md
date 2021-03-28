@@ -9,6 +9,7 @@
 |sigma|gcp_gcr_rm_image.sh| rm gcr images|
 |sigma|gcp_gcr_rm_all.sh|forloop rm gcr|
 |proto|build-protoc.sh|build code|
+|proto|compile.sh|pre compile|
 
 ## How to use
 
@@ -66,13 +67,13 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/modify_version.sh)"
 ```
 
-### complie.sh / build-protoc.sh
+### compile.sh / build-protoc.sh
 
 ```yaml
       - name: Use scripts
         run: |
           echo "Use scripts"
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/complie.sh)"
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/compile.sh)"
 ```
 
 ### yq.sh
