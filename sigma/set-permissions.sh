@@ -160,9 +160,8 @@ if [[ -n ${IAM_SERVICE_ACCOUNT} ]] && [[ -n ${IAM_USER} ]]; then
 fi
 
 echo "Step 1: Enable the Cloud Logging API, the Cloud Monitoring API and the OS Config API for the project by running the following set of commands:"
-PROJECT=$NEW_PROJ
-echo "$PROJECT"
-gcloud config set project "$PROJECT"
+# @lctech-zeki: 修改 官方的文件版本有問題 proj會抓不到 改正在使用的proj
+PROJECT=gcloud config list --format 'value(core.project)' 2>/dev/null
 gcloud services enable monitoring.googleapis.com
 gcloud services enable logging.googleapis.com
 gcloud services enable osconfig.googleapis.com
