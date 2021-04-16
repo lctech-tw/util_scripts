@@ -5,6 +5,7 @@
 |-|notify_slack.sh|Notify slack use|
 |-|modify_version.sh|update package.json|
 |-|yq.sh|yaml edit tool|
+|util|fmt-text.sh|shell text style|
 |sigma|gcp_iam_get_all.sh|list gcp auth fo .csv|
 |sigma|gcp_gcr_rm_image.sh| rm gcr images|
 |sigma|gcp_gcr_rm_all.sh|forloop rm gcr|
@@ -29,7 +30,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
 
 ```
 
-## Demo use scripts by github actions
+## Demo use scripts by GitHub Actions
 
 ### notify_slack.sh
 
@@ -84,10 +85,9 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
         run: |
           echo "Use scripts"
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/yq.sh 
-          bash ./notify_slack.sh -f 
-          # get
+          # get 
           cat a.yaml | sh yq.sh e '.metadata.name' - 
-          # edit
+          # edit 
           cat a.yaml | sh yq.sh e '.metadata.name'="123" - 
 ```
 

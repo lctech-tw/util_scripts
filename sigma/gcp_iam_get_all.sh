@@ -2,6 +2,8 @@
 
 #? Need yq -V = 4.6.1
 
+# print iam list
+
 # #* MODE A
 # for i in $(gcloud projects list |  sed 1d | cut -f1 -d$' '); do 
 #     gcloud projects get-iam-policy $i;
