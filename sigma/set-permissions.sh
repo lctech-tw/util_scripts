@@ -122,7 +122,7 @@ show_usage(){
 }
 
 # It should take 1 param (--project) or 3 params (--project, --iam-user/--iam-service-account, --iam-permission-role).
-if [[ $# -le 0 ]] && [[$# -le 2 ]]; then
+if [[ $# -le 0 ]] && [[ $# -le 2 ]]; then
   show_usage 0
   exit 1
 fi
@@ -160,6 +160,8 @@ if [[ -n ${IAM_SERVICE_ACCOUNT} ]] && [[ -n ${IAM_USER} ]]; then
 fi
 
 echo "Step 1: Enable the Cloud Logging API, the Cloud Monitoring API and the OS Config API for the project by running the following set of commands:"
+PROJECT=$NEW_PROJ
+echo "$PROJECT"
 gcloud config set project "$PROJECT"
 gcloud services enable monitoring.googleapis.com
 gcloud services enable logging.googleapis.com
