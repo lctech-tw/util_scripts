@@ -6,10 +6,6 @@
 |-|modify_version.sh|update package.json|
 |-|yq.sh|yaml edit tool|
 |util|fmt-text.sh|shell text style|
-|sigma|gcp_iam_get_all.sh|list gcp auth fo .csv|
-|sigma|gcp_gcr_rm_image.sh| rm gcr images|
-|sigma|gcp_gcr_rm_all.sh|forloop rm gcr|
-|sigma|set-permissions.sh|[managing-agent-policies](https://cloud.google.com/stackdriver/docs/solutions/managing-agent-policies#set-permissions-script)|
 |proto|build-protoc.sh|build code|
 |proto|compile.sh|pre compile|
 
