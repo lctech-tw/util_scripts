@@ -5,6 +5,7 @@
 |-|notify_slack.sh|Notify slack use|
 |-|modify_version.sh|update package.json|
 |-|yq.sh|yaml edit tool|
+|-|scan.sh|security audit tool |
 |util|fmt-text.sh|shell text style|
 |proto|build-protoc.sh|build code|
 |proto|compile.sh|pre compile|
@@ -85,6 +86,17 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           cat a.yaml | sh yq.sh e '.metadata.name' - 
           # edit 
           cat a.yaml | sh yq.sh e '.metadata.name'="123" - 
+```
+
+### scan.sh
+
+```yaml
+      - name: Use scripts
+        run: |
+          echo "Use scripts"
+          curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/scan.sh 
+          # get 
+          scan --type go
 ```
 
 ## Some other util
