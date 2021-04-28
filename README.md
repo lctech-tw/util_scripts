@@ -57,7 +57,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           bash ./notify_slack.sh -f 
 ```
 
-### modify_version
+### modify_version.sh
 
 ```yaml
       - name: Use scripts
@@ -95,7 +95,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
         run: |
           echo "Use scripts"
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/scan.sh 
-          # get 
+          # use 
           scan --type go
 ```
 
