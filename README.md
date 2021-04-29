@@ -96,7 +96,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           echo "Use scripts"
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/scan.sh 
           # use 
-          scan --type go
+          sh scan.sh --type go
 ```
 
 ## Some other util
