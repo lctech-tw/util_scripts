@@ -71,14 +71,14 @@ echo "$BRANCH_NAME / $GITHUB_EVENT_NAME"
 if [ "$1" == "-s" ]; then
   echo " -- secc mode -- "
 curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$GITMSG"' \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_WORKFLOW"' / '"$GITHUB_JOB"'"}]}' \
+  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"👤 $GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
   "$SLACK_URL"
 fi
 
 if [ "$1" == "-f" ]; then
   echo " -- fail mode -- "
 curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#EA0000","pretext":"[Github Action] Fail \n '"$GITMSG"' \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_WORKFLOW"' / '"$GITHUB_JOB"'"}]}' \
+  --data '{"attachments":[{"color":"#EA0000","pretext":"[Github Action] Fail \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"👤 $GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
   "$SLACK_URL"
 fi
 
