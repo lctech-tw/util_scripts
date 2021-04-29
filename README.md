@@ -37,7 +37,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master  
         with:
           project_id: #$GCPproject_id
-          service_account_email: #"github-ci@email"
+          service_account_email:${{ secrets.GCP_SA_MAIL_GITHUB_CI }}
           service_account_key: ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
           export_default_credentials: true
           
