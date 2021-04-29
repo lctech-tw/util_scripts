@@ -6,48 +6,27 @@ function clean {
     rm -rf "$(ls src)" | xargs -n 1
 }
 
-function _test {
-    echo " 😎😎😎😎😎😎 TEST MODE 😎😎😎😎😎😎"
-    echo "Create File......"
-    TEST_TEMPLATE_PATH=./src/domain/subdomain
-    mkdir -p "$TEST_TEMPLATE_PATH"
-    cat >"$TEST_TEMPLATE_PATH"/ping.proto <<-EOM
-syntax = "proto3";
-package domain.subdomain.ping;
-option go_package = "github.com/lctech-tw/projectname/dist/go/ping";
-service PingServer {
-    rpc Ping (PingMessage) returns (PingMessage);
-}   
-message PingMessage {
-    string ping = 1;
-    int64 reties = 2;
-}
-EOM
-}
-
 # build protoc
 function build {
     clean
-    PROGRAMMING_LANGUAGE=("go" "js" "php" "ruby" "swift" "docs" "node" "python" "csharp")
-    for ((i = 0; i < ${#PROGRAMMING_LANGUAGE[@]}; i++)); do
-        mkdir -p ./dist/"${PROGRAMMING_LANGUAGE[i]}"
-    done
+    mkdir -p ./dist/go ./temp_proto/go ./dist/js ./dist/php ./dist/ruby ./dist/swift ./dist/docs ./dist/node ./dist/python ./dist/csharp
 
-    proto_files=$(find src -name "*.proto")
-    proto_dirs=$(cd ./src && find . -type f -name "*.proto" | xargs -0 -I{} dirname {} | sort | uniq)
+    proto_files=$(find src | grep proto)
+    proto_dirs=$((cd ./src && find . -type f -name "*.proto") | xargs -I{} dirname {} | sort | uniq)
 
     echo "🔥 ----- golang -----"
     for proto_dir in $proto_dirs; do
         # proto_file_name=`basename $proto .proto`
-        service_dist_name=$(basename "${proto_dir}")
+        service_dist_name=`basename ${proto_dir}`
         service_dist="./dist/go/${service_dist_name}"
         descriptor_file="${service_dist}/${service_dist_name}_descriptor.pb"
-        mkdir -p "${service_dist}"
-        src_proto_files=$(find ./src/"${proto_dir}" -iname "*.proto")
+        mkdir -p ${service_dist}
+        src_proto_files=$(find ./src/${proto_dir} -iname "*.proto")
         data_proto_dir=$(echo ${proto_dir} | sed -e 's/admin/data/g')
         external_proto_files=$(find ./external/${data_proto_dir} -iname "*.proto")
         proto_file_all=("${src_proto_files[@]}")
         protoc -I=src/ -I=/opt/include \
+            -I=external/ \
             --go_out=plugins=grpc:./dist/go \
             --validate_out="lang=go:./dist/go" \
             --include_imports \
@@ -61,23 +40,26 @@ function build {
     (cd ./dist/go/"${go_package}"/dist/go && tar c .) | (cd ./dist/go && tar xf -)
     rm -rf ./dist/go/"${go_package}"/dist/go/
 
-    echo "🔥 ----- grpc-web-javascript -----"
+    echo "🔥 ----- javascript -----"
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include "${proto}" \
+            -I=external/ \
             --js_out=import_style=commonjs:./dist/js \
             --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./dist/js/ \
             --ts_out=./dist/js
     done
 
-    echo "🔥 ----- grpc-web-typescript -----"
+    echo "🔥 ----- typescript -----"
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include "${proto}" \
+            -I=external/ \
             --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:./dist/js/
     done
 
     echo "🔥 ----- php -----"
     for proto in $proto_files; do
-        protoc -I=/opt/include -I=src/ \
+        protoc -I=src/ -I=/opt/include \
+            -I=external/ \
             --php_out=./dist/php \
             --plugin=protoc-gen-grpc=/usr/local/bin/grpc_php_plugin \
             --grpc_out=./dist/php \
@@ -86,16 +68,17 @@ function build {
 
     echo "🔥 ----- ruby -----"
     for proto in $proto_files; do
-        protoc -I=/opt/include -I=src/ \
+        protoc -I=src/ -I=/opt/include "${proto}" \
+            -I=external/ \
             --ruby_out=./dist/ruby \
             --plugin=protoc-gen-grpc=/usr/local/bin/grpc_ruby_plugin \
-            --grpc_out=./dist/ruby \
-            "${proto}"
+            --grpc_out=./dist/ruby
     done
 
     echo "🔥 ----- swift -----"
     for proto in $proto_files; do
         protoc -I=/opt/include -I=src/ \
+            -I=external/ \
             --swift_opt=Visibility=Public \
             --swift_out=./dist/swift \
             --grpc-swift_opt=Visibility=Public \
@@ -108,6 +91,7 @@ function build {
     echo "🔥 ----- python -----"
     for proto in $proto_files; do
         protoc -I=/opt/include -I=src/ \
+            -I=external/ \
             --python_out=./dist/python \
             "${proto}"
     done
@@ -115,6 +99,7 @@ function build {
     echo "🔥 ----- c# -----"
     for proto in $proto_files; do
         protoc -I=/opt/include -I=src/ \
+            -I=external/ \
             --csharp_out=./dist/csharp \
             "${proto}"
     done
@@ -123,39 +108,36 @@ function build {
     echo "🔥 ----- document -----"
     for proto in $proto_files; do
         proto_file_src="${proto/"src/"/}"
-        proto_file_outfile_name="${proto_file_src/"/"/"."}"
-        echo $proto_file_outfile_name
-        protoc -I=src/ -I=/opt/include --doc_out=./dist/docs/ --doc_opt=markdown,"$proto_file_outfile_name".md "${proto_file_src}"
+        protoc -I=src/ -I=/opt/include -I=external/ --doc_out=./dist/docs/  --doc_opt=markdown,$proto.md "${proto_file_src}"
     done
 }
 
-# help
-function _help() {
-    cat >&2 <<"EOF"
-Description:
-  This is LCTECH's develop PROTO3 util .
-FLAG:
-    build
-    test
-    help
-    clean
-EOF
-    exit 0
-}
-
-# main
 if [ "${1}" == "build" ]; then
     go_package="${2}"
     build
 elif [ "${1}" == "clean" ]; then
     clean
-elif [ "${1}" == "test" ]; then
-    _test
-elif [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
-    _help
-else
-    _help
 fi
+
+proto_files=$(find src -name "*.proto")
+
+echo "💩 ----- [external] -----"
+
+echo "----- javascript [external] -----"
+for proto in $proto_files; do
+    protoc -I=src/ -I=/opt/include "${proto}" \
+        -I=external/ \
+        --js_out=import_style=commonjs:./dist/js \
+        --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./dist/js/ \
+        --ts_out=./dist/js
+done
+
+echo "----- typescript [external] -----"
+for proto in $proto_files; do
+    protoc -I=src/ -I=/opt/include "${proto}" \
+        -I=external/ \
+        --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:./dist/js/
+done
 
 echo "🦅 ----- Done -----"
 exit 0

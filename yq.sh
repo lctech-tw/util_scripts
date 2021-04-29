@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 #https://mikefarah.gitbook.io/yq/
 # Use ->  cat a.yaml | sh yq.sh e '.metadata.name' -  

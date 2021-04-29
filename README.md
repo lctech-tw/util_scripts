@@ -3,12 +3,13 @@
 |Path|Name|Desc|
 |-|-|-|
 |-|notify_slack.sh|Notify slack use|
-|-|modify_version.sh|update package.json|
+|-|modify_version.sh|update package.json version and package name|
 |-|yq.sh|yaml edit tool|
 |-|scan.sh|security audit tool |
 |util|fmt-text.sh|shell text style|
 |proto|build-protoc.sh|build code|
 |proto|compile.sh|pre compile|
+|proto|dependent-proto.sh|download dependent proto|
 
 ## How to use
 
@@ -32,29 +33,26 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
 ### notify_slack.sh
 
 ```yaml
-      - name: ⚙️ Initialize Google Cloud SDK
-        if: allways()
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master  
+      - name: ⚙️ Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
         with:
-          project_id: #$GCPproject_id
-          service_account_email:${{ secrets.GCP_SA_MAIL_GITHUB_CI }}
-          service_account_key: ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
-          export_default_credentials: true
-          
+          credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
+      - name: ⚙️ Initialize Google Cloud SDK
+        if: always()
+        uses: google-github-actions/setup-gcloud@v0
  # ... some actions
 
-      - name: Slack Notification on Success (O)
-        if: success()
+      - name: Slack Notification
+        if: always()
         run: |
-          echo "run slack on Success (O)"
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
-          bash ./notify_slack.sh -s 
-      - name: Slack Notification on Failure (X)
-        if: failure()
-        run: |
-          echo "run slack on fail (X)"
-          curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
-          bash ./notify_slack.sh -f 
+          if [[ '${{ job.status }}' == 'failure' ]] ;then
+            echo "Run slack on Fail (X)"
+            bash ./notify_slack.sh -f
+          else
+            echo "Run slack on Success (O)"
+            bash ./notify_slack.sh -s
+          fi
 ```
 
 ### modify_version.sh
@@ -72,7 +70,11 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
       - name: Use scripts
         run: |
           echo "Use scripts"
+          # old 
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/compile.sh)"
+          # new
+          COMPILE_MODE="Multi" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/compile2.sh)"
+
 ```
 
 ### yq.sh
@@ -83,9 +85,9 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           echo "Use scripts"
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/yq.sh 
           # get 
-          cat a.yaml | sh yq.sh e '.metadata.name' - 
+          cat a.yaml | bash yq.sh e '.metadata.name' - 
           # edit 
-          cat a.yaml | sh yq.sh e '.metadata.name'="123" - 
+          cat a.yaml | bash yq.sh e '.metadata.name'="123" - 
 ```
 
 ### scan.sh
@@ -96,7 +98,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           echo "Use scripts"
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/scan.sh 
           # use 
-          scan --type go
+          sh scan.sh --type go
 ```
 
 ## Some other util

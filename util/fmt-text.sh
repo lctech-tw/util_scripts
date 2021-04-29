@@ -1,8 +1,8 @@
-#! /bin/bash
+#!/bin/bash
 
 # how to use
 # ----------
-# #! /bin/bash
+# #!/bin/bash
 # . ../util/fmt-text.sh --source-only
 # fmt.bold "msg"
 
