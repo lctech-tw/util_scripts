@@ -68,14 +68,14 @@ echo "$BRANCH_NAME / $GITHUB_EVENT_NAME"
 if [ "$1" == "-s" ]; then
   echo " -- secc mode -- "
 curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_WORKFLOW"' / '"$GITHUB_JOB"'"}]}' \
+  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"${{ github.event.head_commit.message }}"' \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_WORKFLOW"' / '"$GITHUB_JOB"'"}]}' \
   "$SLACK_URL"
 fi
 
 if [ "$1" == "-f" ]; then
   echo " -- fail mode -- "
 curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#EA0000","pretext":"[Github Action] Fail \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_WORKFLOW"' / '"$GITHUB_JOB"'"}]}' \
+  --data '{"attachments":[{"color":"#EA0000","pretext":"[Github Action] Fail \n '"${{ github.event.head_commit.message }}"' \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_WORKFLOW"' / '"$GITHUB_JOB"'"}]}' \
   "$SLACK_URL"
 fi
 
@@ -93,7 +93,7 @@ curl -X POST -H 'Content-type: application/json' \
   "$SLACK_URL"
 fi
 
-#* TEMPLATE
+#* TEMPLATE (https://api.slack.com/docs/messages/builder?msg=%7B%22text%22%3A%22I%20am%20a%20test%20message%22%2C%22attachments%22%3A%5B%7B%22text%22%3A%22And%20here%E2%80%99s%20an%20attachment!%22%7D%5D%7D)
 # {
 #     "attachments": [
 #         {
