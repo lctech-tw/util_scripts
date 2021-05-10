@@ -39,6 +39,9 @@ for i in "$@"; do
     GITHUB_ACTIONS=true
     shift # past argument=value
     ;;
+  -u | --url)
+    URL="${i#*=}"
+    ;;
   *)
     # unknown option
     ;;
@@ -67,11 +70,16 @@ fi
 echo "GITMSG = $GITMSG"
 echo "$BRANCH_NAME / $GITHUB_EVENT_NAME"
 
+#* URL link
+if [ "$URL" != "" ]; then
+  JSONURL=',{"text": "URL : '"$URL"'}'
+fi
+
 #* json post 
 if [ "$1" == "-s" ]; then
   echo " -- secc mode -- "
 curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"👤 $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
+  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"👤 $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
   "$SLACK_URL"
 fi
 
@@ -132,7 +140,10 @@ fi
 #         }
 #     ]
 # }
-
+#? # URL
+# {
+#             "text": "URL : $URL"
+# }
 
 #* ORIGN SHELL
 # curl -X POST -H 'Content-type: application/json' \
