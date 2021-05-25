@@ -72,6 +72,7 @@ echo "$BRANCH_NAME / $GITHUB_EVENT_NAME"
 
 #* URL link
 if [ "$URL" != "" ]; then
+  echo "$URL"
   JSONURL=',{"text": "URL : '"$URL"'}'
 fi
 

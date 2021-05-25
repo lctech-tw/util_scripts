@@ -83,9 +83,9 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           echo "Use scripts"
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/yq.sh 
           # get 
-          cat a.yaml | sh yq.sh e '.metadata.name' - 
+          cat a.yaml | bash yq.sh e '.metadata.name' - 
           # edit 
-          cat a.yaml | sh yq.sh e '.metadata.name'="123" - 
+          cat a.yaml | bash yq.sh e '.metadata.name'="123" - 
 ```
 
 ### scan.sh
