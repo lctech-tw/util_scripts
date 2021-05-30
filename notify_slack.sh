@@ -3,14 +3,7 @@
 #* Need gcp auth 
 
 GITHUB_ACTIONS_MODE=true
-
-# mock testing
-# BRANCH_NAME="test_branch_name"
-# GITHUB_EVENT_NAME="test_event_name"
-# GITHUB_ACTOR="test_actor"
-# GITHUB_JOB="test_job_name"
-# AB_LINK="https://abc.net"
-# AB_HEADER="teststest"
+testmode=false
 
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
   cat >&2 <<"EOF"
@@ -18,12 +11,14 @@ Description:
   由原本 jenkins tesk3.sh 調整
 USAGE:
   SHELL.sh 
-  - a AB test mode
-  - s succ mode
-  - f fail mode
-  - t test mode
-  - c check mode
-  - x bool [true] github mode
+  @ Mode 
+    - a AB test mode
+    - s succ mode
+    - f fail mode
+    - c check mode
+  @ debug use
+    - t test mode
+    - x bool [true] github mode
 EXAMPLE
   [github action]
   SHELL.sh -s
@@ -39,8 +34,32 @@ for i in "$@"; do
     GITHUB_ACTIONS=true
     shift # past argument=value
     ;;
-  -u | --url)
+  -u=*|--url=*)
     URL="${i#*=}"
+    ;;
+  -t | --test)
+    # mock testing
+    testmode=true
+    GITHUB_REPOSITORY="test_repo"
+    BRANCH_NAME="test_main"
+    GITHUB_HEAD_REF="test_test"
+    GITHUB_EVENT_NAME="test_push"
+    GITHUB_ACTOR="test_actorname"
+    GITHUB_JOB="test_job_name"
+    AB_LINK="https://ablink.net"
+    AB_HEADER="teststest"
+    ;;
+  -s | --secc)
+    mode="s"
+    ;;
+  -f | --fail)
+    mode="f"
+    ;;
+  -a | --ab)
+    mode="a"
+    ;;
+  -c | --check)
+    mode="c"
     ;;
   *)
     # unknown option
@@ -54,56 +73,62 @@ if "$GITHUB_ACTIONS_MODE"; then
     echo "🐥 Not from github action"
     exit 1
     else
-    # slack url -> gcp / secrets
-    SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
+    if $testmode ;then
+      SLACK_URL="https://hooks.slack.com/services/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"
+    else
+      # slack url -> gcp / secrets
+      SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
+    fi
   fi
 fi
 
-#* 檢查 EVENT MODE
+#* 檢查 EVENT MODE ( Use git info )
 if [ "$GITHUB_EVENT_NAME" == 'pull_request' ]; then
-  GITMSG=$(git log --format=%B -n 1 ${{ github.event.after }})
+  GITMSG=$(git log --format=%B -n 1 "${{ github.event.after }}" )
   BRANCH_NAME=$(echo "${GITHUB_HEAD_REF}" | tr / -)
 else
   GITMSG=$(git log -1 --pretty=format:"%s")
   BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr / -)
 fi
-echo "GITMSG = $GITMSG"
-echo "$BRANCH_NAME / $GITHUB_EVENT_NAME"
+if $testmode ;then
+  BRANCH_NAME="test"  
+fi
+
+echo "@ GITMSG = $GITMSG"
+echo "@ B/E = $BRANCH_NAME / $GITHUB_EVENT_NAME"
 
 #* URL link
 if [ "$URL" != "" ]; then
-  echo "$URL"
-  JSONURL=',{"text": "URL : '"$URL"'}'
+  echo "@ URL = $URL"
+  JSONURL=',{"text": "URL : '"$URL"'","color": "#FFBB77"}'
 fi
 
 #* json post 
-if [ "$1" == "-s" ]; then
-  echo " -- secc mode -- "
-curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"👤 $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
-  "$SLACK_URL"
-fi
-
-if [ "$1" == "-f" ]; then
-  echo " -- fail mode -- "
-curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#EA0000","pretext":"[Github Action] Fail \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"👤 $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
-  "$SLACK_URL"
-fi
-
-if [ "$1" == "-a" ]; then
-  echo " -- ab mode -- "
-curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_WORKFLOW"' / '"$GITHUB_JOB"'"},{"color":"#FFBB77","pretext":"AB Test","title":" A/B WEB-Link ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
-  "$SLACK_URL"
-fi
-
-if [ "$1" == "-c" ]; then
-  echo " -- check mode -- "
-curl -X POST -H 'Content-type: application/json' \
-  --data '{"attachments":[{"color":"#0B6FFF","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","callback_id":"confirmaction","text":"Are you sure to confirm deployment to GA?","attachment_type":"default","actions":[{"name":"reject","text":"Reject","type":"button","style":"danger","value":"rejectaction"},{"name":"ga","text":"GA","type":"button","style":"primary","value":"confirmaction"}]}]}' \
-  "$SLACK_URL"
-fi
+case $mode in
+  s)
+    echo " -- secc mode -- "
+    curl -X POST -H 'Content-type: application/json' \
+      --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"👤 $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
+      "$SLACK_URL"
+    ;;
+  f)
+    echo " -- fail mode -- "
+    curl -X POST -H 'Content-type: application/json' \
+      --data '{"attachments":[{"color":"#EA0000","pretext":"[Github Action] Fail \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"👤 $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
+      "$SLACK_URL"
+    ;;
+  a)
+    echo " -- ab mode -- "
+    curl -X POST -H 'Content-type: application/json' \
+      --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_WORKFLOW"' / '"$GITHUB_JOB"'"},{"color":"#FFBB77","pretext":"AB Test","title":" A/B WEB-Link ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
+      "$SLACK_URL"
+    ;;
+  c)
+    echo " -- check mode -- "
+    curl -X POST -H 'Content-type: application/json' \
+      --data '{"attachments":[{"color":"#0B6FFF","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","callback_id":"confirmaction","text":"Are you sure to confirm deployment to GA?","attachment_type":"default","actions":[{"name":"reject","text":"Reject","type":"button","style":"danger","value":"rejectaction"},{"name":"ga","text":"GA","type":"button","style":"primary","value":"confirmaction"}]}]}' \
+      "$SLACK_URL"
+esac
 
 #* TEMPLATE (https://api.slack.com/docs/messages/builder?msg=%7B%22text%22%3A%22I%20am%20a%20test%20message%22%2C%22attachments%22%3A%5B%7B%22text%22%3A%22And%20here%E2%80%99s%20an%20attachment!%22%7D%5D%7D)
 # {
