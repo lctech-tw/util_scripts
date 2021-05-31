@@ -10,15 +10,18 @@ if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
 Description:
   由原本 jenkins tesk3.sh 調整
 USAGE:
-  SHELL.sh 
+  SHELL.sh [-acfstxu] 
   @ Mode 
     - a AB test mode
     - s succ mode
     - f fail mode
     - c check mode
-  @ debug use
+  @ Debug use
     - t test mode
     - x bool [true] github mode
+  @ Env setting
+    -u=URL
+    $AB_LINK , $AB_HEADER
 EXAMPLE
   [github action]
   SHELL.sh -s
