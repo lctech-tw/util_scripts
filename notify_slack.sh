@@ -83,7 +83,7 @@ if "$GITHUB_ACTIONS_MODE"; then
   if [ -z "$GITHUB_ACTIONS" ]; then
     echo "🐥 Not from github action"
     exit 1
-    else
+  else
     if $testmode ;then
       SLACK_URL="..."
     else
@@ -109,9 +109,6 @@ else
   GITMSG=$(git log -1 --pretty=format:"%s")
   BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr / -)
 fi
-if $testmode ;then
-  BRANCH_NAME="test"  
-fi
 
 #* URL link
 if [ "$URL" != "" ]; then
@@ -120,6 +117,10 @@ if [ "$URL" != "" ]; then
 fi
 
 #* printenv
+if $testmode ;then
+  echo "===testmode==="
+  BRANCH_NAME="test"  
+fi
 echo "@ GITMSG = $GITMSG"
 echo "@ B/E = $BRANCH_NAME / $GITHUB_EVENT_NAME"
 
