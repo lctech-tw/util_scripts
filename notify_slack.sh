@@ -90,10 +90,11 @@ if "$GITHUB_ACTIONS_MODE"; then
       # url -> gcp / secrets
       case $SLACK_GROUP in
       jvid)
-        echo "jvid mode"
+        echo "@ SLACK_GROUP -> jvid"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_jvid --project=jkf-servers)
       ;;
       *)
+        echo "@ SLACK_GROUP -> default"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
       ;;
       esac
