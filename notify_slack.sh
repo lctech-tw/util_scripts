@@ -2,9 +2,11 @@
 
 #* Need gcp auth 
 
+#* Env
 GITHUB_ACTIONS_MODE=true
 testmode=false
 
+#* help
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
   cat >&2 <<"EOF"
 Description:
@@ -32,6 +34,8 @@ EXAMPLE
 EOF
   exit 1
 fi
+
+#* get env
 for i in "$@"; do
   case $i in
   -x | --x)
@@ -97,7 +101,7 @@ if "$GITHUB_ACTIONS_MODE"; then
   fi
 fi
 
-#* 檢查 EVENT MODE ( Use git info )
+#* 檢查 EVENT MODE ( Use .git info )
 if [ "$GITHUB_EVENT_NAME" == 'pull_request' ]; then
   GITMSG=$(git log --format=%B -n 1 "${{ github.event.after }}" )
   BRANCH_NAME=$(echo "${GITHUB_HEAD_REF}" | tr / -)
@@ -109,14 +113,15 @@ if $testmode ;then
   BRANCH_NAME="test"  
 fi
 
-echo "@ GITMSG = $GITMSG"
-echo "@ B/E = $BRANCH_NAME / $GITHUB_EVENT_NAME"
-
 #* URL link
 if [ "$URL" != "" ]; then
   echo "@ URL = $URL"
   JSONURL=',{"text": "URL : '"$URL"'","color": "#FFBB77"}'
 fi
+
+#* printenv
+echo "@ GITMSG = $GITMSG"
+echo "@ B/E = $BRANCH_NAME / $GITHUB_EVENT_NAME"
 
 #* json post 
 case $mode in
@@ -144,6 +149,8 @@ case $mode in
       --data '{"attachments":[{"color":"#0B6FFF","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","callback_id":"confirmaction","text":"Are you sure to confirm deployment to GA?","attachment_type":"default","actions":[{"name":"reject","text":"Reject","type":"button","style":"danger","value":"rejectaction"},{"name":"ga","text":"GA","type":"button","style":"primary","value":"confirmaction"}]}]}' \
       "$SLACK_URL"
 esac
+
+#* -Note--------------------------------------------------------------------
 
 #* TEMPLATE (https://api.slack.com/docs/messages/builder?msg=%7B%22text%22%3A%22I%20am%20a%20test%20message%22%2C%22attachments%22%3A%5B%7B%22text%22%3A%22And%20here%E2%80%99s%20an%20attachment!%22%7D%5D%7D)
 # {
@@ -190,4 +197,3 @@ esac
 # curl -X POST -H 'Content-type: application/json' \
 # --data '{"text": "Pipeline has passed.","attachments": [{"text": "Node: '"${NODE_NAME}"'"},{"text": "User: '"${CHANGED_BY_AUTHOR}"'"},{"text": "Version: '"${CODE_VERSION}"'"},{"text": "Inspect Header: '"${AB_VAR_NAME}=${AB_VAR_VALUE}"'"},{"text": "URL: '"${SVC_URL}"'"}]}' \
 # $SLACK_URL
-
