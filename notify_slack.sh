@@ -21,6 +21,7 @@ USAGE:
     - x bool [true] github mode
   @ Env setting
     -u=URL
+    -g=group ($SLACK_GROUP) (jvid..)
     $AB_LINK , $AB_HEADER
 EXAMPLE
   [github action]
@@ -39,6 +40,9 @@ for i in "$@"; do
     ;;
   -u=*|--url=*)
     URL="${i#*=}"
+    ;;
+  -g=*|--group=*)
+    SLACK_GROUP="${i#*=}"
     ;;
   -t | --test)
     # mock testing
@@ -70,17 +74,25 @@ for i in "$@"; do
   esac
 done
 
-#* 檢查 GITHUB ACTION
+#* 檢查 GITHUB ACTION & 取URL
 if "$GITHUB_ACTIONS_MODE"; then
   if [ -z "$GITHUB_ACTIONS" ]; then
     echo "🐥 Not from github action"
     exit 1
     else
     if $testmode ;then
-      SLACK_URL="https://hooks.slack.com/services/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"
+      SLACK_URL="..."
     else
-      # slack url -> gcp / secrets
-      SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
+      # url -> gcp / secrets
+      case $SLACK_GROUP in
+      jvid)
+        echo "jvid mode"
+        SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_jvid --project=jkf-servers)
+      ;;
+      *)
+        SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
+      ;;
+      esac
     fi
   fi
 fi
