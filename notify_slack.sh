@@ -4,7 +4,10 @@
 
 #* Env
 GITHUB_ACTIONS_MODE=true
+# 0 -> Nothing / 1 -> Do / < 1 -> close
+modecount=0
 testmode=false
+TAG=""
 
 #* help
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
@@ -12,24 +15,29 @@ if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
 Description:
   由原本 jenkins tesk3.sh 調整
 USAGE:
-  SHELL.sh [-acfstxu] 
+  SHELL.sh [-acfgqstux] 
   @ Mode 
-    - a AB test mode
-    - s succ mode
-    - f fail mode
-    - c check mode
+    - a , --ab     AB test mode
+    - s , --secc   succ mode
+    - f , --fail   fail mode
+    - c , --check  check mode
+    - q            quiet mode
   @ Debug use
-    - t test mode
-    - x bool [true] github mode
+    - t , --test   test mode
+    - x , --x bool [true] github mode
   @ Env setting
-    -u=URL
-    -g=group ($SLACK_GROUP) (jvid..)
-    $AB_LINK , $AB_HEADER
-EXAMPLE
+    - u , --url    use URL     ( Ex: -u=URL )
+  @ Slack Post Setting
+    - g , --group  post group  ( Ex: -g=jvid )
+    --tag  TAG who ( Ex: --tag='<!channel> <!here> <@zeki>' )
+  @ Arg  
+    $AB_LINK   = A/B test's link
+    $AB_HEADER = A/B test's header
+EXAMPLE:
   [github action]
-  SHELL.sh -s
+    SHELL.sh -s
   [other]
-  SHELL.sh -s -x
+    SHELL.sh -t -x -u="https://google.com" -s --tag='<@zeki>'
 
 EOF
   exit 1
@@ -62,21 +70,33 @@ for i in "$@"; do
     ;;
   -s | --secc)
     mode="s"
+    modecount=$((modecount+1))
     ;;
   -f | --fail)
     mode="f"
+    modecount=$((modecount+1))
     ;;
   -a | --ab)
-    mode="a"
+    modecount=$((modecount+1))
     ;;
   -c | --check)
-    mode="c"
+    modecount=$((modecount+1))
+    ;;
+  --tag=*)
+    TAG="${i#*=}"
     ;;
   *)
     # unknown option
     ;;
   esac
 done
+
+#* 檢查 MODE變數
+if [ $modecount -gt 1 ];then
+echo "@ ERROR - You enter mode the wrong "
+echo "@ modecount -> $modecount"
+exit 1
+fi
 
 #* 檢查 GITHUB ACTION & 取URL
 if "$GITHUB_ACTIONS_MODE"; then
@@ -85,7 +105,10 @@ if "$GITHUB_ACTIONS_MODE"; then
     exit 1
   else
     if $testmode ;then
-      SLACK_URL="..."
+      echo "@ TEST" 
+      #SLACK_URL="https://ho"
+      #"oks.slack.com/services/T2BCVHV"
+      #"K2/B02578RKE7J/c8QeRmYfQtVbKcZMWCCRyr3y"
     else
       # url -> gcp / secrets
       case $SLACK_GROUP in
@@ -119,18 +142,19 @@ fi
 
 #* printenv
 if $testmode ;then
-  echo "===testmode==="
+  echo " -- T E S T - - "
   BRANCH_NAME="test"  
 fi
 echo "@ GITMSG = $GITMSG"
 echo "@ B/E = $BRANCH_NAME / $GITHUB_EVENT_NAME"
+echo "@ TAG = $TAG"
 
 #* json post 
 case $mode in
   s)
     echo " -- secc mode -- "
     curl -X POST -H 'Content-type: application/json' \
-      --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' ","author_name":"'"👤 $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
+      --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$BRANCH_NAME"' / '"$GITHUB_EVENT_NAME"' '"$TAG"' ","author_name":"'"👤 $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
       "$SLACK_URL"
     ;;
   f)
