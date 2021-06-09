@@ -16,12 +16,12 @@ Description:
   由原本 jenkins tesk3.sh 調整
 USAGE:
   SHELL.sh [-acfgqstux] 
-  @ Mode 
+  @ Mode (only)
     - a , --ab     AB test mode
     - s , --secc   succ mode
     - f , --fail   fail mode
     - c , --check  check mode
-    - q            quiet mode
+    - q , --quiet  quiet mode
   @ Debug use
     - t , --test   test mode
     - x , --x bool [true] github mode
@@ -81,6 +81,12 @@ for i in "$@"; do
     ;;
   -c | --check)
     modecount=$((modecount+1))
+    ;;
+  -q | --quiet)
+    mode="q"
+    modecount=$((modecount+1))
+    echo "88"
+    exit 0
     ;;
   --tag=*)
     TAG="${i#*=}"
