@@ -2,7 +2,7 @@
 
 #* need login gcloud service account
 
-gcloud auth activate-service-account docker-puller@lc-shared-res.iam.gserviceaccount.com --key-file=puller.json
+gcloud auth activate-service-account docker-puller@lc-shared-res.iam.gserviceaccount.com --key-file=.github/auth/puller.json
 gcloud auth configure-docker
 cat ./.github/auth/puller.json | docker login -u _json_key --password-stdin https://asia.gcr.io
 curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/build-protoc.sh
