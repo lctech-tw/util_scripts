@@ -36,10 +36,10 @@ function build() {
 
     echo "@ ts"
     for proto in $proto_files; do
-        protoc -I=src/ -I=/opt/include "${proto}" \
-            --js_out=import_style=commonjs,binary:./dist/ts \
-            --grpc-web_out=import_style=typescript,mode=grpcwebtext:./dist/ts/ \
-            --ts_out=./dist/ts 
+        protoc -I=/opt/include -I=src/ \
+        --js_out=import_style=commonjs:./ \
+        --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:./ \
+        "${proto}" || { echo 'js_out or ts_out failed' ; exit 1; }
     done
 
     echo "@ php"
