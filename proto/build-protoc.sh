@@ -26,13 +26,19 @@ function build() {
     mv ./dist/go/"${go_package}"/dist/go/* ./dist/go
     rm -rf ./dist/go/github.com
 
-    echo "@ js / ts"
-    # generate js
+    echo "@ js"
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include -I=jsonly/ "${proto}" \
             --js_out=import_style=commonjs:./dist/js \
-            --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:./dist/js/
+            --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./dist/js/
             #--ts_out=./dist/js
+    done
+
+    echo "@ ts"
+    for proto in $proto_files; do
+        protoc -I=src/ -I=/opt/include -I=jsonly/ "${proto}" \
+            --ts_out=./dist/js \
+            --grpc-web_out=import_styletypescript,mode=grpcwebtext:./dist/js/
     done
 
     echo "@ php"
