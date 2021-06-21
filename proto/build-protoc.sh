@@ -37,8 +37,8 @@ function build() {
     echo "@ ts"
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include "${proto}" \
-            --ts_out=./dist/js \
-            --grpc-web_out=import_styletypescript,mode=grpcwebtext:./dist/js/
+            --ts_out=./dist/ts \
+            --grpc-web_out=import_style=typescript,mode=grpcwebtext:./dist/ts/
     done
 
     echo "@ php"
