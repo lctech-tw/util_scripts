@@ -13,7 +13,7 @@ function build() {
 
     proto_files=$(find src | grep proto)
 
-    echo "@generate go"
+    echo "@ go"
     # generate go
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include \
@@ -25,18 +25,17 @@ function build() {
     # start move go files, to github import path
     mv ./dist/go/"${go_package}"/dist/go/* ./dist/go
     rm -rf ./dist/go/github.com
-    # end
 
-    echo "@generate js"
+    echo "@ js / ts"
     # generate js
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include "${proto}" \
             --js_out=import_style=commonjs:./dist/js \
-            --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./dist/js \
+            --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:./dist/js \
             --ts_out=./dist/js
     done
 
-    echo "@generate php"
+    echo "@ php"
     # generate php
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include \
@@ -46,7 +45,7 @@ function build() {
             "${proto}"
     done
 
-    echo "@generate ruby"
+    echo "@ ruby"
     # generate ruby
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include "${proto}" \
@@ -55,7 +54,7 @@ function build() {
             --grpc_out=./dist/ruby
     done
 
-    echo "@generate swift"
+    echo "@ swift"
     # generate swift
     for proto in $proto_files; do
         protoc -I=/opt/include -I=src/ \
