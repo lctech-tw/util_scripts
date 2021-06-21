@@ -31,13 +31,12 @@ function build() {
         protoc -I=src/ -I=/opt/include "${proto}" \
             --js_out=import_style=commonjs:./dist/js \
             --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./dist/js/
-            #--ts_out=./dist/js
     done
 
     echo "@ ts"
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include "${proto}" \
-            --grpc-web_out=import_style=typescript,mode=grpcwebtext:./dist/ts \
+            --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:./dist/ts \
             #--ts_out=./dist/ts
     done
 
