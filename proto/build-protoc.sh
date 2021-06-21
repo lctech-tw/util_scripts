@@ -9,7 +9,7 @@ function clean() {
 # build protoc
 function build() {
     clean
-    mkdir -p ./dist/go ./dist/js ./dist/php ./dist/ruby ./dist/swift
+    mkdir -p ./dist/go ./dist/js ./dist/php ./dist/ruby ./dist/swift ./dist/ts
 
     proto_files=$(find src | grep proto)
 
@@ -38,6 +38,7 @@ function build() {
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include "${proto}" \
             --ts_out=./dist/ts \
+            --js_out=import_style=commonjs,binary:./dist/ts  \
             --grpc-web_out=import_style=typescript,mode=grpcwebtext:./dist/ts/
     done
 
