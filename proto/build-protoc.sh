@@ -13,6 +13,7 @@ function build() {
 
     proto_files=$(find src | grep proto)
 
+    echo "@generate go"
     # generate go
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include \
@@ -26,6 +27,7 @@ function build() {
     rm -rf ./dist/go/github.com
     # end
 
+    echo "@generate js"
     # generate js
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include "${proto}" \
@@ -34,6 +36,7 @@ function build() {
             --ts_out=./dist/js
     done
 
+    echo "@generate php"
     # generate php
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include \
@@ -43,6 +46,7 @@ function build() {
             "${proto}"
     done
 
+    echo "@generate ruby"
     # generate ruby
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include "${proto}" \
@@ -51,6 +55,7 @@ function build() {
             --grpc_out=./dist/ruby
     done
 
+    echo "@generate swift"
     # generate swift
     for proto in $proto_files; do
         protoc -I=/opt/include -I=src/ \
