@@ -37,7 +37,7 @@ function build() {
     for proto in $proto_files; do
         protoc -I=src/ -I=/opt/include "${proto}" \
             --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:./dist/js/ \
-            --ts_out=./dist/ts
+            --ts_out=./dist/js
     done
 
     echo "@ php"
