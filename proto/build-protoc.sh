@@ -28,7 +28,7 @@ function build() {
 
     echo "@ js"
     for proto in $proto_files; do
-        protoc -I=src/ -I=/opt/include -I=jsonly/ "${proto}" \
+        protoc -I=src/ -I=/opt/include "${proto}" \
             --js_out=import_style=commonjs:./dist/js \
             --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./dist/js/
             #--ts_out=./dist/js
@@ -36,7 +36,7 @@ function build() {
 
     echo "@ ts"
     for proto in $proto_files; do
-        protoc -I=src/ -I=/opt/include -I=jsonly/ "${proto}" \
+        protoc -I=src/ -I=/opt/include "${proto}" \
             --ts_out=./dist/js \
             --grpc-web_out=import_styletypescript,mode=grpcwebtext:./dist/js/
     done
