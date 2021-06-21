@@ -29,10 +29,10 @@ function build() {
     echo "@ js / ts"
     # generate js
     for proto in $proto_files; do
-        protoc -I=src/ -I=/opt/include "${proto}" \
+        protoc -I=src/ -I=/opt/include -I=jsonly/ "${proto}" \
             --js_out=import_style=commonjs:./dist/js \
-            --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:./dist/js \
-            --ts_out=./dist/js
+            --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:./dist/js/
+            #--ts_out=./dist/js
     done
 
     echo "@ php"
