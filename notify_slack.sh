@@ -112,6 +112,8 @@ if "$GITHUB_ACTIONS_MODE"; then
   else
     if $testmode ;then
       echo "@ TEST" 
+      GITHUB_ACTOR="lctech-zeki"
+
       #SLACK_URL="https://ho"
       #"oks.slack.com/services/T2BCVHV"
       #"K2/B02578RKE7J/c8QeRmYfQtVbKcZMWCCRyr3y"
@@ -130,6 +132,10 @@ if "$GITHUB_ACTIONS_MODE"; then
     fi
   fi
 fi
+
+#* 取得作者
+curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/nametable.sh
+AURTHOR_NAME=$(bash ./nametable.sh $GITHUB_ACTOR)
 
 #* 檢查 EVENT MODE ( Use .git info )
 if [ "$GITHUB_EVENT_NAME" == 'pull_request' ]; then
@@ -160,7 +166,7 @@ case $mode in
   s)
     echo " -- secc mode -- "
     curl -X POST -H 'Content-type: application/json' \
-      --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' '"$TAG"' ","author_name":"'":doge: $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
+      --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' '"$TAG"' ","author_name":"'":doge: "'<@'"$AURTHOR_NAME"'>'""'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
       "$SLACK_URL"
     ;;
   f)
