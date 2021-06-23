@@ -45,8 +45,10 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
         if: success()
         run: |
           echo "run slack on Success (O)"
+          curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/nametable.sh 
+          AuthorNAME=$(bash ./nametable.sh $GITHUB_ACTOR)
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
-          bash ./notify_slack.sh -s 
+          bash ./notify_slack.sh -s --tag='<@'"$AuthorNAME"'>'
       - name: Slack Notification on Failure (X)
         if: failure()
         run: |
