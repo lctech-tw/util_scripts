@@ -50,3 +50,16 @@ fi
 #123
 
 ```
+
+```sh
+#!/bin/bash
+array[0]="file1.sdf"
+array[1]="file2.sdf"
+array[2]="file3.sdf"
+array[3]="file4.sdf"
+
+size=${#array[@]}
+index=$(($RANDOM % $size))
+echo ${array[$index]}
+
+```
