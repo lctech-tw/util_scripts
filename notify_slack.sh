@@ -166,7 +166,7 @@ case $mode in
   s)
     echo " -- secc mode -- "
     curl -X POST -H 'Content-type: application/json' \
-      --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' '"$TAG"' ","author_name":"'":doge: "'<@'"$AURTHOR_NAME"'>'""'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
+      --data '{"attachments":[{"color":"#36a64f","pretext":"[Github Action] Success \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'":doge: $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
       "$SLACK_URL"
     ;;
   f)
