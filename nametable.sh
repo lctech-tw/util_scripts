@@ -43,7 +43,7 @@ case $NAME in
     SLACKNAME="freddie9527"
     ;;
     irir)
-    SLACKNAME="Irvin Huang"
+    SLACKNAME="irvin"
     ;;
     james-lin00)
     SLACKNAME="james"
