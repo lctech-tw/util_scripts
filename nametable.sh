@@ -34,7 +34,7 @@ suffix='-lctech'
 
 case $NAME in
     TreeTzeng)
-    SLACKNAME="tree"
+    SLACKNAME="Tree"
     ;;
     Allison)
     SLACKNAME="allison"

@@ -112,11 +112,9 @@ if "$GITHUB_ACTIONS_MODE"; then
   else
     if $testmode ;then
       echo "@ TEST" 
-      GITHUB_ACTOR="lctech-zeki"
+      GITHUB_ACTOR="TreeTzeng"
 
-      #SLACK_URL="https://ho"
-      #"oks.slack.com/services/T2BCVHV"
-      #"K2/B02578RKE7J/c8QeRmYfQtVbKcZMWCCRyr3y"
+      SLACK_URL="https://hooks.slack.com/services/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"
     else
       # url -> gcp / secrets
       case $SLACK_GROUP in
@@ -136,6 +134,7 @@ fi
 #* 取得作者
 curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/nametable.sh
 AURTHOR_NAME=$(bash ./nametable.sh $GITHUB_ACTOR)
+echo "@ AURTHOR_NAME = $GITHUB_ACTOR -> $AURTHOR_NAME"
 
 #* 檢查 EVENT MODE ( Use .git info )
 if [ "$GITHUB_EVENT_NAME" == 'pull_request' ]; then
