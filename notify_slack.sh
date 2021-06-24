@@ -114,7 +114,7 @@ if "$GITHUB_ACTIONS_MODE"; then
       echo "@ TEST" 
       GITHUB_ACTOR="TreeTzeng"
 
-      SLACK_URL="https://hooks.slack.com/services/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"
+      #SLACK_URL=""
     else
       # url -> gcp / secrets
       case $SLACK_GROUP in
