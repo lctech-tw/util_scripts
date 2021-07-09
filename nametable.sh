@@ -33,8 +33,11 @@ suffix='-lctech'
 [[ "$1" =~ $suffix ]] && SLACKNAME=$(echo $NAME |sed -e "s/$suffix$//")
 
 case $NAME in
+    Jordan-lctech)
+    SLACKNAME=$(echo "jordan")
+    ;;
     TreeTzeng)
-    SLACKNAME="tree"
+    SLACKNAME=$(echo "tree")
     ;;
     Allison)
     SLACKNAME="allison"
