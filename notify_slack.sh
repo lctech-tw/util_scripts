@@ -97,14 +97,14 @@ for i in "$@"; do
   esac
 done
 
-#* 檢查 MODE變數
+#* 檢查 MODE 變數
 if [ $modecount -gt 1 ];then
 echo "@ ERROR - You enter mode the wrong "
 echo "@ modecount -> $modecount"
 exit 1
 fi
 
-#* 檢查 GITHUB ACTION & 取URL
+#* 檢查 GITHUB ACTION & 獲取 URL
 if "$GITHUB_ACTIONS_MODE"; then
   if [ -z "$GITHUB_ACTIONS" ]; then
     echo "🐥 Not from github action"
@@ -148,7 +148,7 @@ fi
 #* URL link
 if [ "$URL" != "" ]; then
   echo "@ URL = $URL"
-  JSONURL=',{"text": "URL : '"$URL"'","color": "#FFBB77"}'
+  JSONURL=',{"text": ":browers: : '"$URL"'","color": "#FFBB77"}'
 fi
 
 #* printenv
