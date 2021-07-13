@@ -3,11 +3,16 @@
 #* Need gcp auth 
 
 #* Env
+# check is GITHUB_ACTIONS
 GITHUB_ACTIONS_MODE=true
-# 0 -> Nothing / 1 -> Do / < 1 -> close
-modecount=0
-testmode=false
+# func 0 -> Nothing / 1 -> Do / < 1 -> close
+MODECOUNT=0
+# test mode
+TEST_MODE=false
+# msg tag user
 TAG=""
+# setting icon
+ICON=""
 
 #* help
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
@@ -58,7 +63,7 @@ for i in "$@"; do
     ;;
   -t | --test)
     # mock testing
-    testmode=true
+    TEST_MODE=true
     GITHUB_REPOSITORY="test_repo"
     BRANCH_NAME="test_main"
     GITHUB_HEAD_REF="test_test"
@@ -70,21 +75,21 @@ for i in "$@"; do
     ;;
   -s | --secc)
     mode="s"
-    modecount=$((modecount+1))
+    MODECOUNT=$((MODECOUNT+1))
     ;;
   -f | --fail)
     mode="f"
-    modecount=$((modecount+1))
+    MODECOUNT=$((MODECOUNT+1))
     ;;
   -a | --ab)
-    modecount=$((modecount+1))
+    MODECOUNT=$((MODECOUNT+1))
     ;;
   -c | --check)
-    modecount=$((modecount+1))
+    MODECOUNT=$((MODECOUNT+1))
     ;;
   -q | --quiet)
     mode="q"
-    modecount=$((modecount+1))
+    MODECOUNT=$((MODECOUNT+1))
     echo "88"
     exit 0
     ;;
@@ -98,9 +103,9 @@ for i in "$@"; do
 done
 
 #* 檢查 MODE 變數
-if [ $modecount -gt 1 ];then
+if [ $MODECOUNT -gt 1 ];then
 echo "@ ERROR - You enter mode the wrong "
-echo "@ modecount -> $modecount"
+echo "@ MODECOUNT -> $MODECOUNT"
 exit 1
 fi
 
@@ -110,10 +115,9 @@ if "$GITHUB_ACTIONS_MODE"; then
     echo "🐥 Not from github action"
     exit 1
   else
-    if $testmode ;then
+    if $TEST_MODE ;then
       echo "@ TEST" 
       GITHUB_ACTOR="TreeTzeng"
-
       #SLACK_URL=""
     else
       # url -> gcp / secrets
@@ -121,6 +125,7 @@ if "$GITHUB_ACTIONS_MODE"; then
       jvid)
         echo "@ SLACK_GROUP -> jvid"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_jvid --project=jkf-servers)
+        ICON=":jvid-rd:"
       ;;
       *)
         echo "@ SLACK_GROUP -> default"
@@ -151,21 +156,27 @@ if [ "$URL" != "" ]; then
   JSONURL=',{"text": ":browers: : '"$URL"'","color": "#FFBB77"}'
 fi
 
-#* printenv
-if $testmode ;then
+#* icon
+if [ "$ICON" == "" ];then
+  ICON=":doge:"
+fi
+
+#* print env
+if $TEST_MODE ;then
   echo " -- T E S T - - "
   BRANCH_NAME="test"  
 fi
 echo "@ GITMSG = $GITMSG"
 echo "@ B/E = $BRANCH_NAME / $GITHUB_EVENT_NAME"
-echo "@ TAG = $TAG"
+echo "@ TAG = $TAG" 
+echo "@ ICON = $ICON"
 
 #* json post 
 case $mode in
   s)
     echo " -- secc mode -- "
     curl -X POST -H 'Content-type: application/json' \
-      --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'":doge: $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
+      --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
       "$SLACK_URL"
     ;;
   f)
