@@ -3,7 +3,7 @@
 |Path|Name|Desc|
 |-|-|-|
 |-|notify_slack.sh|Notify slack use|
-|-|modify_version.sh|update package.json|
+|-|modify_version.sh|update package.json version and package name|
 |-|yq.sh|yaml edit tool|
 |-|scan.sh|security audit tool |
 |util|fmt-text.sh|shell text style|
