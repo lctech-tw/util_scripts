@@ -39,14 +39,14 @@ case $NAME in
     TreeTzeng)
     SLACKNAME=$(echo "tree")
     ;;
-    Allison)
-    SLACKNAME="allison"
+    allisonkuooo)
+    SLACKNAME=$(echo "allison")
     ;;
     freddie9527)
     SLACKNAME="freddie9527"
     ;;
     irir)
-    SLACKNAME="irvin"
+    SLACKNAME=$(echo "irvin")
     ;;
     james-lin00)
     SLACKNAME="james"
