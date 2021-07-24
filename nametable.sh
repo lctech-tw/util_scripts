@@ -40,13 +40,13 @@ case $NAME in
     SLACKNAME=$(echo "tree")
     ;;
     allisonkuooo)
-    SLACKNAME=$(echo "allison")
+    SLACKNAME="U9GLLPYHY"
     ;;
     freddie9527)
     SLACKNAME="freddie9527"
     ;;
     irir)
-    SLACKNAME=$(echo "irvin")
+    SLACKNAME="U2BCVHVLG"
     ;;
     james-lin00)
     SLACKNAME="james"
