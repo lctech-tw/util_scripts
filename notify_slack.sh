@@ -157,7 +157,7 @@ fi
 #* URL link
 if [ "$URL" != "" ]; then
   echo "@ URL = $URL"
-  JSONURL=',{"text": ":chrome: : '"$URL"'","color": "#FFBB77"}'
+  JSONURL=',{"text": ":chrome: '"$URL"'","color": "#FFBB77"}'
 fi
 
 #* icon
