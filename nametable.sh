@@ -37,7 +37,7 @@ case $NAME in
     SLACKNAME=$(echo "jordan")
     ;;
     TreeTzeng)
-    SLACKNAME=$(echo "tree")
+    SLACKNAME="U017BFMBZLZ"
     ;;
     allisonkuooo)
     SLACKNAME="U9GLLPYHY"
