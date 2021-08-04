@@ -1,7 +1,7 @@
 #! /bin/bash
 # Purpose: Update package.json
 # Author: @lctech-zeki
-# Requirments: package.json
+# Requirments: package.json , jq
 # -------------------------------------------------------------------
 
 # mock testing
