@@ -57,12 +57,27 @@ echo "TF    =   ${TF}"
 if [[ -n $1 ]]; then
     echo "$1"
 fi
-#sh ./this.sh -a=aaa -b=bbb 123
+#DEMO# sh ./this.sh -a=aaa -b=bbb 123
 #VAR1  = aaa
 #VAR2  = bbb
 #TF    =  
 #123
+```
 
+```sh
+while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
+    -V | --version )
+    echo $version
+    exit
+    ;;
+    -s | --string )
+    shift; string=$1
+    ;;
+    -f | --flag )
+    flag=1
+    ;;
+esac; shift; done
+if [[ "$1" == '--' ]]; then shift; fi
 ```
 
 ### array
@@ -78,4 +93,17 @@ size=${#array[@]}
 index=$(($RANDOM % $size))
 echo ${array[$index]}
 
+```
+
+### trap
+
+```sh
+#!/bin/bash
+trap "echo TRAP!!; exit" SIGTERM SIGINT SIGHUP
+
+for (( i=0; i<5; i=i+1 ))
+do
+    echo $i
+    sleep 1
+done
 ```
