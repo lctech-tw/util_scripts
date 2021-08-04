@@ -1,7 +1,20 @@
 # template
 
+## bash
+
+### title
+
 ```sh
-# help
+#!/bin/bash
+# Purpose: text
+# Author: @lctech-zeki
+# Requirments: text
+# -------------------------------------------------------------------
+```
+
+### help
+
+```sh
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
   cat >&2 <<"EOF"
 Description:
@@ -16,8 +29,9 @@ EOF
 fi
 ```
 
+### flag
+
 ```sh
-# flag
 for i in "$@"
 do
 case $i in
@@ -50,6 +64,8 @@ fi
 #123
 
 ```
+
+### array
 
 ```sh
 #!/bin/bash
