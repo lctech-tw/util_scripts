@@ -1,3 +1,4 @@
 *.csv
 test*
 .DS_Store
+package.json
