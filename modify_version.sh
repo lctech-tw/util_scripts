@@ -1,10 +1,16 @@
 #! /bin/bash
-
-#* Need package.json
+# Purpose: Update package.json
+# Author: @lctech-zeki
+# Requirments: package.json
+# -------------------------------------------------------------------
 
 # mock testing
-# echo '{"version":"1.0.21"}' > package.json
-# GITHUB_ACTIONS=true
+function testing() {
+    if [ ! -f ./package.json ] ; then
+    echo '{"version":"1.0.21"}' >package.json
+    GITHUB_ACTIONS=true
+    fi
+}
 
 function Update() {
     echo "@ UpdateVersion"
