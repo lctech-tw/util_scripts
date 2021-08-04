@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # clean folder
-function clean() {
+function clean {
     rm -Rf dist/*
     rm -rf "$(ls src)" | xargs -n 1
 }
 
 # build protoc
-function build() {
+function build {
     clean
     mkdir -p ./dist/go ./dist/js ./dist/php ./dist/ruby ./dist/swift 
 

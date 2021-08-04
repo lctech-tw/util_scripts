@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------
 
 # mock testing
-function testing() {
+function testing {
     echo "@ ${FUNCNAME[0]}"
     if [ ! -f ./package.json ] ; then
     echo '{"version":"1.0.21"}' >package.json
@@ -13,7 +13,7 @@ function testing() {
     fi
 }
 
-function Update() {
+function Update {
     echo "@ ${FUNCNAME[0]}"
     VERSION_OLD=$(jq <package.json '.version')
     VERSION_OLD_LAST=$(echo "$VERSION_OLD" | cut -f3 -d"." | cut -f1 -d'"')
@@ -27,7 +27,7 @@ function Update() {
         echo "TAG_VERSION=""v""$(jq -r '.version' <package.json)" >>"$GITHUB_ENV"
     fi
 }
-function RenamePackage() {
+function RenamePackage {
     echo "@ ${FUNCNAME[0]}"
     NAME_NEW=$(git config --get remote.origin.url | sed 's/.*\/\([^ ]*\/[^.]*\).*/\1/')
     echo "🐹 New Name : @$NAME_NEW"
