@@ -87,12 +87,33 @@ if [[ "$1" == '--' ]]; then shift; fi
 array[0]="file1.sdf"
 array[1]="file2.sdf"
 array[2]="file3.sdf"
-array[3]="file4.sdf"
-
 size=${#array[@]}
 index=$(($RANDOM % $size))
 echo ${array[$index]}
 
+```
+
+```sh
+arr[0]="0"
+arr[1]="1"
+rand=$((RANDOM % ${#arr[@]}))
+echo "${arr[$rand]}"
+```
+
+## Get week
+
+```sh
+if [ "$(date '+%u')" = 1 ] ; then
+echo "1 => today is monday"
+fi
+```
+
+```sh
+case  "$(date '+%u')" in
+    1)
+    echo "today is monday"
+    ;;
+esac
 ```
 
 ### trap
