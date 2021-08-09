@@ -100,7 +100,7 @@ rand=$((RANDOM % ${#arr[@]}))
 echo "${arr[$rand]}"
 ```
 
-## Get week
+### get_week_num
 
 ```sh
 if [ "$(date '+%u')" = 1 ] ; then
