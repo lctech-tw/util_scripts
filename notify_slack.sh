@@ -219,7 +219,7 @@ c)
   ;;
 esac
 
-  function postline {
+function postline {
     if [ "$1" == "pre-ci" ]; then
       LINE_MSG="$PROJECT 即將更新版本"
     elif [ "$1" == "end-ci" ]; then
