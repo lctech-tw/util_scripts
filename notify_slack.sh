@@ -301,15 +301,18 @@ if [ $PRECI == "true" ] ;then
   if  [ $BRANCH_NAME == "main" ]||[ $BRANCH_NAME == "master" ] ; then
     # "@channel 通告營運相關所有人員，XXX 網站即將更新版本。相關資訊：{last commit message}"
     echo "@ Call lin pre-ci"
-    postline pre-ci
+    #postline pre-ci
     exit 0
   fi
 fi
 #* json post CC  營運 / 客服
-if [ $mode == "s" ] && [ $BRANCH_NAME == "main" ]||[ $mode == "s" ] &&[ $BRANCH_NAME == "master" ] ; then
-  # "@channel 通告營運相關所有人員，XXX 網站即將更新版本。相關資訊：{last commit message}"
+if [ $mode == "s" ] &&[ $BRANCH_NAME == "master" ] ; then
   echo "@ Call line end-ci"
-  postline end-ci
+  #postline end-ci
+fi
+if [ $mode == "s" ] && [ $BRANCH_NAME == "main" ] ; then
+  echo "@ Call line end-ci"
+  #postline end-ci
 fi
 
 #* -Note--------------------------------------------------------------------
