@@ -308,11 +308,11 @@ fi
 #* json post CC  營運 / 客服
 if [ $mode == "s" ] &&[ $BRANCH_NAME == "master" ] ; then
   echo "@ Call line end-ci"
-  #postline end-ci
+  postline end-ci
 fi
 if [ $mode == "s" ] && [ $BRANCH_NAME == "main" ] ; then
   echo "@ Call line end-ci"
-  #postline end-ci
+  postline end-ci
 fi
 
 #* -Note--------------------------------------------------------------------
