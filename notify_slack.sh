@@ -20,7 +20,7 @@ ICON=""
 # setting PROJECT
 PROJECT=""
 # setting PRECI
-PRECI=""
+PRECI="false"
 
 #* help
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
