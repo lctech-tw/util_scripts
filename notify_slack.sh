@@ -19,6 +19,8 @@ TAG=""
 ICON=""
 # setting PROJECT
 PROJECT=""
+# setting PRECI
+PRECI=""
 
 #* help
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
@@ -26,7 +28,7 @@ if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
 Description:
   由原本 jenkins tesk3.sh 調整
 USAGE:
-  SHELL.sh [-acfgqstux] 
+  SHELL.sh [-acfgpqstux] 
   @ Mode (only)
     - a , --ab      AB test mode
     - s , --secc    succ mode
@@ -43,6 +45,8 @@ USAGE:
   @ Slack Post Setting
     - g , --group   post group  ( Ex: -g=jvid )
           --tag     TAG who  ( Ex: --tag='<!channel> <!here> <@zeki>' )
+  @ Pre-CI
+    --pre-ci
   @ Arg  
     $AB_LINK   = A/B test's link
     $AB_HEADER = A/B test's header
@@ -71,6 +75,10 @@ for i in "$@"; do
     ;;
   -p=* | --project=*)
     PROJECT="${i#*=}"
+    ;;
+  --pre-ci)
+    PRECI="true"
+    mode="f"
     ;;
   -t | --test)
     # mock testing
@@ -211,10 +219,6 @@ c)
   ;;
 esac
 
-#* json post CC  營運 / 客服
-if [ $BRANCH_NAME == "main" ]||[ $BRANCH_NAME == "master" ] ; then
-  # "@channel 通告營運相關所有人員，XXX 網站即將更新版本。相關資訊：{last commit message}"
-  echo "@ Call line"
   function postline {
     if [ "$1" == "pre-ci" ]; then
       LINE_MSG="$PROJECT 即將更新版本"
@@ -292,9 +296,20 @@ if [ $BRANCH_NAME == "main" ]||[ $BRANCH_NAME == "master" ] ; then
     ]
 }'
   }
-  #postline pre-ci
-  #postline end-ci
-
+#* json post CC  營運 / 客服
+if [ $PRECI == "true" ] ;then 
+  if  [ $BRANCH_NAME == "main" ]||[ $BRANCH_NAME == "master" ] ; then
+    # "@channel 通告營運相關所有人員，XXX 網站即將更新版本。相關資訊：{last commit message}"
+    echo "@ Call lin pre-ci"
+    postline pre-ci
+    exit 0
+  fi
+fi
+#* json post CC  營運 / 客服
+if [ $mode == "s" ] && [ $BRANCH_NAME == "main" ]||[ $mode == "s" ] &&[ $BRANCH_NAME == "master" ] ; then
+  # "@channel 通告營運相關所有人員，XXX 網站即將更新版本。相關資訊：{last commit message}"
+  echo "@ Call line end-ci"
+  postline end-ci
 fi
 
 #* -Note--------------------------------------------------------------------
