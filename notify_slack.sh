@@ -15,6 +15,7 @@ MODECOUNT=0
 TEST_MODE=false
 # msg tag user
 TAG=""
+CC_GLOUP=""
 # setting icon
 ICON=""
 
@@ -31,6 +32,8 @@ USAGE:
     - f , --fail   fail mode
     - c , --check  check mode
     - q , --quiet  quiet mode
+  @ CC Gloup ()
+          -- cc    cc for other gloup  
   @ Debug use
     - t , --test   test mode
     - x , --x bool [true] github mode
@@ -100,6 +103,9 @@ for i in "$@"; do
   --tag=*)
     TAG="${i#*=}"
     ;;
+  --cc=*)
+    CC_GLOUP="${i#*=}"
+    ;;
   *)
     # unknown option
     ;;
@@ -128,7 +134,7 @@ if "$GITHUB_ACTIONS_MODE"; then
       case $SLACK_GROUP in
       jvid)
         echo "@ SLACK_GROUP -> jvid"
-        SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_jvid --project=jkf-servers)
+        SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_jvid-cicd --project=jkf-servers)
         ICON=":jvid-rd:"
       ;;
       *)
@@ -174,8 +180,9 @@ echo "@ GITMSG = $GITMSG"
 echo "@ B/E = $BRANCH_NAME / $GITHUB_EVENT_NAME"
 echo "@ TAG = $TAG" 
 echo "@ ICON = $ICON"
+echo "@ CC =  $CC_GLOUP"
 
-#* json post 
+#* json post mode
 case $mode in
   s)
     echo " -- secc mode -- "
@@ -200,6 +207,21 @@ case $mode in
     curl -s -X POST -H 'Content-type: application/json' \
       --data '{"attachments":[{"color":"#0B6FFF","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' ","callback_id":"confirmaction","text":"Are you sure to confirm deployment to GA?","attachment_type":"default","actions":[{"name":"reject","text":"Reject","type":"button","style":"danger","value":"rejectaction"},{"name":"ga","text":"GA","type":"button","style":"primary","value":"confirmaction"}]}]}' \
       "$SLACK_URL"
+    ;;
+esac
+
+#* json post CC_GLOUP 營運 / 客服
+case $CC_GLOUP in
+  jkfroum)
+  ;;
+  jkface)
+  ;;
+  speedjav)
+  ;;
+  jvid)
+  ;;
+  all)
+  ;;
 esac
 
 #* -Note--------------------------------------------------------------------
