@@ -270,7 +270,7 @@ function postline {
                       "text": "重要通知",
                       "color": "#E63946",
                       "weight": "bold",
-                      "margin": "none"
+                      "margin": "md"
                     },
                     {
                       "type": "text",
