@@ -247,7 +247,6 @@ function postline {
                       "margin": "md",
                       "size": "md",
                       "color": "#240407",
-                      "offsetBottom": "xs",
                       "weight": "bold",
                       "gravity": "center"
                     },
