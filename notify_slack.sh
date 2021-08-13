@@ -4,7 +4,7 @@
 # Requirments: Bash v3.x+ and curl running on Linux/Unix-like systems
 # -------------------------------------------------------------------
 
-#* Need gcp auth 
+#* Need gcp auth
 
 #* Env
 # check is GITHUB_ACTIONS
@@ -15,9 +15,10 @@ MODECOUNT=0
 TEST_MODE=false
 # msg tag user
 TAG=""
-CC_GLOUP=""
 # setting icon
 ICON=""
+# setting PROJECT
+PROJECT=""
 
 #* help
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
@@ -27,21 +28,21 @@ Description:
 USAGE:
   SHELL.sh [-acfgqstux] 
   @ Mode (only)
-    - a , --ab     AB test mode
-    - s , --secc   succ mode
-    - f , --fail   fail mode
-    - c , --check  check mode
-    - q , --quiet  quiet mode
-  @ CC Gloup ()
-          -- cc    cc for other gloup  
+    - a , --ab      AB test mode
+    - s , --secc    succ mode
+    - f , --fail    fail mode
+    - c , --check   check mode
+    - q , --quiet   quiet mode
+  @ Project 
+    - p , --project projectname
   @ Debug use
-    - t , --test   test mode
-    - x , --x bool [true] github mode
+    - t , --test    test mode
+    - x , --x bool  [true] github mode
   @ Env setting
-    - u , --url    use URL     ( Ex: -u=URL )
+    - u , --url     use URL     ( Ex: -u=URL )
   @ Slack Post Setting
-    - g , --group  post group  ( Ex: -g=jvid )
-    --tag  TAG who ( Ex: --tag='<!channel> <!here> <@zeki>' )
+    - g , --group   post group  ( Ex: -g=jvid )
+          --tag     TAG who  ( Ex: --tag='<!channel> <!here> <@zeki>' )
   @ Arg  
     $AB_LINK   = A/B test's link
     $AB_HEADER = A/B test's header
@@ -49,7 +50,7 @@ EXAMPLE:
   [github action]
     SHELL.sh -s
   [other]
-    SHELL.sh -t -x -u="https://google.com" -s --tag='<@zeki>'
+    SHELL.sh -t -x -u="https://google.com" -s --tag='<@zeki>' -p="產品Ａ"
 
 EOF
   exit 1
@@ -62,16 +63,19 @@ for i in "$@"; do
     GITHUB_ACTIONS=true
     shift # past argument=value
     ;;
-  -u=*|--url=*)
+  -u=* | --url=*)
     URL="${i#*=}"
     ;;
-  -g=*|--group=*)
+  -g=* | --group=*)
     SLACK_GROUP="${i#*=}"
+    ;;
+  -p=* | --project=*)
+    PROJECT="${i#*=}"
     ;;
   -t | --test)
     # mock testing
     TEST_MODE=true
-    GITHUB_REPOSITORY="test_repo"
+    GITHUB_REPOSITORY="lctech-tw/test_repo"
     BRANCH_NAME="test_main"
     GITHUB_HEAD_REF="test_test"
     GITHUB_EVENT_NAME="test_push"
@@ -82,29 +86,26 @@ for i in "$@"; do
     ;;
   -s | --secc)
     mode="s"
-    MODECOUNT=$((MODECOUNT+1))
+    MODECOUNT=$((MODECOUNT + 1))
     ;;
   -f | --fail)
     mode="f"
-    MODECOUNT=$((MODECOUNT+1))
+    MODECOUNT=$((MODECOUNT + 1))
     ;;
   -a | --ab)
-    MODECOUNT=$((MODECOUNT+1))
+    MODECOUNT=$((MODECOUNT + 1))
     ;;
   -c | --check)
-    MODECOUNT=$((MODECOUNT+1))
+    MODECOUNT=$((MODECOUNT + 1))
     ;;
   -q | --quiet)
     mode="q"
-    MODECOUNT=$((MODECOUNT+1))
+    MODECOUNT=$((MODECOUNT + 1))
     echo "88"
     exit 0
     ;;
   --tag=*)
     TAG="${i#*=}"
-    ;;
-  --cc=*)
-    CC_GLOUP="${i#*=}"
     ;;
   *)
     # unknown option
@@ -113,10 +114,10 @@ for i in "$@"; do
 done
 
 #* 檢查 MODE 變數
-if [ $MODECOUNT -gt 1 ];then
-echo "@ ERROR - You enter mode the wrong "
-echo "@ MODECOUNT -> $MODECOUNT"
-exit 1
+if [ $MODECOUNT -gt 1 ]; then
+  echo "@ ERROR - You enter mode the wrong "
+  echo "@ MODECOUNT -> $MODECOUNT"
+  exit 1
 fi
 
 #* 檢查 GITHUB ACTION & 獲取 URL
@@ -125,10 +126,10 @@ if "$GITHUB_ACTIONS_MODE"; then
     echo "🐥 Not from github action"
     exit 1
   else
-    if $TEST_MODE ;then
-      echo "@ TEST" 
-      GITHUB_ACTOR="TreeTzeng"
-      #SLACK_URL=""
+    if $TEST_MODE; then
+      echo "@ TEST"
+      GITHUB_ACTOR="lctech-zeki"
+      # SLACK_URL=""
     else
       # url -> gcp / secrets
       case $SLACK_GROUP in
@@ -136,11 +137,11 @@ if "$GITHUB_ACTIONS_MODE"; then
         echo "@ SLACK_GROUP -> jvid"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_jvid-cicd --project=jkf-servers)
         ICON=":jvid-rd:"
-      ;;
+        ;;
       *)
         echo "@ SLACK_GROUP -> default"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
-      ;;
+        ;;
       esac
     fi
   fi
@@ -167,62 +168,134 @@ if [ "$URL" != "" ]; then
 fi
 
 #* icon
-if [ "$ICON" == "" ];then
+if [ "$ICON" == "" ]; then
   ICON=":doge:"
 fi
 
 #* print env
-if $TEST_MODE ;then
+if $TEST_MODE; then
   echo " -- T E S T - - "
-  BRANCH_NAME="test"  
+  BRANCH_NAME="master"
 fi
 echo "@ GITMSG = $GITMSG"
 echo "@ B/E = $BRANCH_NAME / $GITHUB_EVENT_NAME"
-echo "@ TAG = $TAG" 
+echo "@ TAG = $TAG"
 echo "@ ICON = $ICON"
-echo "@ CC =  $CC_GLOUP"
+echo "@ PROJECT =  $PROJECT"
 
 #* json post mode
 case $mode in
-  s)
-    echo " -- secc mode -- "
-    curl -s -X POST -H 'Content-type: application/json' \
-      --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
-      "$SLACK_URL"
-    ;;
-  f)
-    echo " -- fail mode -- "
-    curl -s -X POST -H 'Content-type: application/json' \
-      --data '{"attachments":[{"color":"#EA0000","pretext":"[ Github Action ] :github-changes-requested: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"'  ","author_name":"'":imdead: $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
-      "$SLACK_URL"
-    ;;
-  a)
-    echo " -- ab mode -- "
-    curl -s -X POST -H 'Content-type: application/json' \
-      --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_WORKFLOW"' / '"$GITHUB_JOB"'"},{"color":"#FFBB77","pretext":"AB Test","title":" A/B WEB-Link ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
-      "$SLACK_URL"
-    ;;
-  c)
-    echo " -- check mode -- "
-    curl -s -X POST -H 'Content-type: application/json' \
-      --data '{"attachments":[{"color":"#0B6FFF","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' ","callback_id":"confirmaction","text":"Are you sure to confirm deployment to GA?","attachment_type":"default","actions":[{"name":"reject","text":"Reject","type":"button","style":"danger","value":"rejectaction"},{"name":"ga","text":"GA","type":"button","style":"primary","value":"confirmaction"}]}]}' \
-      "$SLACK_URL"
-    ;;
+s)
+  echo " -- secc mode -- "
+  curl -s -X POST -H 'Content-type: application/json' \
+    --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
+    "$SLACK_URL"
+  ;;
+f)
+  echo " -- fail mode -- "
+  curl -s -X POST -H 'Content-type: application/json' \
+    --data '{"attachments":[{"color":"#EA0000","pretext":"[ Github Action ] :github-changes-requested: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"'  ","author_name":"'":imdead: $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
+    "$SLACK_URL"
+  ;;
+a)
+  echo " -- ab mode -- "
+  curl -s -X POST -H 'Content-type: application/json' \
+    --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_WORKFLOW"' / '"$GITHUB_JOB"'"},{"color":"#FFBB77","pretext":"AB Test","title":" A/B WEB-Link ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
+    "$SLACK_URL"
+  ;;
+c)
+  echo " -- check mode -- "
+  curl -s -X POST -H 'Content-type: application/json' \
+    --data '{"attachments":[{"color":"#0B6FFF","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' ","callback_id":"confirmaction","text":"Are you sure to confirm deployment to GA?","attachment_type":"default","actions":[{"name":"reject","text":"Reject","type":"button","style":"danger","value":"rejectaction"},{"name":"ga","text":"GA","type":"button","style":"primary","value":"confirmaction"}]}]}' \
+    "$SLACK_URL"
+  ;;
 esac
 
-#* json post CC_GLOUP 營運 / 客服
-case $CC_GLOUP in
-  jkfroum)
-  ;;
-  jkface)
-  ;;
-  speedjav)
-  ;;
-  jvid)
-  ;;
-  all)
-  ;;
-esac
+#* json post CC  營運 / 客服
+if [ $BRANCH_NAME == "main" ]||[ $BRANCH_NAME == "master" ] ; then
+  # "@channel 通告營運相關所有人員，XXX 網站即將更新版本。相關資訊：{last commit message}"
+  echo "@ Call line"
+  function postline {
+    if [ "$1" == "pre-ci" ]; then
+      LINE_MSG="$PROJECT 即將更新版本"
+    elif [ "$1" == "end-ci" ]; then
+      LINE_MSG="$PROJECT 新版本更新完成上線，請立即確認情況。"
+    fi
+    echo "$LINE_MSG ,$GITMSG, $GITHUB_REPOSITORY"
+    curl -X POST https://api.line.me/v2/bot/message/push \
+      -H 'Content-Type: application/json' \
+      -H 'Authorization: Bearer { IyKxd6AaPUdB/GVHhmUzJzpGLwITyx0CxDSXnjnFy7u8sJ41vBUWUjAN9wO8OslFod6PJjfheEOMOizWNGZBQclW7IEubSM2pHyWlS1Cly0NQUp1A15ale1iuBH7IYi/DP/rTdYKpTWAjLKI2ayuiQdB04t89/1O/w1cDnyilFU= }' \
+      -d '{
+    "to": "C5326151f5088938355140be7f339f5c8",
+    "messages":[
+        {
+            "type": "flex",
+            "altText": "重要通知",
+            "contents":  {
+                    "type": "bubble",
+                    "size": "giga",
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                        {
+                            "type": "text",
+                            "text": "產品更新",
+                            "weight": "bold",
+                            "color": "#800000",
+                            "size": "sm"
+                        },
+                        {
+                            "type": "text",
+                            "text": "重要通知",
+                            "color": "#FD0446",
+                            "weight": "bold",
+                            "margin": "md"
+                        },
+                        {
+                            "type": "text",
+                            "text": "'"$LINE_MSG"'",
+                            "weight": "regular",
+                            "size": "lg",
+                            "margin": "xs",
+                            "wrap": true
+                        },
+                        {
+                            "type": "text",
+                            "text": "相關資訊",
+                            "weight": "bold",
+                            "color": "#FD0446",
+                            "margin": "md"
+                        },
+                        {
+                            "type": "text",
+                            "text": "'"$GITMSG"'"
+                        },
+                        {
+                            "type": "text",
+                            "text": "'"$GITHUB_REPOSITORY"'",
+                            "size": "xs",
+                            "color": "#aaaaaa",
+                            "wrap": true,
+                            "margin": "sm"
+                        }
+                        
+                        ]
+                    },
+                    "styles": {
+                        "footer": {
+                        "separator": true
+                        }
+                    }
+                 }
+        }
+    ]
+}'
+  }
+  #postline pre-ci
+  #postline end-ci
+
+fi
 
 #* -Note--------------------------------------------------------------------
 
@@ -256,7 +329,7 @@ esac
 # 			      "text": "Are you sure to confirm deployment to GA?",
 #             "attachment_type": "default",
 #             "actions": [
-# 			        {"name": "reject", "text": "Reject", "type": "button", "style": "danger", "value": "rejectaction"}, 
+# 			        {"name": "reject", "text": "Reject", "type": "button", "style": "danger", "value": "rejectaction"},
 # 		        	{"name": "ga", "text": "GA", "type": "button", "style": "primary", "value": "confirmaction"}
 #             ]
 #         }
