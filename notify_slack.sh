@@ -221,9 +221,9 @@ esac
 
 function postline {
     if [ "$1" == "pre-ci" ]; then
-      LINE_MSG="$PROJECT 即將更新版本"
+      LINE_MSG="$PROJECT即將更新版本"
     elif [ "$1" == "end-ci" ]; then
-      LINE_MSG="$PROJECT 新版本更新完成上線，請立即確認情況。"
+      LINE_MSG="$PROJECT新版本更新完成上線"
     fi
     echo "$LINE_MSG ,$GITMSG, $GITHUB_REPOSITORY"
     curl -X POST https://api.line.me/v2/bot/message/push \
@@ -236,76 +236,102 @@ function postline {
             "type": "flex",
             "altText": "重要通知",
             "contents":  {
-                    "type": "bubble",
-                    "size": "giga",
-                    "body": {
-                        "type": "box",
-                        "layout": "vertical",
-                        "contents": [
-                        {
-                            "type": "text",
-                            "text": "產品更新",
-                            "weight": "bold",
-                            "color": "#800000",
-                            "size": "sm"
-                        },
-                        {
-                            "type": "text",
-                            "text": "重要通知",
-                            "color": "#FD0446",
-                            "weight": "bold",
-                            "margin": "md"
-                        },
-                        {
-                            "type": "text",
-                            "text": "'"$LINE_MSG"'",
-                            "weight": "regular",
-                            "size": "lg",
-                            "margin": "xs",
-                            "wrap": true
-                        },
-                        {
-                            "type": "text",
-                            "text": "相關資訊",
-                            "weight": "bold",
-                            "color": "#FD0446",
-                            "margin": "md"
-                        },
-                        {
-                            "type": "text",
-                            "text": "'"$GITMSG"'"
-                        },
-                        {
-                            "type": "text",
-                            "text": "'"$GITHUB_REPOSITORY"'",
-                            "size": "xs",
-                            "color": "#aaaaaa",
-                            "wrap": true,
-                            "margin": "sm"
-                        }
-                        
-                        ]
+                "type": "bubble",
+                "header": {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "產品更新",
+                      "margin": "md",
+                      "size": "md",
+                      "color": "#240407",
+                      "offsetBottom": "xs",
+                      "weight": "bold",
+                      "gravity": "center"
                     },
-                    "styles": {
-                        "footer": {
-                        "separator": true
-                        }
+                    {
+                      "type": "image",
+                      "url": "https://www.jkf.net/images/jkflogo.png",
+                      "size": "xxs",
+                      "align": "end",
+                      "offsetBottom": "xs"
                     }
-                 }
+                  ],
+                  "paddingBottom": "sm",
+                  "paddingTop": "sm"
+                },
+                "body": {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "重要通知",
+                      "color": "#E63946",
+                      "weight": "bold",
+                      "margin": "none"
+                    },
+                    {
+                      "type": "text",
+                      "text": "'"$LINE_MSG"'",
+                      "weight": "regular",
+                      "size": "lg",
+                      "margin": "xs",
+                      "wrap": true
+                    },
+                    {
+                      "type": "text",
+                      "text": "相關資訊",
+                      "weight": "bold",
+                      "color": "#E63946",
+                      "margin": "md"
+                    },
+                    {
+                      "type": "text",
+                      "text": "'"$GITMSG"'"
+                    },
+                    {
+                      "type": "text",
+                      "text": "'"$GITHUB_REPOSITORY"'",
+                      "size": "xs",
+                      "color": "#aaaaaa",
+                      "wrap": true,
+                      "margin": "sm"
+                    }
+                  ],
+                  "paddingTop": "sm",
+                  "paddingBottom": "lg"
+                },
+                "size": "mega",
+                "styles": {
+                  "header": {
+                    "backgroundColor": "#CCAFAF"
+                  },
+                  "body": {
+                    "backgroundColor": "#F0F0F0"
+                  },
+                  "footer": {
+                    "separator": true
+                  }
+                }
+              }
         }
-    ]
-}'
-  }
-#* json post CC  營運 / 客服
+      ]
+  }'
+}
+
+#* json Line post PRE CC  營運 / 客服
 if [ $PRECI == "true" ] ;then 
   if  [ $BRANCH_NAME == "main" ]||[ $BRANCH_NAME == "master" ] ; then
-    # "@channel 通告營運相關所有人員，XXX 網站即將更新版本。相關資訊：{last commit message}"
+    # 通告營運相關所有人員
     echo "@ Call lin pre-ci"
     #postline pre-ci
     exit 0
   fi
 fi
-#* json post CC  營運 / 客服
+#* json Line post END CC 營運 / 客服
 if [ $mode == "s" ] &&[ $BRANCH_NAME == "master" ] ; then
   echo "@ Call line end-ci"
   postline end-ci
