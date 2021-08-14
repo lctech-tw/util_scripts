@@ -223,8 +223,12 @@ fi
 
 function postline {
     if [ "$1" == "pre-ci" ]; then
+      LINE_ALTTEXT="重要通知 - 即將更新版本"
+      LINE_COLOR="#B5B5B5"
       LINE_MSG="$PROJECT即將更新版本"
     elif [ "$1" == "end-ci" ]; then
+      LINE_ALTTEXT="重要通知 - 版本更新完成"
+      LINE_COLOR="#CCAFAF"
       LINE_MSG="$PROJECT新版本更新完成上線"
     fi
     echo "$LINE_MSG ,$GITMSG, $GITHUB_REPOSITORY"
@@ -236,7 +240,7 @@ function postline {
     "messages":[
         {
             "type": "flex",
-            "altText": "重要通知",
+            "altText": "'"$LINE_ALTTEXT"'",
             "contents":  {
                 "type": "bubble",
                 "header": {
@@ -308,7 +312,7 @@ function postline {
                 "size": "mega",
                 "styles": {
                   "header": {
-                    "backgroundColor": "#CCAFAF"
+                    "backgroundColor": "'"$LINE_COLOR"'"
                   },
                   "body": {
                     "backgroundColor": "#FFFCFC"
