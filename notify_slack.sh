@@ -326,7 +326,7 @@ if [ $PRECI == "true" ] ;then
   if  [ $BRANCH_NAME == "main" ]||[ $BRANCH_NAME == "master" ] ; then
     # 通告營運相關所有人員
     echo "@ Call lin pre-ci"
-    #postline pre-ci
+    postline pre-ci
     exit 0
   fi
 fi
