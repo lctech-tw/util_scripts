@@ -309,7 +309,7 @@ function postline {
                     "backgroundColor": "#CCAFAF"
                   },
                   "body": {
-                    "backgroundColor": "#F0F0F0"
+                    "backgroundColor": "#FFFCFC"
                   },
                   "footer": {
                     "separator": true
