@@ -78,7 +78,6 @@ for i in "$@"; do
     ;;
   --pre-ci)
     PRECI="true"
-    mode="f"
     ;;
   -t | --test)
     # mock testing
@@ -192,6 +191,7 @@ echo "@ ICON = $ICON"
 echo "@ PROJECT =  $PROJECT"
 
 #* json post mode
+if [ -n "$mode" ];then
 case $mode in
 s)
   echo " -- secc mode -- "
@@ -218,6 +218,8 @@ c)
     "$SLACK_URL"
   ;;
 esac
+ echo "No mode"
+fi
 
 function postline {
     if [ "$1" == "pre-ci" ]; then
