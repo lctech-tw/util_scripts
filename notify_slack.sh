@@ -202,7 +202,7 @@ s)
 f)
   echo " -- fail mode -- "
   curl -s -X POST -H 'Content-type: application/json' \
-    --data '{"attachments":[{"color":"#EA0000","pretext":"[ Github Action ] :github-changes-requested: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"'  ","author_name":"'":imdead: $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
+    --data '{"attachments":[{"color":"#EA0000","pretext":"[ Github Action ] :github-changes-requested: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' / '"<@zeki>"'  ","author_name":"'":imdead: $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
     "$SLACK_URL"
   ;;
 a)
