@@ -302,7 +302,8 @@ function postline {
                     },
                     {
                       "type": "text",
-                      "text": "'"$GITMSG"'"
+                      "text": "'"$GITMSG"'",
+                      "wrap": true
                     },
                     {
                       "type": "text",
