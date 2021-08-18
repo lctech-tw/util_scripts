@@ -165,6 +165,7 @@ if [ "$GITHUB_EVENT_NAME" == 'pull_request' ]; then
   BRANCH_NAME=$(echo "${GITHUB_HEAD_REF}" | tr / -)
 else
   GITMSG=$(git log -1 --pretty=format:"%s")
+  GITMSG_BODY=$(git log -1 --pretty=format:"%b")
   #BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr / -)
   BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 fi
@@ -192,6 +193,7 @@ if $TEST_MODE; then
   BRANCH_NAME="master"
 fi
 echo "@ GITMSG = $GITMSG"
+echo "@ GITMSG_BODY = $GITMSG_BODY"
 echo "@ B/E = $BRANCH_NAME / $GITHUB_EVENT_NAME"
 echo "@ TAG = $TAG"
 echo "@ ICON = $ICON"
@@ -238,7 +240,7 @@ function postline {
       LINE_COLOR="#CCAFAF"
       LINE_MSG="$PROJECT新版本更新完成上線"
     fi
-    echo "$LINE_MSG ,$GITMSG, $GITHUB_REPOSITORY"
+    echo "$LINE_MSG ,$GITMSG, $GITMSG_BODY, $GITHUB_REPOSITORY"
     curl -X POST https://api.line.me/v2/bot/message/push \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer { IyKxd6AaPUdB/GVHhmUzJzpGLwITyx0CxDSXnjnFy7u8sJ41vBUWUjAN9wO8OslFod6PJjfheEOMOizWNGZBQclW7IEubSM2pHyWlS1Cly0NQUp1A15ale1iuBH7IYi/DP/rTdYKpTWAjLKI2ayuiQdB04t89/1O/w1cDnyilFU= }' \
@@ -295,7 +297,7 @@ function postline {
                     },
                     {
                       "type": "text",
-                      "text": "相關資訊",
+                      "text": "相關資訊標題",
                       "weight": "bold",
                       "color": "#E63946",
                       "margin": "md"
@@ -303,6 +305,18 @@ function postline {
                     {
                       "type": "text",
                       "text": "'"$GITMSG"'",
+                      "wrap": true
+                    },
+                    {
+                      "type": "text",
+                      "text": "相關資訊細節",
+                      "weight": "bold",
+                      "color": "#E63946",
+                      "margin": "md"
+                    },
+                    {
+                      "type": "text",
+                      "text": "'"${GITMSG_BODY-nil}"'",
                       "wrap": true
                     },
                     {
