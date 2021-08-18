@@ -169,7 +169,7 @@ else
 fi
 
 #* 檢查 來源 JENKINS
-if [ -n ${JENKINS_HOME+x} ] ;then
+if [ -z ${JENKINS_HOME+x} ] ;then
   echo "JENKINS_MODE"
   BRANCH_NAME=master
 fi
