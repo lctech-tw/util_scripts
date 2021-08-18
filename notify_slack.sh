@@ -166,7 +166,7 @@ if [ "$GITHUB_EVENT_NAME" == 'pull_request' ]; then
 else
   GITMSG=$(git log -1 --pretty=format:"%s")
   #BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr / -)
-  BRANCH_NAME=$(git branch --show-current)
+  BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 fi
 
 #* URL link
