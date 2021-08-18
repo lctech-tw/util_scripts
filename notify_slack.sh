@@ -169,6 +169,12 @@ else
   BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 fi
 
+#* 檢查 GITHUB_REPOSITORY
+if [ -z ${GITHUB_REPOSITORY+x} ] ;then
+  echo "JENKINS_MODE"
+  GITHUB_REPOSITORY=$JOB_NAME
+fi
+
 #* URL link
 if [ "$URL" != "" ]; then
   echo "@ URL = $URL"
