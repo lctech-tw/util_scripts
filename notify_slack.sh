@@ -165,13 +165,8 @@ if [ "$GITHUB_EVENT_NAME" == 'pull_request' ]; then
   BRANCH_NAME=$(echo "${GITHUB_HEAD_REF}" | tr / -)
 else
   GITMSG=$(git log -1 --pretty=format:"%s")
-  BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr / -)
-fi
-
-#* 檢查 來源 JENKINS
-if [ -z ${JENKINS_HOME+x} ] ;then
-  echo "JENKINS_MODE"
-  BRANCH_NAME=master
+  #BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr / -)
+  BRANCH_NAME=$(git branch --show-current)
 fi
 
 #* URL link
