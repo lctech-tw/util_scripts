@@ -129,7 +129,7 @@ fi
 
 #* 檢查 GITHUB ACTION & 獲取 URL
 if "$GITHUB_ACTIONS_MODE"; then
-  if [ -z "$GITHUB_ACTIONS" ]; then
+  if [ -z ${GITHUB_ACTIONS+x} ]; then
     echo "🐥 Not from github action"
     exit 1
   else
