@@ -243,7 +243,7 @@ function postline {
     echo "$LINE_MSG ,$GITMSG, $GITMSG_BODY, $GITHUB_REPOSITORY"
     curl -X POST https://api.line.me/v2/bot/message/push \
       -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer { IyKxd6AaPUdB/GVHhmUzJzpGLwITyx0CxDSXnjnFy7u8sJ41vBUWUjAN9wO8OslFod6PJjfheEOMOizWNGZBQclW7IEubSM2pHyWlS1Cly0NQUp1A15ale1iuBH7IYi/DP/rTdYKpTWAjLKI2ayuiQdB04t89/1O/w1cDnyilFU= }' \
+      -H 'Authorization: Bearer { wkTOK3Z1ZEtIcZj45gsvB6pXrxibL9PzMSYNF7haKwgkwr/J1Ge5utbHZCT7Lk08pkT+OSr2kiFlPhwxUi605jfH0NWezwiTXChkJ1Xp2IJk9CuKbYVXulGDRYdirG3a7NgrgYkHXmwYnLEWGCdLawdB04t89/1O/w1cDnyilFU= }' \
       -d '{
     "to": "C5326151f5088938355140be7f339f5c8",
     "messages":[
