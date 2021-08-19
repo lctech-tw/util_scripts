@@ -243,7 +243,7 @@ function postline {
     echo "$LINE_MSG ,$GITMSG, $GITMSG_BODY, $GITHUB_REPOSITORY"
     curl -X POST https://api.line.me/v2/bot/message/push \
       -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer { wkTOK3Z1ZEtIcZj45gsvB6pXrxibL9PzMSYNF7haKwgkwr/J1Ge5utbHZCT7Lk08pkT+OSr2kiFlPhwxUi605jfH0NWezwiTXChkJ1Xp2IJk9CuKbYVXulGDRYdirG3a7NgrgYkHXmwYnLEWGCdLawdB04t89/1O/w1cDnyilFU= }' \
+      -H 'Authorization: Bearer { '"$LINE_TOKEN"' }' \
       -d '{
     "to": "C5326151f5088938355140be7f339f5c8",
     "messages":[
@@ -348,7 +348,7 @@ function postline {
       ]
   }'
 }
-
+LINE_TOKEN=$(gcloud secrets versions access latest --secret=line_token --project=jkf-servers)
 #* json Line post PRE CC  營運 / 客服
 if [ $PRECI == "true" ] ;then 
   if  [ $BRANCH_NAME == "main" ]||[ $BRANCH_NAME == "master" ] ; then
