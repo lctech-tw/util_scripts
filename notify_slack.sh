@@ -240,7 +240,7 @@ function postline {
       LINE_COLOR="#CCAFAF"
       LINE_MSG="$PROJECT新版本更新完成上線"
     fi
-    echo "$LINE_MSG ,$GITMSG, $GITMSG_BODY, $GITHUB_REPOSITORY"
+    echo "$LINE_MSG ,$GITMSG, ${GITMSG_BODY:-nil}, ${GITHUB_REPOSITORY:-nil}"
     curl -X POST https://api.line.me/v2/bot/message/push \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer { '"$LINE_TOKEN"' }' \
@@ -316,12 +316,12 @@ function postline {
                     },
                     {
                       "type": "text",
-                      "text": "'"${GITMSG_BODY-nil}"'",
+                      "text": "'"${GITMSG_BODY:-nil}"'",
                       "wrap": true
                     },
                     {
                       "type": "text",
-                      "text": "'"$GITHUB_REPOSITORY"'",
+                      "text": "'"${GITHUB_REPOSITORY:-nil}"'",
                       "size": "xs",
                       "color": "#aaaaaa",
                       "wrap": true,
