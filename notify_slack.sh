@@ -170,6 +170,10 @@ else
   BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 fi
 
+if [ "$GITMSG_BODY" == "" ] ;then
+  GITMSG_BODY="N/A"
+fi
+
 #* 檢查 GITHUB_REPOSITORY
 if [ -z ${GITHUB_REPOSITORY+x} ] ;then
   echo "JENKINS_MODE"
@@ -316,12 +320,12 @@ function postline {
                     },
                     {
                       "type": "text",
-                      "text": "'"${GITMSG_BODY:-nil}"'",
+                      "text": "'"$GITMSG_BODY"'",
                       "wrap": true
                     },
                     {
                       "type": "text",
-                      "text": "'"${GITHUB_REPOSITORY:-nil}"'",
+                      "text": "'"$GITHUB_REPOSITORY"'",
                       "size": "xs",
                       "color": "#aaaaaa",
                       "wrap": true,
