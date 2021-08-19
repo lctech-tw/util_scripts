@@ -231,7 +231,6 @@ c)
     "$SLACK_URL"
   ;;
 esac
- echo "No mode"
 fi
 
 function postline {
