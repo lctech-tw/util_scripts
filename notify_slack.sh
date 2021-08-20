@@ -178,6 +178,8 @@ fi
 if [ -z ${GITHUB_REPOSITORY+x} ] ;then
   echo "JENKINS_MODE"
   GITHUB_REPOSITORY=$JOB_NAME
+  GITHUB_ACTOR=jenkins
+  GITHUB_EVENT_NAME=jenkins
 fi
 
 #* URL link
