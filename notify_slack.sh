@@ -180,6 +180,7 @@ if [ -z ${GITHUB_REPOSITORY+x} ] ;then
   GITHUB_REPOSITORY=$JOB_NAME
   GITHUB_ACTOR=jenkins
   GITHUB_EVENT_NAME=jenkins
+  ICON=":sad-jenkins:"
 fi
 
 #* URL link
@@ -239,11 +240,11 @@ function postline {
     if [ "$1" == "pre-ci" ]; then
       LINE_ALTTEXT="重要通知 - 即將更新版本"
       LINE_COLOR="#B5B5B5"
-      LINE_MSG="$PROJECT即將更新版本"
+      LINE_MSG="${PROJECT:-${PWD##*/}}即將更新版本"
     elif [ "$1" == "end-ci" ]; then
       LINE_ALTTEXT="重要通知 - 版本更新完成"
       LINE_COLOR="#CCAFAF"
-      LINE_MSG="$PROJECT新版本更新完成上線"
+      LINE_MSG="${PROJECT:-${PWD##*/}}新版本更新完成上線"
     fi
     echo "$LINE_MSG ,$GITMSG, ${GITMSG_BODY:-nil}, ${GITHUB_REPOSITORY:-nil}"
     curl -X POST https://api.line.me/v2/bot/message/push \
