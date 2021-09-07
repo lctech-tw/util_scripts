@@ -200,6 +200,7 @@ if $TEST_MODE; then
   BRANCH_NAME="master"
 fi
 echo "@ GITMSG = $GITMSG"
+GITMSG_BODY="$(echo "$GITMSG_BODY" | xargs)"
 echo "@ GITMSG_BODY = $GITMSG_BODY"
 echo "@ B/E = $BRANCH_NAME / $GITHUB_EVENT_NAME"
 echo "@ TAG = $TAG"
