@@ -154,11 +154,6 @@ if "$GITHUB_ACTIONS_MODE"; then
   fi
 fi
 
-#* 取得作者
-curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/nametable.sh
-AURTHOR_NAME=$(bash ./nametable.sh $GITHUB_ACTOR)
-echo "@ AURTHOR_NAME = $GITHUB_ACTOR -> $AURTHOR_NAME"
-
 #* 檢查 EVENT MODE ( Use .git info )
 if [ "$GITHUB_EVENT_NAME" == 'pull_request' ]; then
   GITMSG=$(git log --format=%B -n 1 "${{ github.event.after }}" )
@@ -174,14 +169,20 @@ if [ "$GITMSG_BODY" == "" ] ;then
   GITMSG_BODY="N/A"
 fi
 
-#* 檢查 GITHUB_REPOSITORY
+#* 檢查 GITHUB_REPOSITORY -> Jenkins
 if [ -z ${GITHUB_REPOSITORY+x} ] ;then
   echo "JENKINS_MODE"
   GITHUB_REPOSITORY=$JOB_NAME
-  GITHUB_ACTOR=jenkins
+  GITHUB_ACTOR=$CHANGE_AUTHOR
+  GITHUB_RUN_NUMBER=$BUILD_ID
   GITHUB_EVENT_NAME=jenkins
   ICON=":sad-jenkins:"
 fi
+
+#* 取得作者
+curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/nametable.sh
+AURTHOR_NAME=$(bash ./nametable.sh "$GITHUB_ACTOR")
+echo "@ AURTHOR_NAME = $GITHUB_ACTOR -> $AURTHOR_NAME"
 
 #* URL link
 if [ "$URL" != "" ]; then
@@ -225,7 +226,7 @@ f)
 a)
   echo " -- ab mode -- "
   curl -s -X POST -H 'Content-type: application/json' \
-    --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' ","author_name":"'"$GITHUB_ACTOR"'","title":"'"$GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"$GITHUB_WORKFLOW"' / '"$GITHUB_JOB"'"},{"color":"#FFBB77","pretext":"AB Test","title":" A/B WEB-Link ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
+    --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"},{"color":"#FFBB77","pretext":"AB Test","title":" A/B WEB-Link ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
     "$SLACK_URL"
   ;;
 c)
