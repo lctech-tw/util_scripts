@@ -102,6 +102,7 @@ for i in "$@"; do
     MODECOUNT=$((MODECOUNT + 1))
     ;;
   -a | --ab)
+    mode="a"
     MODECOUNT=$((MODECOUNT + 1))
     ;;
   -c | --check)
@@ -369,7 +370,7 @@ if [ $PRECI == "true" ] ;then
   fi
 fi
 #* json Line post END CC 營運 / 客服
-if [ $mode == "s" ] &&[ $BRANCH_NAME == "master" ] ; then
+if [ $mode == "s" ] && [ $BRANCH_NAME == "master" ] ; then
   echo "@ Call line end-ci"
   postline end-ci
 fi
