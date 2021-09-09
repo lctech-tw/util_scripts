@@ -365,6 +365,7 @@ function postline {
       ]
   }'
 }
+#* Notify to Line (Only main/master branch)
 LINE_TOKEN=$(gcloud secrets versions access latest --secret=line_token --project=jkf-servers)
 #* json Line post PRE CC  營運 / 客服
 if [ $PRECI == "true" ] ;then 
