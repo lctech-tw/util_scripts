@@ -48,8 +48,8 @@ USAGE:
   @ Pre-CI
     --pre-ci
   @ Arg  
-    $AB_LINK   = A/B test's link
-    $AB_HEADER = A/B test's header
+    --aburl         $AB_LINK   = A/B test's link
+    --abheader      $AB_HEADER = A/B test's header
 EXAMPLE:
   [github action]
     SHELL.sh -s
@@ -104,6 +104,12 @@ for i in "$@"; do
   -a | --ab)
     mode="a"
     MODECOUNT=$((MODECOUNT + 1))
+    ;;
+  --aburl=*)
+    AB_LINK="${i#*=}"
+    ;;
+  --abheader=*)
+    AB_HEADER="${i#*=}"
     ;;
   -c | --check)
     MODECOUNT=$((MODECOUNT + 1))
@@ -229,7 +235,7 @@ f)
 a)
   echo " -- ab mode -- "
   curl -s -X POST -H 'Content-type: application/json' \
-    --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"},{"color":"#FFBB77","title":" A/B-Link: ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
+    --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"},{"color":"#FFBB77","title":" A/B-Url: ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
     "$SLACK_URL"
   ;;
 c)
