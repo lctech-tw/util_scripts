@@ -235,7 +235,7 @@ f)
 a)
   echo " -- ab mode -- "
   curl -s -X POST -H 'Content-type: application/json' \
-    --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"},{"color":"#FFBB77","title":" A/B-Url: ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
+    --data '{"attachments":[{"color":"#36a64f","pretext":"[ Github Action ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"📦 $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"},{"color":"#FFBB77","title":" A/B-Url:  '"$AB_LINK"' ","title_link":"'"$AB_LINK"'","text":"Inspect Header: '"$AB_HEADER"'"}]}' \
     "$SLACK_URL"
   ;;
 c)
