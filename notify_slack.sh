@@ -53,8 +53,10 @@ USAGE:
 EXAMPLE:
   [github action]
     SHELL.sh -s
-  [other]
-    SHELL.sh -t -x -u="https://google.com" -s --tag='<@zeki>' -p="產品Ａ"
+  [jenkins,other]
+    SHELL.sh -s -x -p=jkforum
+  [test]
+    SHELL.sh -t -x -u="https://google.com" -s --tag='<@zeki>' -p="projectＡ"
 
 EOF
   exit 1
