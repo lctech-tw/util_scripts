@@ -166,7 +166,7 @@ if "$GITHUB_ACTIONS_MODE"; then
       jkface)
         echo "@ SLACK_GROUP -> jkface"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_txg-cicd --project=jkf-servers)
-        ICON=":corgi_hey:"
+        ICON=":pissed:"
         ;;
       *)
         echo "@ SLACK_GROUP -> default"
