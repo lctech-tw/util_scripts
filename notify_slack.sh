@@ -190,6 +190,10 @@ else
   BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 fi
 
+if [ "$GITMSG" == "" ] ;then
+  GITMSG="N/A"
+fi
+
 if [ "$GITMSG_BODY" == "" ] ;then
   GITMSG_BODY="N/A"
 fi
