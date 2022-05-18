@@ -226,6 +226,9 @@ if [ "$ICON" == "" ]; then
   if [ "$AURTHOR_NAME" == "ray" ] || [ "$AURTHOR_NAME" == "freddie9527"  ] ; then
     ICON=":pissed:"
   fi
+    if [ "$AURTHOR_NAME" == "jack" ] ; then
+    ICON=":squirrel:"
+  fi
 fi
 
 #* print env
