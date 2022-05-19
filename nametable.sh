@@ -45,6 +45,9 @@ freddie9527)
 irir)
   SLACKNAME="U2BCVHVLG"
   ;;
+Ninja)
+  SLACKNAME="jenkins"
+  ;;
 james-lin00)
   SLACKNAME="james"
   ;;
