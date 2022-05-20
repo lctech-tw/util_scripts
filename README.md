@@ -64,6 +64,15 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/modify_version.sh)"
 ```
 
+### changelog.sh
+
+```yaml
+      - name: Use scripts
+        run: |
+          echo "Use changelog"
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lctech-tw/util_scripts/main/changelog.sh)"
+```
+
 ### compile.sh / build-protoc.sh
 
 ```yaml

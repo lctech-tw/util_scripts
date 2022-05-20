@@ -42,7 +42,7 @@ function _RenamePackage {
     echo "🐹 New Name : @$NAME_NEW"
     cat <<<"$(jq '.name'='"@'"$NAME_NEW"'"' package.json)" >package.json
 }
-function _ChangeLog {
+function _ReleseChangeLog {
     echo "@ ${FUNCNAME[0]}"
     if [ ! -f ./CHANGELOG.md ]; then
         echo "Create CHANGELOG.md ...."
@@ -66,4 +66,4 @@ fi
 _Update
 echo "==============="
 _RenamePackage
-#_ChangeLog
+#_ReleseChangeLog
