@@ -42,6 +42,15 @@ allisonkuooo)
 freddie9527)
   SLACKNAME="freddie9527"
   ;;
+lctech-Arthur)
+  SLACKNAME="U03E4MY00MD"
+  ;;
+lctech-Marc)
+  SLACKNAME="U03E1TAKSMP"
+  ;;
+lctech-coco)
+  SLACKNAME="U03EGCNMBDK"
+  ;;
 irir)
   SLACKNAME="U2BCVHVLG"
   ;;
