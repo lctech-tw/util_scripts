@@ -57,6 +57,9 @@ irir)
 Ninja)
   SLACKNAME="jenkins"
   ;;
+Jenkins)
+  SLACKNAME="jenkins"
+  ;;
 james-lin00)
   SLACKNAME="james"
   ;;
