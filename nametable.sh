@@ -48,6 +48,9 @@ lctech-Arthur)
 lctech-Marc)
   SLACKNAME="U03E1TAKSMP"
   ;;
+lctech-Leo)
+  SLACKNAME="U03AGHT74KZ"
+  ;;
 lctech-coco)
   SLACKNAME="U03EGCNMBDK"
   ;;
