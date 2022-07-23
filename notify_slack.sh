@@ -140,6 +140,14 @@ if [ $MODECOUNT -gt 1 ]; then
   exit 1
 fi
 
+#* 假日不發通知 by@lctech-zeki
+if [ "$(date +%u)" -lt 6 ]; then
+  if [ "${GITHUB_ACTOR}" == "lctech-zeki" ]; then
+  echo "@ Skip notify because it's weekend"
+  exit 0
+  fi
+fi
+
 #* 檢查 GITHUB ACTION & 獲取 URL
 if "$GITHUB_ACTIONS_MODE"; then
   if [ -z ${GITHUB_ACTIONS+x} ]; then
