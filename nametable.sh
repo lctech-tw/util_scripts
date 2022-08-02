@@ -36,6 +36,9 @@ Jordan-lctech)
 TreeTzeng)
   SLACKNAME="U017BFMBZLZ"
   ;;
+lctech-erin)
+  SLACKNAME="U9GLLPYHY"
+  ;;
 allisonkuooo)
   SLACKNAME="U9GLLPYHY"
   ;;
