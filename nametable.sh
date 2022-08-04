@@ -37,7 +37,7 @@ TreeTzeng)
   SLACKNAME="U017BFMBZLZ"
   ;;
 lctech-erin)
-  SLACKNAME="U9GLLPYHY"
+  SLACKNAME="U03AX65UFH8"
   ;;
 allisonkuooo)
   SLACKNAME="U9GLLPYHY"
