@@ -163,21 +163,25 @@ if "$GITHUB_ACTIONS_MODE"; then
         echo "@ SLACK_GROUP -> jvid"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_jvid-cicd --project=jkf-servers)
         ICON=":jvid-rd:"
+        ERROR_USER='zeki'
         ;;
       tpe)
         echo "@ SLACK_GROUP -> tpe"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_tpe-cicd --project=jkf-servers)
         ICON=":github:"
+        ERROR_USER='zeki'
         ;;
       jkface)
         echo "@ SLACK_GROUP -> jkface"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_txg-cicd --project=jkf-servers)
         ICON=":pissed:"
+        ERROR_USER='Coco'
         ;;
       *)
         echo "@ SLACK_GROUP -> default"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
         CHAT_URL=$(gcloud secrets versions access latest --secret=cicd_chat_url --project=jkf-servers)
+        ERROR_USER='zeki'
         ;;
       esac
     fi
@@ -276,7 +280,7 @@ s)
 f)
   echo " -- fail mode -- "
   curl -s -X POST -H 'Content-type: application/json' \
-    --data '{"attachments":[{"color":"#EA0000","pretext":"[ '"$CI_SERVER_NAME"' ] :github-changes-requested: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_WORKFLOW"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' / '"<@zeki>"'  ","author_name":"'":imdead: $GITHUB_ACTOR"'","title":"'"⚠️  $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
+    --data '{"attachments":[{"color":"#EA0000","pretext":"[ '"$CI_SERVER_NAME"' ] :github-changes-requested: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_WORKFLOW"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' / '"<@$ERROR_USER>"'  ","author_name":"'":imdead: $GITHUB_ACTOR"'","title":"'"⚠️  $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
     "$SLACK_URL"
   # google chat  
   curl -X POST -H "Content-Type: application/json" \
