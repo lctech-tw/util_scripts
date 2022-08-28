@@ -20,6 +20,9 @@ fi
 if [ "$COMPILE_MODE" == "Multi" ] || [ "$COMPILE_MODE" == "MULITI" ] || [ "$COMPILE_MODE" == "multi" ]; then
     SCRIPT_FILE="build-protoc2.sh"
     echo "🦅 -- Multi mode / $SCRIPT_FILE --"
+elif [ "$COMPILE_MODE" == "v3" ]; then
+    SCRIPT_FILE="build-protoc3.sh"
+    echo "🦅 -- Multi mode / $SCRIPT_FILE --"
 else
     SCRIPT_FILE="build-protoc.sh"
     echo "🦅 -- Default mode / $SCRIPT_FILE --"
