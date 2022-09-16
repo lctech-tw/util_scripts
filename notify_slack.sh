@@ -24,7 +24,7 @@ declare PROJECT=""
 # setting PRECI
 declare PRECI="false"
 
-declare "${varia2ble:-10}"
+#declare "${varia2ble:-10}"
 
 #* help
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then

@@ -75,49 +75,49 @@ function build {
             --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:./dist/js/
     done
 
-    echo "🔥 ----- php -----"
-    for proto in $proto_files; do
-        protoc -I=/opt/include -I=src/ \
-            --php_out=./dist/php \
-            --plugin=protoc-gen-grpc=/usr/local/bin/grpc_php_plugin \
-            --grpc_out=./dist/php \
-            "${proto}"
-    done
+    # echo "🔥 ----- php -----"
+    # for proto in $proto_files; do
+    #     protoc -I=/opt/include -I=src/ \
+    #         --php_out=./dist/php \
+    #         --plugin=protoc-gen-grpc=/usr/local/bin/grpc_php_plugin \
+    #         --grpc_out=./dist/php \
+    #         "${proto}"
+    # done
 
-    echo "🔥 ----- ruby -----"
-    for proto in $proto_files; do
-        protoc -I=/opt/include -I=src/ \
-            --ruby_out=./dist/ruby \
-            --plugin=protoc-gen-grpc=/usr/local/bin/grpc_ruby_plugin \
-            --grpc_out=./dist/ruby \
-            "${proto}"
-    done
+    # echo "🔥 ----- ruby -----"
+    # for proto in $proto_files; do
+    #     protoc -I=/opt/include -I=src/ \
+    #         --ruby_out=./dist/ruby \
+    #         --plugin=protoc-gen-grpc=/usr/local/bin/grpc_ruby_plugin \
+    #         --grpc_out=./dist/ruby \
+    #         "${proto}"
+    # done
 
-    echo "🔥 ----- swift -----"
-    for proto in $proto_files; do
-        protoc -I=/opt/include -I=src/ \
-            --swift_opt=Visibility=Public \
-            --swift_out=./dist/swift \
-            --grpc-swift_opt=Visibility=Public \
-            --grpc-swift_opt=Client=true \
-            --grpc-swift_opt=Server=false \
-            --grpc-swift_out=./dist/swift \
-            "${proto}"
-    done
+    # echo "🔥 ----- swift -----"
+    # for proto in $proto_files; do
+    #     protoc -I=/opt/include -I=src/ \
+    #         --swift_opt=Visibility=Public \
+    #         --swift_out=./dist/swift \
+    #         --grpc-swift_opt=Visibility=Public \
+    #         --grpc-swift_opt=Client=true \
+    #         --grpc-swift_opt=Server=false \
+    #         --grpc-swift_out=./dist/swift \
+    #         "${proto}"
+    # done
 
-    echo "🔥 ----- python -----"
-    for proto in $proto_files; do
-        protoc -I=/opt/include -I=src/ \
-            --python_out=./dist/python \
-            "${proto}"
-    done
+    # echo "🔥 ----- python -----"
+    # for proto in $proto_files; do
+    #     protoc -I=/opt/include -I=src/ \
+    #         --python_out=./dist/python \
+    #         "${proto}"
+    # done
 
-    echo "🔥 ----- c# -----"
-    for proto in $proto_files; do
-        protoc -I=/opt/include -I=src/ \
-            --csharp_out=./dist/csharp \
-            "${proto}"
-    done
+    # echo "🔥 ----- c# -----"
+    # for proto in $proto_files; do
+    #     protoc -I=/opt/include -I=src/ \
+    #         --csharp_out=./dist/csharp \
+    #         "${proto}"
+    # done
 
     # document
     echo "🔥 ----- document -----"

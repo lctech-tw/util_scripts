@@ -1,0 +1,52 @@
+name: deploy.v1.golang
+on:
+  workflow_call:
+    inputs:
+      GCP_PROJECT:
+        description: 'gcp project'
+        required: true
+        type: string
+      GCP_GKE_NAME:
+        description: 'gcp gke name'
+        required: true
+        type: string
+      GCP_GKE_ZONE:
+        description: 'gcp gke zone'
+        required: true
+        type: string
+      ZMODE:
+        description: 'mode'
+        required: false
+        type: string
+        default: dev
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: ⚙️ Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
+      - name: ⚙️ Initialize Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+      - name: ⚓️ K8s deploy
+        run: |
+          echo "@ deploy server! ${{ inputs.GCP_PROJECT }} -> ${{ inputs.GCP_GKE_NAME }} -> ${{ inputs.ZMODE }}"
+          gcloud container clusters get-credentials ${{ inputs.GCP_GKE_NAME }} --zone ${{ inputs.GCP_GKE_ZONE }} --project ${{ inputs.GCP_PROJECT }}
+          sudo chmod -R 777 ./.github/
+          yq e '.images.[].newTag=''"'"${{ inputs.ZMODE }}-${{ github.run_number }}"'"' -i .github/k8s/overlays/${{ inputs.ZMODE }}/kustomization.yaml
+          yq e .spec.http[].headers.response.add.running-version='"'"${{ inputs.ZMODE }}-${{ github.run_number }}"'"' -i .github/k8s/base/vs.yaml
+          # kubectl apply -f ./.github/k8s/setting/
+          # kubectl apply -k ./.github/k8s/overlays/${{ inputs.ZMODE }}
+      # - name: 📨 Notification via Slack
+      #   if: always()
+      #   run: |
+      #     curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
+      #     if [[ '${{ job.status }}' == 'failure' ]] ;then
+      #       echo "Run slack on Fail (X)"
+      #       bash ./notify_slack.sh -f
+      #     else
+      #       echo "Run slack on Success (O)"
+      #       bash ./notify_slack.sh -s
+      #     fi

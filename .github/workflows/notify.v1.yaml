@@ -1,15 +1,13 @@
-name: Notify
-
+name: v1.notify
 on:
   workflow_call:
     inputs:
-      status:
-        description: 'A username passed from the caller workflow'
-        required: false
+      CI_STATUS:
+        description: 'status'
+        required: true
         type: string
-
 jobs:
-  example_job:
+  notify:
     runs-on: ubuntu-latest
     steps:
       - name: ⚙️ Authenticate to Google Cloud
@@ -17,13 +15,12 @@ jobs:
         with:
           credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
       - name: ⚙️ Initialize Google Cloud SDK
-        if: always()
         uses: google-github-actions/setup-gcloud@v0
-      - name: Slack Notification
+      - name: 📨 Notification via Slack
         if: always()
         run: |
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
-          if [[ '${{ inputs.username }}' == 'failure' ]] ;then
+          if [[ '${{ inputs.CI_STATUS }}' == 'failure' ]] ;then
             echo "Run slack on Fail (X)"
             bash ./notify_slack.sh -f
           else
