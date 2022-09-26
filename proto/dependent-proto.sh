@@ -29,7 +29,7 @@ function _download_github_proto_folder() {
     #* copy git repo to external folder
     rm -rf ../"$GITHUB_PROTO/"
     cp -r ../tmp_"$GITHUB_PROTO"/src/* ../
-    cd ..
+    cd ../../
     rm -rf tmp_"$GITHUB_PROTO"
 }
 
