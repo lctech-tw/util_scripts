@@ -10,6 +10,8 @@ function clean {
 function build {
     clean
     mkdir -p ./dist/go ./temp_proto/go ./dist/js ./dist/php ./dist/ruby ./dist/swift ./dist/docs ./dist/node ./dist/python ./dist/csharp
+    
+    ls -lha
 
     proto_files=$(find src | grep proto)
     proto_dirs=$((cd ./src && find . -type f -name "*.proto") | xargs -I{} dirname {} | sort | uniq)
