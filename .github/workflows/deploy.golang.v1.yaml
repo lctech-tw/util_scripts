@@ -37,8 +37,8 @@ jobs:
           sudo chmod -R 777 ./.github/
           yq e '.images.[].newTag=''"'"${{ inputs.ZMODE }}-${{ github.run_number }}"'"' -i .github/k8s/overlays/${{ inputs.ZMODE }}/kustomization.yaml
           yq e .spec.http[].headers.response.add.running-version='"'"${{ inputs.ZMODE }}-${{ github.run_number }}"'"' -i .github/k8s/base/vs.yaml
-          # kubectl apply -f ./.github/k8s/setting/
-          # kubectl apply -k ./.github/k8s/overlays/${{ inputs.ZMODE }}
+          kubectl apply -f ./.github/k8s/setting/
+          kubectl apply -k ./.github/k8s/overlays/${{ inputs.ZMODE }}
       # - name: 📨 Notification via Slack
       #   if: always()
       #   run: |
