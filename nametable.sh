@@ -43,7 +43,7 @@ allisonkuooo)
   SLACKNAME="U9GLLPYHY"
   ;;
 Jacky-lctech)
-  SLACKNAME="U03E1TAKSMP"
+  SLACKNAME="U03JC9FEXLK"
   ;;
 freddie9527)
   SLACKNAME="freddie9527"
