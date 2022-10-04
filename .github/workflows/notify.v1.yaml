@@ -6,6 +6,10 @@ on:
         description: 'status'
         required: true
         type: string
+      GROUP:
+        description: 'slack group'
+        required: true
+        type: string
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -22,8 +26,8 @@ jobs:
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
           if [[ '${{ inputs.CI_STATUS }}' == 'failure' ]] ;then
             echo "Run slack on Fail (X)"
-            bash ./notify_slack.sh -f
+            bash ./notify_slack.sh -f -g ${{ input.GROUP }}
           else
             echo "Run slack on Success (O)"
-            bash ./notify_slack.sh -s
+            bash ./notify_slack.sh -s -g ${{ input.GROUP }}
           fi
