@@ -63,7 +63,17 @@ jobs:
       - name: ⚙️ Set up Golang
         uses: actions/setup-go@v3
         with:
-          go-version: ${{ inputs.GO_VERSION }}
+          # go-version: ${{ inputs.GO_VERSION }}
+          go-version-file: './go.mod'
+      - name: Setup Golang caches
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-golang-
       - name: ⚙️ build Golang
         run: |
           cd ${{ inputs.GO_BUILD_PATH }} && go build .
@@ -95,14 +105,3 @@ jobs:
         #     -t ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }} ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ github.run_number }} \
         #     -t ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }} ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ inputs.ZMODE }}-${{ github.run_number }} \
         #     .
-      # - name: 📨 Notification via Slack
-      #   if: always()
-      #   run: |
-      #     curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
-      #     if [[ '${{ job.status }}' == 'failure' ]] ;then
-      #       echo "Run slack on Fail (X)"
-      #       bash ./notify_slack.sh -f
-      #     else
-      #       echo "Run slack on Success (O)"
-      #       bash ./notify_slack.sh -s
-      #     fi
