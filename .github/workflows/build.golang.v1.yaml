@@ -65,7 +65,7 @@ jobs:
         with:
           # go-version: ${{ inputs.GO_VERSION }}
           go-version-file: './go.mod'
-      - name: Setup Golang caches
+      - name: ⚙️ Setup Golang caches
         uses: actions/cache@v3
         with:
           path: |
