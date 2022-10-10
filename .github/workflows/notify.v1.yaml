@@ -1,4 +1,4 @@
-name: v1.notify
+name: notify.v1
 on:
   workflow_call:
     inputs:
@@ -25,10 +25,16 @@ jobs:
         if: always()
         run: |
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
-          if [[ '${{ inputs.CI_STATUS }}' == 'success' ]] ;then
+          case ${{ inputs.CI_STATUS }} in
+          success)
             echo "Run slack on Success (O)"
             bash ./notify_slack.sh -s -g=${{ inputs.GROUP }}
-          else
+            ;;
+          skipped)
+            echo "Run slack on Skip (-)"
+            ;;
+          failure)
             echo "Run slack on Fail (X)"
             bash ./notify_slack.sh -f -g=${{ inputs.GROUP }}
-          fi
+            ;;
+          esac
