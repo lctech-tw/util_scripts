@@ -20,7 +20,7 @@ on:
         type: string
         default: dev
       GO_VERSION:
-        description: 'vseion'
+        description: 'vseion 棄用 哪次不棄用'
         required: false
         type: string
         default: "1.19"
