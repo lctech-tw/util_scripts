@@ -221,7 +221,7 @@ if [ -z ${GITHUB_REPOSITORY+x} ] ;then
 fi
 
 #* 取得作者
-curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/nametable.sh
+curl -sLJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/nametable.sh
 AURTHOR_NAME=$(bash ./nametable.sh "$GITHUB_ACTOR")
 echo "@ AURTHOR_NAME = $GITHUB_ACTOR -> $AURTHOR_NAME"
 
