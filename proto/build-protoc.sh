@@ -7,7 +7,7 @@ function clean {
 }
 
 function _test {
-    echo " 😎😎😎😎😎😎 TEST MODE 😎😎😎😎😎😎"
+    echo "  TEST MODE  "
     echo "Create File......"
     TEST_TEMPLATE_PATH=./src/domain/subdomain
     mkdir -p "$TEST_TEMPLATE_PATH"
@@ -28,7 +28,7 @@ EOM
 # build protoc
 function build {
     clean
-    PROGRAMMING_LANGUAGE=("go" "js" "php" "ruby" "swift" "docs" "node" "python" "csharp")
+    PROGRAMMING_LANGUAGE=("go" "js" "docs" "node" )
     for ((i = 0; i < ${#PROGRAMMING_LANGUAGE[@]}; i++)); do
         mkdir -p ./dist/"${PROGRAMMING_LANGUAGE[i]}"
     done
@@ -47,6 +47,7 @@ function build {
         # data_proto_dir=$(echo ${proto_dir} | sed -e 's/admin/data/g')
         # external_proto_files=$(find ./external/${data_proto_dir} -iname "*.proto" 2> /dev/null)
         # proto_file_all=("${src_proto_files[@]}" "${external_proto_files[@]}")
+        echo "PROTO_FILE_ALL: ${proto_file_all[@]}"
         proto_file_all=("${src_proto_files[@]}")
         protoc -I=src/ -I=/opt/include \
             --go_out=plugins=grpc:./dist/go \
