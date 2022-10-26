@@ -6,7 +6,7 @@
 if [ -z "$GITHUB_REPOSITORY" ]; then
     echo "You must define ENV GITHUB_REPOSITORY or run via github action."
     echo "建議通過 github action 執行"
-    GITHUB_REPOSITORY=git config --get remote.origin.url | sed 's/https:\/\/github.com\///' | sed 's/\.git//'
+    GITHUB_REPOSITORY=$(git config --get remote.origin.url | sed 's/https:\/\/github.com\///' | sed 's/\.git//')
 fi
 echo "GITHUB_REPOSITORY = $GITHUB_REPOSITORY"
 

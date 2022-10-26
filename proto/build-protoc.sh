@@ -112,12 +112,12 @@ function build {
     #         "${proto}"
     # done
 
-    echo "🔥 ----- c# -----"
-    for proto in $proto_files; do
-        protoc -I=/opt/include -I=src/ \
-            --csharp_out=./dist/csharp \
-            "${proto}"
-    done
+    # echo "🔥 ----- c# -----"
+    # for proto in $proto_files; do
+    #     protoc -I=/opt/include -I=src/ \
+    #         --csharp_out=./dist/csharp \
+    #         "${proto}"
+    # done
 
     # document
     echo "🔥 ----- document -----"
