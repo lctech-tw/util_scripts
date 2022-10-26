@@ -3,7 +3,7 @@
 # build protoc
 function _build-plugin {
     mkdir -p ./dist/"node"
-    proto_files=$(find src | grep proto)
+    proto_files=$(find src | grep proto 2> /dev/null)
     mkdir -p ./src/google/protobuf/
     #cp -r /usr/include/google/protobuf/ ./src/google/ 
     echo "🔥 ----- Node -----"
