@@ -34,11 +34,11 @@ function build {
     done
 
     proto_files=$(find src -name "*.proto")
-    proto_dirs=$(cd ./src && find . -type f -name "*.proto" | xargs -0 -I{} dirname {} | sort | uniq)
+    proto_dirs=$(cd ./src && find . -type f -name "*.proto" | sort | uniq)
 
     echo "🔥 ----- golang -----"
     for proto_dir in $proto_dirs; do
-        echo "$proto_dir"
+        echo "proto_dir: $proto_dir"
         # proto_file_name=`basename $proto .proto`
         service_dist_name=$(basename "${proto_dir}")
         service_dist="./dist/go/${service_dist_name}"
@@ -49,13 +49,13 @@ function build {
         # external_proto_files=$(find ./external/${data_proto_dir} -iname "*.proto" 2> /dev/null)
         # proto_file_all=("${src_proto_files[@]}" "${external_proto_files[@]}")
         proto_file_all=("${src_proto_files[@]}")
-        echo "PROTO_FILE_ALL: $proto_file_all"
+        echo "PROTO_FILE_ALL: ${proto_file_all[*]}"
         protoc -I=src/ -I=/opt/include \
             --go_out=plugins=grpc:./dist/go \
             --validate_out="lang=go:./dist/go" \
             --include_imports \
-            --descriptor_set_out=${service_dist}/api_descriptor.pb \
-            ${proto_file_all[@]}
+            --descriptor_set_out="${service_dist}"/api_descriptor.pb \
+            "${proto_file_all[@]}"
     done
 
     # start move go files, to github import path
