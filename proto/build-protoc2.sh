@@ -23,7 +23,7 @@ function build {
         mkdir -p ${service_dist}
         src_proto_files=$(find ./src/${proto_dir} -iname "*.proto")
         data_proto_dir=$(echo ${proto_dir} | sed -e 's/admin/data/g')
-        external_proto_files=$(find ./external/${data_proto_dir} -iname "*.proto")
+        external_proto_files=$(find ./external/${data_proto_dir} -iname "*.proto" 2> /dev/null)
         proto_file_all=("${src_proto_files[@]}")
         protoc -I=src/ -I=/opt/include \
             -I=external/ \
