@@ -41,20 +41,20 @@ function build {
         # proto_file_name=`basename $proto .proto`
         service_dist_name=$(basename "${proto_dir}")
         service_dist="./dist/go/${service_dist_name}"
-        descriptor_file="${service_dist}/${service_dist_name}_descriptor.pb"
         mkdir -p "${service_dist}"
         src_proto_files=$(find ./src/"${proto_dir}" -iname "*.proto")
+        # descriptor_file="${service_dist}/${service_dist_name}_descriptor.pb"
         # data_proto_dir=$(echo ${proto_dir} | sed -e 's/admin/data/g')
         # external_proto_files=$(find ./external/${data_proto_dir} -iname "*.proto" 2> /dev/null)
         # proto_file_all=("${src_proto_files[@]}" "${external_proto_files[@]}")
-        echo "PROTO_FILE_ALL: ${proto_file_all[@]}"
-        proto_file_all=("${src_proto_files[@]}")
+        # proto_file_all=("${src_proto_files[@]}")
+        # echo "PROTO_FILE_ALL: $proto_file_all"
         protoc -I=src/ -I=/opt/include \
             --go_out=plugins=grpc:./dist/go \
             --validate_out="lang=go:./dist/go" \
             --include_imports \
             --descriptor_set_out=${service_dist}/api_descriptor.pb \
-            ${proto_file_all[@]}
+            ${src_proto_files[@]}
     done
 
     # start move go files, to github import path
