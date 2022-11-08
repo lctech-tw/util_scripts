@@ -9,7 +9,7 @@ function clean {
 # build protoc
 function build {
     clean
-    mkdir -p ./dist/go ./temp_proto/go ./dist/js ./dist/php ./dist/ruby ./dist/swift ./dist/docs ./dist/node ./dist/python ./dist/csharp
+    mkdir -p ./dist/external ./dist/go ./temp_proto/go ./dist/js ./dist/php ./dist/ruby ./dist/swift ./dist/docs ./dist/node ./dist/python ./dist/csharp
     
     ls -lha
 
