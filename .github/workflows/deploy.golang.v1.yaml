@@ -30,10 +30,16 @@ jobs:
           credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
       - name: ⚙️ Initialize Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
+      - name: ⚙️ Initialize Google Cloud SDK kubectl
+        uses: google-github-actions/get-gke-credentials@v0
+        with:
+          cluster_name: ${{ inputs.GCP_GKE_NAME }} 
+          location: ${{ inputs.GCP_GKE_ZONE }}
+          project_id: ${{ inputs.GCP_PROJECT }}
       - name: ⚓️ K8s deploy
         run: |
           echo "@ deploy server! ${{ inputs.GCP_PROJECT }} -> ${{ inputs.GCP_GKE_NAME }} -> ${{ inputs.ZMODE }}"
-          gcloud container clusters get-credentials ${{ inputs.GCP_GKE_NAME }} --zone ${{ inputs.GCP_GKE_ZONE }} --project ${{ inputs.GCP_PROJECT }}
+          # gcloud container clusters get-credentials ${{ inputs.GCP_GKE_NAME }} --zone ${{ inputs.GCP_GKE_ZONE }} --project ${{ inputs.GCP_PROJECT }}
           sudo chmod -R 777 ./.github/
           yq e '.images.[].newTag=''"'"${{ inputs.ZMODE }}-${{ github.run_number }}"'"' -i .github/k8s/overlays/${{ inputs.ZMODE }}/kustomization.yaml
           yq e .spec.http[].headers.response.add.running-version='"'"${{ inputs.ZMODE }}-${{ github.run_number }}"'"' -i .github/k8s/base/vs.yaml
