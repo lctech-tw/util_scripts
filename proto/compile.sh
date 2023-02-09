@@ -35,11 +35,11 @@ if [ ! "$(whoami)" == "lctech-zeki" ]; then
     gcloud auth configure-docker -q
     # Docker
     cat <./.github/auth/puller.json | docker login -u _json_key --password-stdin https://asia.gcr.io
-    docker pull asia.gcr.io/lc-shared-res/proto-compiler:latest
 fi
 
 # Run build-protoc via docker
 docker pull asia.gcr.io/lc-shared-res/proto-compiler:node &
+docker pull asia.gcr.io/lc-shared-res/proto-compiler:latest
 docker run --rm -v "$(pwd)":/workdir asia.gcr.io/lc-shared-res/proto-compiler:latest ./"$SCRIPT_FILE" build github.com/"$GITHUB_REPOSITORY"
 docker run --rm -v "$(pwd)":/workdir asia.gcr.io/lc-shared-res/proto-compiler:node ./build-protoc-node.sh build
 
