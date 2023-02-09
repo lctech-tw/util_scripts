@@ -11,18 +11,16 @@ fi
 echo "@ GITHUB_REPOSITORY = $GITHUB_REPOSITORY"
 
 # Check out env COMPILE_MODE
-if [ -n "$COMPILE_MODE" ]; then
-    # Default -> single-compile
-    # Multi -> multi-compile
-    if [ "$COMPILE_MODE" == "Multi" ] || [ "$COMPILE_MODE" == "MULITI" ] || [ "$COMPILE_MODE" == "multi" ]; then
-        SCRIPT_FILE="build-protoc2.sh"
-    elif [ "$COMPILE_MODE" == "v3" ]; then
-        SCRIPT_FILE="build-protoc3.sh"
-    else
-        SCRIPT_FILE="build-protoc.sh"
-    fi
-    echo "@ ENV / COMPILE_MODE = $COMPILE_MODE : SCRIPT_FILE = $SCRIPT_FILE"
+# Default -> single-compile
+# Multi -> multi-compile
+if [ "$COMPILE_MODE" == "Multi" ] || [ "$COMPILE_MODE" == "MULITI" ] || [ "$COMPILE_MODE" == "multi" ]; then
+    SCRIPT_FILE="build-protoc2.sh"
+elif [ "$COMPILE_MODE" == "v3" ]; then
+    SCRIPT_FILE="build-protoc3.sh"
+else
+    SCRIPT_FILE="build-protoc.sh"
 fi
+echo "@ ENV / COMPILE_MODE = $COMPILE_MODE : SCRIPT_FILE = $SCRIPT_FILE"
 
 # Download script
 curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/$SCRIPT_FILE"
