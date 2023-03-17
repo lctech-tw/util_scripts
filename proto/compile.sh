@@ -24,7 +24,7 @@ elif [ "$COMPILE_MODE" == "v3" ]; then
 else
     SCRIPT_FILE="build-protoc.sh"
 fi
-echo "@ ENV / COMPILE_MODE = ${COMPILE_MODE:-Default} : SCRIPT_FILE = ${RED}$SCRIPT_FILE${NC}"
+echo -e "@ ENV / COMPILE_MODE = ${COMPILE_MODE:-Default} : SCRIPT_FILE = ${RED}$SCRIPT_FILE${NC}"
 
 # Download script
 curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/$SCRIPT_FILE"
