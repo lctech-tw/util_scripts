@@ -2,13 +2,17 @@
 
 #* Before the event: Need login gcloud service account
 
+# Init color
+RED='\033[0;31m'
+NC='\033[0m'
+
 # Check out env GITHUB_REPOSITORY
 if [ -z "$GITHUB_REPOSITORY" ]; then
     echo "You must define ENV GITHUB_REPOSITORY or run via Github Actions..."
     echo "Try to get GITHUB_REPOSITORY from git config..."
     GITHUB_REPOSITORY=$(git config --get remote.origin.url | sed 's/https:\/\/github.com\///' | sed 's/\.git//')
 fi
-echo "@ GITHUB_REPOSITORY = $GITHUB_REPOSITORY"
+echo -e "@ GITHUB_REPOSITORY = ${RED}$GITHUB_REPOSITORY${NC}"
 
 # Check out env COMPILE_MODE
 # Default -> single-compile
@@ -20,7 +24,7 @@ elif [ "$COMPILE_MODE" == "v3" ]; then
 else
     SCRIPT_FILE="build-protoc.sh"
 fi
-echo "@ ENV / COMPILE_MODE = ${COMPILE_MODE:-Default} : SCRIPT_FILE = $SCRIPT_FILE"
+echo "@ ENV / COMPILE_MODE = ${COMPILE_MODE:-Default} : SCRIPT_FILE = ${RED}$SCRIPT_FILE${NC}"
 
 # Download script
 curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/$SCRIPT_FILE"
