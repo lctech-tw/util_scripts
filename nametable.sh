@@ -90,7 +90,7 @@ lctech-Neil)
 esac
 
 if [ "$SLACKNAME" == "" ]; then
-  echo " ( ˘•ω•˘ ) who is $NAME "
+  echo "$NAME is not found"
   exit 0
 else
   echo "$SLACKNAME"
