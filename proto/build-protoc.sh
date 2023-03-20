@@ -29,7 +29,7 @@ EOM
 function build {
     clean
     PROGRAMMING_LANGUAGE=("go" "js" "docs" "node" "python" )
-    for ((i = 0; i < ${#PROGRAMMING_LANGUAGE[@]}; i++)); do
+    for ((i = 1; i <= ${#PROGRAMMING_LANGUAGE[@]}; i++)); do
         mkdir -p ./dist/"${PROGRAMMING_LANGUAGE[i]}"
     done
 
