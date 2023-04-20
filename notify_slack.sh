@@ -163,7 +163,7 @@ if "$GITHUB_ACTIONS_MODE"; then
         echo "@ SLACK_GROUP -> jvid"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_jvid-cicd --project=jkf-servers)
         ICON=":jvid-rd:"
-        ERROR_USER='zeki'
+        ERROR_USER=''
         ;;
       tpe)
         echo "@ SLACK_GROUP -> tpe"
