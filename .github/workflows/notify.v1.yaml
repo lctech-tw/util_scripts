@@ -3,24 +3,26 @@ on:
   workflow_call:
     inputs:
       CI_STATUS:
-        description: 'status'
+        description: 'Status of CI, can be success, skipped, cancelled, or failure'
         required: true
         type: string
       GROUP:
-        description: 'slack group'
+        default: 'jkf'
+        description: 'Slack group name, can be [ jkf, jvid, jkface ]'
         required: true
         type: string
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: ⚙️ Checkout code
+        uses: actions/checkout@v3
       - name: ⚙️ Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v1
         with:
           credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
       - name: ⚙️ Initialize Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v1
       - name: 📨 Notification via Slack
         if: always()
         run: |
@@ -31,7 +33,7 @@ jobs:
             bash ./notify_slack.sh -s -g=${{ inputs.GROUP }}
             ;;
           skipped|cancelled)
-            echo "Run slack on Skip (-)"
+            echo "Run slack on Skipped (-) ----------------"
             ;;
           failure)
             echo "Run slack on Fail (X)"

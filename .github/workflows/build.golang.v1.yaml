@@ -7,23 +7,23 @@ on:
         required: true
         type: string
       APP_DOCKER_REPOSITORIES:
-        description: 'docker repositories name'
+        description: 'Docker repositories name'
         required: true
         type: string
       GCP_PROJECT:
-        description: 'gcp project'
+        description: 'GCP project'
         required: true
         type: string
       ZMODE:
-        description: 'mode'
+        description: "Mode name [dev, prod, ...]"
         required: false
         type: string
         default: dev
       GO_VERSION:
-        description: 'vseion 棄用 哪次不棄用'
+        description: 'Vseion 棄用 哪次不棄用'
         required: false
         type: string
-        default: "1.19"
+        default: "1.20"
       GO_BUILD_PATH:
         description: 'main.go path'
         required: false
@@ -51,19 +51,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.githubAppAuth.outputs.token }}
       - name: ⚙️ Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v1
         with:
           credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
       - name: ⚙️ Initialize Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v1
       - name: ⚙️ setting docker auth
         run: |
           gcloud auth configure-docker -q
           gcloud auth configure-docker $(echo ${{ inputs.APP_DOCKER_REPOSITORIES }}  | cut -d "/" -f 1) -q
       - name: ⚙️ Set up Golang
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
-          # go-version: ${{ inputs.GO_VERSION }}
+          # use the version of Go in go.mod
+          ## go-version: ${{ inputs.GO_VERSION }}
+          # use go.mod version
           go-version-file: './go.mod'
       - name: ⚙️ Setup Golang caches
         uses: actions/cache@v3
@@ -74,7 +76,7 @@ jobs:
           key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-golang-
-      - name: ⚙️ build Golang
+      - name: ⚙️ Build Golang
         run: |
           cd ${{ inputs.GO_BUILD_PATH }} && go build .
       - name: ⚙️ Set up Docker Buildx

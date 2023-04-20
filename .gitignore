@@ -1,4 +1,4 @@
 *.csv
-test*
+test.*
 .DS_Store
 package.json
