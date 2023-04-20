@@ -262,7 +262,7 @@ case $mode in
 s)
   echo " -- secc mode -- "
   curl -s -X POST -H 'Content-type: application/json' \
-    --data '{"attachments":[{"color":"#36a64f","pretext":"[ '"$CI_SERVER_NAME"' ] :github-check-mark: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_WORKFLOW"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"✅  $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
+    --data '{"attachments":[{"color":"#36a64f","pretext":"[ '"$CI_SERVER_NAME"' ] :approved: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_WORKFLOW"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"✅  $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
     "$SLACK_URL"
   # google chat  
   curl -X POST -H "Content-Type: application/json" \
