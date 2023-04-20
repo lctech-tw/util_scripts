@@ -66,6 +66,9 @@ lctech-coco)
 irir)
   SLACKNAME="U2BCVHVLG"
   ;;
+lctech-daniel-hung)
+  SLACKNAME="U04RP3AV02Z"
+  ;;
 Ninja)
   SLACKNAME="jenkins"
   ;;
