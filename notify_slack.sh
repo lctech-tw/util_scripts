@@ -270,7 +270,7 @@ s)
       "header": {
         "title": "Github Actions",
         "subtitle": "'"$GITHUB_REPOSITORY"'",
-        "imageUrl": "https://emojis.slackmojis.com/emojis/images/1540491167/4864/github-check-mark.png?1540491167"
+        "imageUrl": "https://emoji.slack-edge.com/T2BCVHVK2/approved/334666dff8892a75.png"
       },
       "sections": {
         "header": "<font color=\"#006400\"> '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_WORKFLOW"' / '"$GITHUB_RUN_NUMBER"' / '"$GITHUB_ACTOR"' </font>",
