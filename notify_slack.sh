@@ -158,6 +158,9 @@ if "$GITHUB_ACTIONS_MODE"; then
       # SLACK_URL=""
     else
       # url -> gcp / secrets
+      # google chat url
+      CHAT_URL=$(gcloud secrets versions access latest --secret=cicd_chat_url --project=jkf-servers)
+      # slack url
       case $SLACK_GROUP in
       jvid)
         echo "@ SLACK_GROUP -> jvid"
@@ -180,7 +183,6 @@ if "$GITHUB_ACTIONS_MODE"; then
       *)
         echo "@ SLACK_GROUP -> default"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
-        CHAT_URL=$(gcloud secrets versions access latest --secret=cicd_chat_url --project=jkf-servers)
         ERROR_USER='zeki'
         ;;
       esac
@@ -262,9 +264,10 @@ case $mode in
 s)
   echo " -- secc mode -- "
   curl -s -X POST -H 'Content-type: application/json' \
-    --data '{"attachments":[{"color":"#36a64f","pretext":"[ '"$CI_SERVER_NAME"' ] :approved: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_WORKFLOW"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"✅  $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}'"$JSONURL"']}' \
+    --data '{"attachments":[{"color":"#36a64f","pretext":"[ '"$CI_SERVER_NAME"' ] :approved: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_WORKFLOW"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' '" $TAG"' ","author_name":"'"$ICON $GITHUB_ACTOR"'","title":"'"✅  $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 ${GITMSG}"'"}'"$JSONURL"']}' \
     "$SLACK_URL"
   # google chat  
+  echo " -- google chat -- "
   curl -X POST -H "Content-Type: application/json" \
     -d '{"cards": [{
       "header": {
@@ -283,6 +286,7 @@ f)
     --data '{"attachments":[{"color":"#EA0000","pretext":"[ '"$CI_SERVER_NAME"' ] :github-changes-requested: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_WORKFLOW"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' / '"<@$ERROR_USER>"'  ","author_name":"'":imdead: $GITHUB_ACTOR"'","title":"'"⚠️  $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
     "$SLACK_URL"
   # google chat  
+  echo " -- google chat -- "
   curl -X POST -H "Content-Type: application/json" \
     -d '{"cards": [{
       "header": {
