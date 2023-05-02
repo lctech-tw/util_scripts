@@ -91,9 +91,9 @@ jobs:
           file: .github/docker/Dockerfile
           tags: |
             ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ github.sha }}
-            ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ github.ZMODE }}-latest
+            ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ inputs.ZMODE }}-latest
             ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ inputs.ZMODE }}-${{ github.run_number }}
-        # ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ github.ref_name }}-${{ github.run_number }}
+            ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ github.ref_name }}-${{ github.run_number }}
           build-args: |
             SERVER_NAME=${{ inputs.SERVER_NAME }}
         
