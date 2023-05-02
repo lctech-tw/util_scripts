@@ -32,10 +32,10 @@ jobs:
             echo "Run slack on Success (O)"
             bash ./notify_slack.sh -s -g=${{ inputs.GROUP }}
             ;;
-          skipped|cancelled)
+          cancelled)
             echo "Run slack on Skipped (-) ----------------"
             ;;
-          failure)
+          failure|skipped)
             echo "Run slack on Fail (X)"
             bash ./notify_slack.sh -f -g=${{ inputs.GROUP }}
             ;;
