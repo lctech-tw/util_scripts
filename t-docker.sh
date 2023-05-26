@@ -51,6 +51,11 @@ function _dtest() {
     echo "arg:" "${@:2}"
 }
 
+# -------------------------------------------------------------------
+# Main
+
+_check_docker
+
 case $1 in
 _dtest)
     _dtest "$@"

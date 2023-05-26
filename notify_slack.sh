@@ -177,7 +177,7 @@ if "$GITHUB_ACTIONS_MODE"; then
       jkface)
         echo "@ SLACK_GROUP -> jkface"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_txg-cicd --project=jkf-servers)
-        ICON=":pissed:"
+        ICON=":hehe:"
         ERROR_USER='zeki'
         ;;
       *)
@@ -283,7 +283,7 @@ s)
 f)
   echo " -- fail mode -- "
   curl -s -X POST -H 'Content-type: application/json' \
-    --data '{"attachments":[{"color":"#EA0000","pretext":"[ '"$CI_SERVER_NAME"' ] :github-changes-requested: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_WORKFLOW"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' / '"<@$ERROR_USER>"'  ","author_name":"'":imdead: $GITHUB_ACTOR"'","title":"'"⚠️  $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
+    --data '{"attachments":[{"color":"#EA0000","pretext":"[ '"$CI_SERVER_NAME"' ] :github-changes-requested: \n '"$GITHUB_EVENT_NAME"' / '"$BRANCH_NAME"' / '"$GITHUB_WORKFLOW"' / '"$GITHUB_RUN_NUMBER"' / '"<@$AURTHOR_NAME>"' / '"<@$ERROR_USER>"'  ","author_name":"'":rdrr_pa: $GITHUB_ACTOR"'","title":"'"⚠️  $GITHUB_REPOSITORY"'","title_link":"https://github.com/'"$GITHUB_REPOSITORY"'","text":"'"💬 $GITMSG"'"}]}' \
     "$SLACK_URL"
   # google chat  
   echo " -- google chat -- "
