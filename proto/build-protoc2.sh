@@ -66,14 +66,14 @@ function build {
     #         "${proto}"
     # done
 
-    # echo "🔥 ----- ruby -----"
-    # for proto in $proto_files; do
-    #     protoc -I=src/ -I=/opt/include "${proto}" \
-    #         -I=external/ \
-    #         --ruby_out=./dist/ruby \
-    #         --plugin=protoc-gen-grpc=/usr/local/bin/grpc_ruby_plugin \
-    #         --grpc_out=./dist/ruby
-    # done
+    echo "🔥 ----- ruby -----"
+    for proto in $proto_files; do
+        protoc -I=src/ -I=/opt/include "${proto}" \
+            -I=external/ \
+            --ruby_out=./dist/ruby \
+            --plugin=protoc-gen-grpc=/usr/local/bin/grpc_ruby_plugin \
+            --grpc_out=./dist/ruby
+    done
 
     # echo "🔥 ----- swift -----"
     # for proto in $proto_files; do

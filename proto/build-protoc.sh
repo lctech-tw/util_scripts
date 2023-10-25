@@ -28,7 +28,7 @@ EOM
 # build protoc
 function build {
     clean
-    PROGRAMMING_LANGUAGE=("go" "js" "docs" "node" "python" )
+    PROGRAMMING_LANGUAGE=("go" "js" "docs" "node" "python" "ruby")
     for ((i = 1; i <= ${#PROGRAMMING_LANGUAGE[@]}; i++)); do
         mkdir -p ./dist/"${PROGRAMMING_LANGUAGE[i]}"
     done
@@ -85,14 +85,14 @@ function build {
     #         "${proto}"
     # done
 
-    # echo "🔥 ----- ruby -----"
-    # for proto in $proto_files; do
-    #     protoc -I=/opt/include -I=src/ \
-    #         --ruby_out=./dist/ruby \
-    #         --plugin=protoc-gen-grpc=/usr/local/bin/grpc_ruby_plugin \
-    #         --grpc_out=./dist/ruby \
-    #         "${proto}"
-    # done
+    echo "🔥 ----- ruby -----"
+    for proto in $proto_files; do
+        protoc -I=/opt/include -I=src/ \
+            --ruby_out=./dist/ruby \
+            --plugin=protoc-gen-grpc=/usr/local/bin/grpc_ruby_plugin \
+            --grpc_out=./dist/ruby \
+            "${proto}"
+    done
 
     # echo "🔥 ----- swift -----"
     # for proto in $proto_files; do
