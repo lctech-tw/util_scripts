@@ -34,12 +34,6 @@ on:
         required: false
         type: string
         default: "server"
-      GH_TOKEN:
-        description: 'GH_APP_CREDENTIALS_TOKEN'
-        required: false
-        type: string
-        default: ${{ secrets.GH_APP_CREDENTIALS_TOKEN }}
-      
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -48,7 +42,7 @@ jobs:
       - name: ⚙️ Obtain GitHub App Installation Access Token
         id: githubAppAuth
         run: |
-          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{ inputs.GH_TOKEN }})
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{ secrets.GH_APP_CREDENTIALS_TOKEN }})
           echo "::add-mask::$TOKEN"
           echo "::set-output name=token::$TOKEN"
       - name: ⚙️ Setting GitHub Auth
