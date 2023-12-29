@@ -36,6 +36,12 @@ Jordan-lctech)
 TreeTzeng)
   SLACKNAME="U017BFMBZLZ"
   ;;
+lctech-kin)
+  SLACKNAME="U06AJTT83QS"
+  ;;
+lctech-stark)
+  SLACKNAME="U069A9CHNTY"
+  ;;
 lctech-erin)
   SLACKNAME="U03AX65UFH8"
   ;;
