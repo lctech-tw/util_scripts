@@ -39,6 +39,9 @@ TreeTzeng)
 lctech-kin)
   SLACKNAME="U06AJTT83QS"
   ;;
+LeoLioa)
+  SLACKNAME="U0642V9DDMX"
+  ;;
 lctech-stark)
   SLACKNAME="U069A9CHNTY"
   ;;
