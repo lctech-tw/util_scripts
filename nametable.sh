@@ -45,6 +45,9 @@ LeoLioa)
 lctech-stark)
   SLACKNAME="U069A9CHNTY"
   ;;
+lctech-Eddy)
+  SLACKNAME="U03AGHT28BZ"
+  ;;
 lctech-erin)
   SLACKNAME="U03AX65UFH8"
   ;;
