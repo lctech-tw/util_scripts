@@ -194,21 +194,15 @@ fi
 if [ "${GITHUB_EVENT_NAME:-"not-github"}" == 'pull_request' ]; then
   # shellcheck disable=SC2296
   GITMSG=$(git log --format=%B -n 1 "${{ github.event.after }}" )
-  BRANCH_NAME=$(echo "${GITHUB_HEAD_REF}" | tr / -)
+  BRANCH_NAME="${GITHUB_HEAD_REF//\//-}"
 else
   GITMSG=$(git log -1 --pretty=format:"%s")
   GITMSG_BODY=$(git log -1 --pretty=format:"%b")
-  #BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr / -)
-  BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+  BRANCH_NAME=$(git symbolic-ref --short HEAD)
 fi
 
-if [ "$GITMSG" == "" ] ;then
-  GITMSG="N/A"
-fi
-
-if [ "$GITMSG_BODY" == "" ] ;then
-  GITMSG_BODY="N/A"
-fi
+GITMSG=${GITMSG:-"N/A"}
+GITMSG_BODY=${GITMSG_BODY:-"N/A"}
 
 #* 檢查 GITHUB_REPOSITORY -> Jenkins
 if [ -z ${GITHUB_REPOSITORY+x} ] ;then
