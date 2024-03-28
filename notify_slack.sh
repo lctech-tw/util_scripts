@@ -262,7 +262,7 @@ s)
     "$SLACK_URL"
   # google chat  
   echo " -- google chat -- "
-  curl -X POST -H "Content-Type: application/json" \
+  curl -X POST -H "Content-Type: application/json" --no-progress-meter -q \
     -d '{"cards": [{
       "header": {
         "title": "Github Actions",
@@ -281,7 +281,7 @@ f)
     "$SLACK_URL"
   # google chat  
   echo " -- google chat -- "
-  curl -X POST -H "Content-Type: application/json" \
+  curl -X POST -H "Content-Type: application/json"  --no-progress-meter -q \
     -d '{"cards": [{
       "header": {
         "title": "Github Actions",
@@ -431,7 +431,7 @@ function _postline {
 # LINE_TOKEN=$(gcloud secrets versions access latest --secret=line_token --project=jkf-servers)
 #* json Line post PRE CC  營運 / 客服
 if [ $PRECI == "true" ] ;then 
-  if  [ $BRANCH_NAME == "main" ]||[ $BRANCH_NAME == "master" ] ; then
+  if  [ "$BRANCH_NAME" == "main" ]||[ "$BRANCH_NAME" == "master" ] ; then
     # 通告營運相關所有人員
     echo "@ Call lin pre-ci"
     # _postline pre-ci
@@ -439,15 +439,15 @@ if [ $PRECI == "true" ] ;then
   fi
 fi
 #* json Line post END CC 營運 / 客服
-if [ $mode == "s" ] && [[ $GITHUB_REPOSITORY =~ "proto" ]] ; then
+if [ "$mode" == "s" ] && [[ $GITHUB_REPOSITORY =~ "proto" ]] ; then
   echo "@ proto pass~~"
   exit 0
 fi
-if [ $mode == "s" ] && [ $BRANCH_NAME == "master" ] ; then
+if [ "$mode" == "s" ] && [ "$BRANCH_NAME" == "master" ] ; then
   echo "@ Call line end-ci"
   # _postline end-ci
 fi
-if [ $mode == "s" ] && [ $BRANCH_NAME == "main" ] ; then
+if [ "$mode" == "s" ] && [ "$BRANCH_NAME" == "main" ] ; then
   echo "@ Call line end-ci"
   # _postline end-ci
 fi
