@@ -193,11 +193,11 @@ fi
 #* 檢查 EVENT MODE ( Use .git info )
 if [ "${GITHUB_EVENT_NAME:-"not-github"}" == 'pull_request' ]; then
   # shellcheck disable=SC2296
-  GITMSG=${$(git log --format=%B -n 1 "${{ github.event.after }}" ):-N/A}
+  GITMSG=${$(git log --format=%B -n 1 "${{ github.event.after }}" ):-Null}
   BRANCH_NAME=$(echo "${GITHUB_HEAD_REF}" | tr / -)
 else
-  GITMSG=${$(git log -1 --pretty=format:"%s"):-N/A}
-  GITMSG_BODY=${$(git log -1 --pretty=format:"%b"):-N/A}
+  GITMSG=${$(git log -1 --pretty=format:"%s"):-Null}
+  GITMSG_BODY=${$(git log -1 --pretty=format:"%b"):-Null}
   #BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr / -)
   BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 fi
