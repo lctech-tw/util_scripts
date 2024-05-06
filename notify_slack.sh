@@ -162,19 +162,19 @@ if "$GITHUB_ACTIONS_MODE"; then
       CHAT_URL=$(gcloud secrets versions access latest --secret=cicd_chat_url --project=jkf-servers)
       # slack url
       case $SLACK_GROUP in
-      jvid)
+      avplus|rdc02)
+        echo "@ SLACK_GROUP -> rdc02"
+        SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_rdc02-cicd --project=jkf-servers)
+        ICON=":github:"
+        ERROR_USER='freddie9527'
+        ;;
+      jvid|rdc03)
         echo "@ SLACK_GROUP -> jvid"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_jvid-cicd --project=jkf-servers)
         ICON=":jvid-rd:"
         ERROR_USER=''
         ;;
-      tpe)
-        echo "@ SLACK_GROUP -> tpe"
-        SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_tpe-cicd --project=jkf-servers)
-        ICON=":github:"
-        ERROR_USER='zeki'
-        ;;
-      jkface)
+      jkface|rdc04)
         echo "@ SLACK_GROUP -> jkface"
         SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_txg-cicd --project=jkf-servers)
         ICON=":hehe:"
