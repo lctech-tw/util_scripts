@@ -21,6 +21,8 @@ if [ "$COMPILE_MODE" == "Multi" ] || [ "$COMPILE_MODE" == "MULITI" ] || [ "$COMP
     SCRIPT_FILE="build-protoc2.sh"
 elif [ "$COMPILE_MODE" == "v3" ]; then
     SCRIPT_FILE="build-protoc3.sh"
+elif [ "$COMPILE_MODE" == "v4" ]; then
+    SCRIPT_FILE="build-protoc4.sh"
 else
     SCRIPT_FILE="build-protoc.sh"
 fi
