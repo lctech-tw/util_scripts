@@ -27,7 +27,6 @@ function build {
         --validate_out="lang=go:./dist/go" \
         --include_imports \
         --descriptor_set_out=${service_dist}/api_descriptor.pb \
-        --experimental_allow_proto3_optional \
         ${proto_file_all[@]}
     done
 
