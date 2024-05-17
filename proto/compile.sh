@@ -30,7 +30,7 @@ else
 fi
 echo -e "@ ENV / COMPILE_MODE = ${COMPILE_MODE:-Default} : SCRIPT_FILE = ${RED}$SCRIPT_FILE${NC}"
 
-if [ ! "$(COMPILE_MODE)" == "neo" ]; then
+if [ ! "$COMPILE_MODE" == "neo" ]; then
     echo "--- default ---"
     # Download script
     curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/$SCRIPT_FILE"
