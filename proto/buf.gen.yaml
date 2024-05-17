@@ -64,8 +64,8 @@ plugins:
   #   out: dist/python
   # DOC
   - plugin: buf.build/community/pseudomuto-doc
-    out: dist/doc
+    out: dist/docs
     opt: markdown,docs.md
   - plugin: buf.build/community/pseudomuto-doc
-    out: dist/doc
+    out: dist/docs
     opt: html,index.html
