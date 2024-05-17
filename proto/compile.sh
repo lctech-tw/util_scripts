@@ -59,7 +59,7 @@ else
     mkdir dist
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml
-    mv ../dist/docs/docs.md ../README.md
+    sudo mv ../dist/docs/docs.md ../README.md
 fi
 # Remove script
 rm -f ./build-protoc*
