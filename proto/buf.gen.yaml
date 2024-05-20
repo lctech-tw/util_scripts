@@ -4,9 +4,9 @@ plugins:
   - plugin: buf.build/grpc-ecosystem/gateway
     out: dist/go
     opt: paths=source_relative
-  - plugin: buf.build/connectrpc/go
-    out: dist/go
-    opt: paths=source_relative
+  # - plugin: buf.build/connectrpc/go
+  #   out: dist/go
+  #   opt: paths=source_relative
   - plugin: buf.build/protocolbuffers/go
     out: dist/go
     opt: paths=source_relative
@@ -18,6 +18,7 @@ plugins:
   - plugin: buf.build/bufbuild/validate-go
     out: dist/go
     opt: paths=source_relative
+    
   # Node
   - plugin: buf.build/community/timostamm-protobuf-ts
     out: dist/node
@@ -30,6 +31,7 @@ plugins:
     out: dist/node
   - plugin: buf.build/protocolbuffers/js
     out: dist/node
+
   # GRPC-WEB
   - plugin: buf.build/grpc/web
     out: dist/js
@@ -39,29 +41,35 @@ plugins:
   - plugin: buf.build/protocolbuffers/js
     out: dist/js
     opt: import_style=commonjs
+
   # C sharp
   # - plugin: buf.build/grpc/csharp
   #   out: dist/csharp
   # - plugin: buf.build/protocolbuffers/csharp
   #   out: dist/csharp
+
   # PHP
   # - plugin: buf.build/grpc/php:v1.63.0
   #   out: dist/php
   # - plugin: buf.build/protocolbuffers/php
   #   out: dist/php
+
   # DART
   # - plugin: buf.build/protocolbuffers/dart:v21.1.2
   #   out: dist/dart
+
   # RUBY
   - plugin: buf.build/grpc/ruby
     out: dist/ruby
   - plugin: buf.build/protocolbuffers/ruby
     out: dist/ruby
+
   # PYTHON
   # - plugin: buf.build/grpc/python:v1.63.0
   #   out: dist/python
   # - plugin: buf.build/protocolbuffers/python
   #   out: dist/python
+
   # DOC
   - plugin: buf.build/community/pseudomuto-doc
     out: dist/docs
