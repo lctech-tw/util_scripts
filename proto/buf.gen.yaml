@@ -1,8 +1,8 @@
 version: v1
 plugins:
   # GO
-  - plugin: buf.build/grpc-ecosystem/gateway
-    out: dist/go
+  # - plugin: buf.build/grpc-ecosystem/gateway
+  #   out: dist/go
     # opt: paths=source_relative
   # - plugin: buf.build/connectrpc/go
   #   out: dist/go
