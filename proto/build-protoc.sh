@@ -106,12 +106,12 @@ function build {
     #         "${proto}"
     # done
 
-     echo "🔥 ----- python -----"
-     for proto in $proto_files; do
-         protoc -I=/opt/include -I=src/ \
-             --python_out=./dist/python \
-             "${proto}"
-     done
+    #  echo "🔥 ----- python -----"
+    #  for proto in $proto_files; do
+    #      protoc -I=/opt/include -I=src/ \
+    #          --python_out=./dist/python \
+    #          "${proto}"
+    #  done
 
     # echo "🔥 ----- c# -----"
     # for proto in $proto_files; do
