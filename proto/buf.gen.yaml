@@ -3,22 +3,22 @@ plugins:
   # GO
   - plugin: buf.build/grpc-ecosystem/gateway
     out: dist/go
-    opt: paths=source_relative
+    # opt: paths=source_relative
   # - plugin: buf.build/connectrpc/go
   #   out: dist/go
   #   opt: paths=source_relative
   - plugin: buf.build/protocolbuffers/go
     out: dist/go
-    opt: paths=source_relative
+    # opt: paths=source_relative
   - plugin: buf.build/grpc/go
     out: dist/go
     opt:
-      - paths=source_relative
+      # - paths=source_relative
       - require_unimplemented_servers=false
   - plugin: buf.build/bufbuild/validate-go
     out: dist/go
-    opt: paths=source_relative
-    
+    # opt: paths=source_relative
+
   # Node
   - plugin: buf.build/community/timostamm-protobuf-ts
     out: dist/node
