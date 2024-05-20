@@ -59,6 +59,7 @@ else
     mkdir dist
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml
+    sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
     sudo mv ../dist/docs/docs.md ../README.md
 fi
 # Remove script
