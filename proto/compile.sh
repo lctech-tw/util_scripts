@@ -23,19 +23,18 @@ elif [ "$COMPILE_MODE" == "v3" ]; then
     SCRIPT_FILE="build-protoc3.sh"
 elif [ "$COMPILE_MODE" == "v4" ]; then
     SCRIPT_FILE="build-protoc4.sh"
-elif [ "$COMPILE_MODE" == "neo" ]; then
-    SCRIPT_FILE="build-neo.sh"
-else
+elif [ "$COMPILE_MODE" == "old" ]; then
     SCRIPT_FILE="build-protoc.sh"
+else
+    SCRIPT_FILE="build-neo.sh"
 fi
 echo -e "@ ENV / COMPILE_MODE = ${COMPILE_MODE:-Default} : SCRIPT_FILE = ${RED}$SCRIPT_FILE${NC}"
 
-if [ ! "$COMPILE_MODE" == "neo" ]; then
+if [ ! "$COMPILE_MODE" == "Multi" ] || [ "$COMPILE_MODE" == "MULITI" ] || [ "$COMPILE_MODE" == "multi" ] || [ "$COMPILE_MODE" == "v3" ] || [ "$COMPILE_MODE" == "v4" ] || [ "$COMPILE_MODE" == "old" ]; then
     echo "--- default ---"
     # Download script
     curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/$SCRIPT_FILE"
     curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/build-protoc-node.sh"
-
     # Auth
     if [ ! "$(whoami)" == "lctech-zeki" ]; then
         # GCP
@@ -44,23 +43,28 @@ if [ ! "$COMPILE_MODE" == "neo" ]; then
         # Docker
         cat <./.github/auth/puller.json | docker login -u _json_key --password-stdin https://asia.gcr.io
     fi
-
     # Run build-protoc via docker
     docker pull asia.gcr.io/lc-shared-res/proto-compiler:node &
     docker pull asia.gcr.io/lc-shared-res/proto-compiler:latest
     docker run --rm -v "$(pwd)":/workdir asia.gcr.io/lc-shared-res/proto-compiler:latest ./"$SCRIPT_FILE" build github.com/"$GITHUB_REPOSITORY"
     docker run --rm -v "$(pwd)":/workdir asia.gcr.io/lc-shared-res/proto-compiler:node ./build-protoc-node.sh build
+    # Remove script
+    rm -f ./build-protoc*
 else
-    echo "--- neo ---"
+    echo "--- neo stable ---"
     rm -rf dist
     cd ./src || exit
-    curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/buf.yaml"
-    curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/buf.gen.yaml"
+    if [ ! -f "buf.yaml" ]; then
+        curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/buf.yaml"
+    fi
+    if [ ! -f "buf.gen.yaml" ]; then
+        curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/buf.gen.yaml"
+    fi
     mkdir dist
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml
+    # golang
     sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
+    # README
     sudo mv ../dist/docs/docs.md ../README.md
 fi
-# Remove script
-rm -f ./build-protoc*
