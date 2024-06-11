@@ -29,6 +29,7 @@ plugins:
   #     - force_disable_services
   - remote: buf.build/grpc/node
     out: dist/node
+    opt: grpc_js,binary,import_style=commonjs
   - remote: buf.build/protocolbuffers/js
     out: dist/node
     opt: import_style=commonjs,binary
