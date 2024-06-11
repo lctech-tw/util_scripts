@@ -1,79 +1,81 @@
-version: v1
+version: v2
 plugins:
   # GO
-  # - plugin: buf.build/grpc-ecosystem/gateway
+  # - remote: buf.build/grpc-ecosystem/gateway
   #   out: dist/go
     # opt: paths=source_relative
-  # - plugin: buf.build/connectrpc/go
+  # - remote: buf.build/connectrpc/go
   #   out: dist/go
   #   opt: paths=source_relative
-  - plugin: buf.build/protocolbuffers/go
+  - remote: buf.build/protocolbuffers/go
     out: dist/go
     # opt: paths=source_relative
-  - plugin: buf.build/grpc/go
+  - remote: buf.build/grpc/go
     out: dist/go
     opt:
       # - paths=source_relative
       - require_unimplemented_servers=false
-  - plugin: buf.build/bufbuild/validate-go
+  - remote: buf.build/bufbuild/validate-go
     out: dist/go
     # opt: paths=source_relative
 
   # Node
-  - plugin: buf.build/community/timostamm-protobuf-ts
+  # - remote: buf.build/community/timostamm-protobuf-ts
+  #   out: dist/node
+  #   opt:
+  #     - long_type_number
+  #     - output_javascript_es2015
+  #     - force_optimize_code_size
+  #     - force_disable_services
+  - remote: buf.build/bufbuild/es:v1.10.0
     out: dist/node
-    opt:
-      - long_type_number
-      - output_javascript_es2015
-      - force_optimize_code_size
-      - force_disable_services
-  - plugin: buf.build/grpc/node
+  - remote: buf.build/grpc/node
     out: dist/node
-  - plugin: buf.build/protocolbuffers/js
+  - remote: buf.build/protocolbuffers/js
     out: dist/node
 
   # GRPC-WEB
-  - plugin: buf.build/grpc/web
+  - remote: buf.build/grpc/web
     out: dist/js
     opt:
       - import_style=commonjs+dts
       - mode=grpcwebtext
-  - plugin: buf.build/protocolbuffers/js
+  - remote: buf.build/protocolbuffers/js
     out: dist/js
     opt: import_style=commonjs
 
   # C sharp
-  # - plugin: buf.build/grpc/csharp
+  # - remote: buf.build/grpc/csharp
   #   out: dist/csharp
-  # - plugin: buf.build/protocolbuffers/csharp
+  # - remote: buf.build/protocolbuffers/csharp
   #   out: dist/csharp
 
   # PHP
-  # - plugin: buf.build/grpc/php:v1.63.0
+  # - remote: buf.build/grpc/php:v1.63.0
   #   out: dist/php
-  # - plugin: buf.build/protocolbuffers/php
+  # - remote: buf.build/protocolbuffers/php
   #   out: dist/php
 
   # DART
-  # - plugin: buf.build/protocolbuffers/dart:v21.1.2
+  # - remote: buf.build/protocolbuffers/dart:v21.1.2
   #   out: dist/dart
 
   # RUBY
-  - plugin: buf.build/grpc/ruby
+  - remote: buf.build/grpc/ruby
     out: dist/ruby
-  - plugin: buf.build/protocolbuffers/ruby
+  - remote: buf.build/protocolbuffers/ruby
     out: dist/ruby
 
   # PYTHON
-  # - plugin: buf.build/grpc/python:v1.63.0
+  # - remote: buf.build/grpc/python:v1.63.0
   #   out: dist/python
-  # - plugin: buf.build/protocolbuffers/python
+  # - remote: buf.build/protocolbuffers/python
   #   out: dist/python
 
   # DOC
-  - plugin: buf.build/community/pseudomuto-doc
+  - remote: buf.build/community/pseudomuto-doc
     out: dist/docs
     opt: markdown,docs.md
-  - plugin: buf.build/community/pseudomuto-doc
+  - remote: buf.build/community/pseudomuto-doc
     out: dist/docs
     opt: html,index.html
