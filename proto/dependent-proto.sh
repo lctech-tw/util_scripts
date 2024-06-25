@@ -30,7 +30,7 @@ function _download_github_proto_folder() {
     rm -rf ../"$GITHUB_PROTO/"
     cp -r ../tmp_"$GITHUB_PROTO"/src/* ../
     cd ../../
-    rm -rf tmp_"$GITHUB_PROTO"
+    rm -rf tmp_"$GITHUB_PROTO" ./external/tmp_"$GITHUB_PROTO"
 }
 
 #* check has space in lastline

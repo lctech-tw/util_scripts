@@ -54,6 +54,10 @@ else
     echo "--- neo stable ---"
     rm -rf dist
     cd ./src || exit
+    # backup original src
+    mkdir ../tmp_src
+    cp -r ./* ../tmp_src/
+
     if [ ! -f "buf.yaml" ]; then
         curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/buf.yaml"
     fi
@@ -61,10 +65,19 @@ else
         curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/buf.gen.yaml"
     fi
     mkdir dist
+
+    # cp external proto files to src/external
+    rsync -av ../external/ ./
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml
     # golang
     sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
     # README
     sudo mv ../dist/docs/docs.md ../README.md
+    # remove temp proto files
+    sudo rm -rf ../dist/go/github.com/*
+    # restore original src
+    rm -rf ./*
+    cp -r ../tmp_src/* ./
+    rm -rf ../tmp_src
 fi
