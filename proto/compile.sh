@@ -52,12 +52,11 @@ if [ "$COMPILE_MODE" == "Multi" ] || [ "$COMPILE_MODE" == "MULITI" ] || [ "$COMP
     rm -f ./build-protoc*
 else
     echo "--- neo stable ---"
+    # Remove dist folder and copy src to tmp_src
     rm -rf dist
+    cp -R src tmp_src
     cd ./src || exit
-    # backup original src
-    mkdir ../tmp_src
-    cp -r ./* ../tmp_src/
-
+    # Download buf.yaml and buf.gen.yaml
     if [ ! -f "buf.yaml" ]; then
         curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/buf.yaml"
     fi
@@ -65,19 +64,16 @@ else
         curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/buf.gen.yaml"
     fi
     mkdir dist
-
-    # cp external proto files to src/external
+    # Copy external proto files to src/external
     rsync -av ../external/ ./
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml
-    # golang
+    # Moidfy golang path
     sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
-    # README
+    # Modify README
     sudo mv ../dist/docs/docs.md ../README.md
-    # remove temp proto files
+    # Remove temp proto files
     sudo rm -rf ../dist/go/github.com/*
-    # restore original src
-    rm -rf ./*
-    cp -r ../tmp_src/* ./
-    rm -rf ../tmp_src
+    # Restore original src
+    cd .. && rm -rf src && mv tmp_src src
 fi
