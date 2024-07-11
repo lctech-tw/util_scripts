@@ -74,11 +74,11 @@ else
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml
     # Moidfy golang path
-    mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
+    sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
     # Modify README
-    mv ../dist/docs/docs.md ../README.md
+    sudo mv ../dist/docs/docs.md ../README.md
     # Remove temp proto files
-    rm -rf ../dist/go/github.com/*
+    sudo rm -rf ../dist/go/github.com/*
     # Restore original src
     cd .. && rm -rf src && mv tmp_src src
 fi
