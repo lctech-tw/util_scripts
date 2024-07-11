@@ -10,8 +10,8 @@ NC='\033[0m'
 if [ -z "$GITHUB_REPOSITORY" ]; then
     echo "@ Start"
     echo "------------------------------------------------------------------"
-    echo "You must define ENV: ${RED}$GITHUB_REPOSITORY${NC} or run via ${RED}Github Actions${NC}..."
-    echo "Try to get ${RED}$GITHUB_REPOSITORY${NC} from git config..."
+    echo -e "You must define ENV: ${RED}$GITHUB_REPOSITORY${NC} or run via ${RED}Github Actions${NC}..."
+    echo -e "Try to get ${RED}$GITHUB_REPOSITORY${NC} from git config..."
     echo "------------------------------------------------------------------"
     GITHUB_REPOSITORY=$(git config --get remote.origin.url | sed 's/git@github.com://' | sed 's/https:\/\/github.com\///' | sed 's/\.git//')
 fi
@@ -33,7 +33,7 @@ else
 fi
 
 if [ "$COMPILE_MODE" == "Multi" ] || [ "$COMPILE_MODE" == "MULITI" ] || [ "$COMPILE_MODE" == "multi" ] || [ "$COMPILE_MODE" == "v3" ] || [ "$COMPILE_MODE" == "v4" ] || [ "$COMPILE_MODE" == "old" ]; then
-    echo "@ ENGINE = ${RED}Default${NC}"
+    echo -e "@ ENGINE = ${RED}Default${NC}"
     echo -e "@ ENV / COMPILE_MODE = ${COMPILE_MODE:-Default} : SCRIPT_FILE = ${RED}$SCRIPT_FILE${NC}"
     # Download script
     curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/$SCRIPT_FILE"
@@ -54,7 +54,7 @@ if [ "$COMPILE_MODE" == "Multi" ] || [ "$COMPILE_MODE" == "MULITI" ] || [ "$COMP
     # Remove script
     rm -f ./build-protoc*
 else
-    echo "@ ENGINE = ${RED}Neo mode${NC}"
+    echo -e "@ ENGINE = ${RED}Neo mode${NC}"
     # Remove dist folder and copy src to tmp_src
     rm -rf dist
     cp -R src tmp_src
