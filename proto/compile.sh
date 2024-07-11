@@ -8,12 +8,15 @@ NC='\033[0m'
 
 # Check out env GITHUB_REPOSITORY
 if [ -z "$GITHUB_REPOSITORY" ]; then
-    echo "You must define ENV GITHUB_REPOSITORY or run via Github Actions..."
-    echo "Try to get GITHUB_REPOSITORY from git config..."
+    echo "@ Start"
+    echo "------------------------------------------------------------------"
+    echo "You must define ENV: ${RED}$GITHUB_REPOSITORY${NC} or run via ${RED}Github Actions${NC}..."
+    echo "Try to get ${RED}$GITHUB_REPOSITORY${NC} from git config..."
+    echo "------------------------------------------------------------------"
     GITHUB_REPOSITORY=$(git config --get remote.origin.url | sed 's/https:\/\/github.com\///' | sed 's/\.git//')
 fi
 echo -e "@ GITHUB_REPOSITORY = ${RED}$GITHUB_REPOSITORY${NC}"
-
+echo "------------------------------------------------------------------"
 # Check out env COMPILE_MODE
 # Default -> single-compile
 # Multi -> multi-compile
@@ -30,7 +33,7 @@ else
 fi
 
 if [ "$COMPILE_MODE" == "Multi" ] || [ "$COMPILE_MODE" == "MULITI" ] || [ "$COMPILE_MODE" == "multi" ] || [ "$COMPILE_MODE" == "v3" ] || [ "$COMPILE_MODE" == "v4" ] || [ "$COMPILE_MODE" == "old" ]; then
-    echo "--- default ---"
+    echo "@ ENGINE = ${RED}Default${NC}"
     echo -e "@ ENV / COMPILE_MODE = ${COMPILE_MODE:-Default} : SCRIPT_FILE = ${RED}$SCRIPT_FILE${NC}"
     # Download script
     curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/$SCRIPT_FILE"
@@ -51,7 +54,7 @@ if [ "$COMPILE_MODE" == "Multi" ] || [ "$COMPILE_MODE" == "MULITI" ] || [ "$COMP
     # Remove script
     rm -f ./build-protoc*
 else
-    echo "--- neo stable ---"
+    echo "@ ENGINE = ${RED}Neo mode${NC}"
     # Remove dist folder and copy src to tmp_src
     rm -rf dist
     cp -R src tmp_src
@@ -65,15 +68,19 @@ else
     fi
     mkdir dist
     # Copy external proto files to src/external
-    rsync -av ../external/ ./
+    if [ -d "../external" ]; then
+        rsync -av ../external/ ./
+    fi
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml
     # Moidfy golang path
-    sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
+    mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
     # Modify README
-    sudo mv ../dist/docs/docs.md ../README.md
+    mv ../dist/docs/docs.md ../README.md
     # Remove temp proto files
-    sudo rm -rf ../dist/go/github.com/*
+    rm -rf ../dist/go/github.com/*
     # Restore original src
     cd .. && rm -rf src && mv tmp_src src
 fi
+
+echo "@ Done 🎉🎉🎉"
