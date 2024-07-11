@@ -13,7 +13,7 @@ if [ -z "$GITHUB_REPOSITORY" ]; then
     echo "You must define ENV: ${RED}$GITHUB_REPOSITORY${NC} or run via ${RED}Github Actions${NC}..."
     echo "Try to get ${RED}$GITHUB_REPOSITORY${NC} from git config..."
     echo "------------------------------------------------------------------"
-    GITHUB_REPOSITORY=$(git config --get remote.origin.url | sed 's/https:\/\/github.com\///' | sed 's/\.git//')
+    GITHUB_REPOSITORY=$(git config --get remote.origin.url | sed 's/git@github.com://'  | sed 's/https:\/\/github.com\///' | sed 's/\.git//')
 fi
 echo -e "@ GITHUB_REPOSITORY = ${RED}$GITHUB_REPOSITORY${NC}"
 echo "------------------------------------------------------------------"
