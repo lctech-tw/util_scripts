@@ -10,8 +10,8 @@ NC='\033[0m'
 if [ -z "$GITHUB_REPOSITORY" ]; then
     echo "@ Start"
     echo "------------------------------------------------------------------"
-    echo -e "You must define ENV: ${RED}$GITHUB_REPOSITORY${NC} or run via ${RED}Github Actions${NC}..."
-    echo -e "Try to get ${RED}$GITHUB_REPOSITORY${NC} from git config..."
+    echo -e "You must define ENV: ${RED}GITHUB_REPOSITORY${NC} or run via ${RED}Github Actions${NC}..."
+    echo -e "Try to get ${RED}GITHUB_REPOSITORY${NC} from git config..."
     echo "------------------------------------------------------------------"
     GITHUB_REPOSITORY=$(git config --get remote.origin.url | sed 's/git@github.com://' | sed 's/https:\/\/github.com\///' | sed 's/\.git//')
 fi
@@ -73,7 +73,7 @@ else
     fi
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml
-    # Moidfy golang path
+    # Modufy golang path
     sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
     # Modify README
     sudo mv ../dist/docs/docs.md ../README.md
