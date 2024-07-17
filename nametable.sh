@@ -48,6 +48,9 @@ lctech-LeoLioa)
 lctech-stark)
   SLACKNAME="U069A9CHNTY"
   ;;
+lctech-sid)
+  SLACKNAME="U07A8E61S4E"
+  ;;
 lctech-Eddy)
   SLACKNAME="U03AGHT28BZ"
   ;;
