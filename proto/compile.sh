@@ -71,6 +71,7 @@ else
     if [ -d "../external" ]; then
         rsync -av ../external/ ./
     fi
+    docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf dep update 
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml
     # Modufy golang path
