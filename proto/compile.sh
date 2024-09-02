@@ -73,7 +73,7 @@ else
     fi
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf dep update 
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
-    mv dist ../dist && rm -rf buf.yaml buf.gen.yaml
+    mv dist ../dist && rm -rf buf.yaml buf.gen.yaml buf.lock
     # Modufy golang path
     sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
     # Modify README
