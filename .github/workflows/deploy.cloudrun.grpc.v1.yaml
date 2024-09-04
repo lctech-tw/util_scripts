@@ -1,4 +1,4 @@
-name: deploy.cloudrun.v1
+name: deploy.cloudrun.grpc.v1
 on:
   workflow_call:
     inputs:
@@ -7,16 +7,20 @@ on:
         required: false
         type: string
         default: dev
+      APP_DOCKER_REPOSITORIES:
+        description: 'Docker repositories name'
+        required: true
+        type: string
       GCP_PROJECT:
-        description: 'gcp project'
+        description: 'GCP project'
         required: true
         type: string
       GCP_CLOUD_RUN_NAME:
-        description: 'gcp cloudrun name'
+        description: 'GCP cloudrun name'
         required: true
         type: string
       GCP_CLOUD_RUN_REGION:
-        description: 'gcp cloudrun zone'
+        description: 'GCP cloudrun zone'
         required: true
         type: string
       GCP_CLOUD_RUN_DEPLOY_GRPC_WEB:
@@ -39,36 +43,37 @@ on:
         required: false
         type: string
         default: "1"
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: ⚙️ Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v2
         with:
           credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
       - name: ⚙️ Initialize Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
-      - name: deploy
+        uses: google-github-actions/setup-gcloud@v2
+      - name: Deploy
         run: |
-          echo "@ deploy server! $GCP_PROJECT -> $GCP_CLOUD_RUN_NAME -> $ZMODE"
+          echo "@ deploy : $GCP_PROJECT -> $GCP_CLOUD_RUN_NAME -> $ZMODE"
           if [ ${{inputs.GCP_CLOUD_RUN_DEPLOY_GRPC_WEB}} ];then
+          echo "@ Deploy gRPC Web"
           gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-grpc-web \
             --project ${{inputs.GCP_PROJECT}}  \
             --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
-            --image "${{inputs.APP_DOCKER_REPOSITORIES}}"/"${{inputs.APP_NAME}}":"$ZMODE"-"$GITHUB_RUN_NUMBER" \
+            --image "${{inputs.APP_DOCKER_REPOSITORIES}}":"$ZMODE"-"$GITHUB_RUN_NUMBER" \
             --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
             --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
             --port "${{inputs.GCP_CLOUD_RUN_PORT_GRPC_WEB}}" \
             --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
             --inputs-vars-file ./.github/config/$ZMODE.yaml &
           fi
+          echo "@ Deploy gRPC"
           gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-grpc \
             --project ${{inputs.GCP_PROJECT}}  \
             --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
-            --image "${{inputs.APP_DOCKER_REPOSITORIES}}"/"${{inputs.APP_NAME}}":"$ZMODE"-"$GITHUB_RUN_NUMBER" \
+            --image "${{inputs.APP_DOCKER_REPOSITORIES}}":"$ZMODE"-"$GITHUB_RUN_NUMBER" \
             --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
             --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
             --port "${{inputs.GCP_CLOUD_RUN_PORT_GRPC}}" \

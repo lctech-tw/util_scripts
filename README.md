@@ -34,12 +34,12 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
 
 ```yaml
       - name: ⚙️ Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v2
         with:
           credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
       - name: ⚙️ Initialize Google Cloud SDK
         if: always()
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v2
  # ... some actions
 
       - name: Slack Notification

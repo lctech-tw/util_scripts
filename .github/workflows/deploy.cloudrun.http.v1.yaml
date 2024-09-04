@@ -1,0 +1,63 @@
+name: deploy.cloudrun.http.v1
+on:
+  workflow_call:
+    inputs:
+      ZMODE:
+        description: 'Mode'
+        required: false
+        type: string
+        default: dev
+      APP_DOCKER_REPOSITORIES:
+          description: 'Docker repositories name'
+          required: true
+          type: string
+      GCP_PROJECT:
+        description: 'GCP project'
+        required: true
+        type: string
+      GCP_CLOUD_RUN_NAME:
+        description: 'GCP cloudrun name'
+        required: true
+        type: string
+      GCP_CLOUD_RUN_REGION:
+        description: 'GCP cloudrun zone'
+        required: true
+        type: string
+      GCP_CLOUD_RUN_PROT:
+        required: false
+        type: string
+        default: "8080"
+      GCP_CLOUD_RUN_VPC:
+        required: false
+        type: string
+      GCP_CLOUD_RUN_CPU:
+        required: false
+        type: string
+        default: "1"
+      GCP_CLOUD_RUN_MEM:
+        required: false
+        type: string
+        default: "1"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ⚙️ Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
+      - name: ⚙️ Initialize Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+      - name: Deploy
+        run: |
+          echo "@ deploy : ${{inputs.GCP_PROJECT}} -> ${{inputs.GCP_CLOUD_RUN_NAME}} -> ${{inputs.ZMODE}}"
+          gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-http \
+            --project ${{inputs.GCP_PROJECT}}  \
+            --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
+            --image "${{inputs.APP_DOCKER_REPOSITORIES}} \
+            --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
+            --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
+            --port "${{inputs.GCP_CLOUD_RUN_PROT}}" \
+            --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
+            --inputs-vars-file ./.github/config/$ZMODE.yaml 
