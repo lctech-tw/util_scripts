@@ -73,8 +73,10 @@ jobs:
             ${{runner.os}}-golang-
       - name: ⚙️ Build Golang
         run: cd ${{inputs.GO_BUILD_PATH}} && go build .
-      - name: ⚙️ Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: ⛴ Set up Docker QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: ⛴ Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: ⛴ Docker build / tag / push
         uses: docker/build-push-action@v6
         with:
@@ -90,15 +92,3 @@ jobs:
             ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{github.ref_name}}-${{github.run_number}}
           build-args: |
             SERVER_NAME=${{inputs.SERVER_NAME}}
-
-        ## Use docker buildx cmd
-        # run : |
-        #   docker buildx build \
-        #     --cache-from=type=gha \
-        #     --cache-to=type=gha,mode=max \
-        #     -f .github/docker/Dockerfile \
-        #     -t ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}} \
-        #     -t ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}} ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${GITHUB_SHA::7} \
-        #     -t ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}} ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{github.run_number}} \
-        #     -t ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}} ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}} \
-        #     .
