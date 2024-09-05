@@ -2,20 +2,25 @@ name: deploy.v1.golang
 on:
   workflow_call:
     inputs:
+      K8S_PATH:
+        description: "k8s path for kustomize"
+        required: false
+        default: ".github/k8s"
+        type: string
       GCP_PROJECT:
-        description: 'gcp project'
+        description: "gcp project"
         required: true
         type: string
       GCP_GKE_NAME:
-        description: 'gcp gke name'
+        description: "gcp gke name"
         required: true
         type: string
       GCP_GKE_ZONE:
-        description: 'gcp gke zone'
+        description: "gcp gke zone"
         required: true
         type: string
       ZMODE:
-        description: 'mode'
+        description: "mode"
         required: false
         type: string
         default: dev
@@ -27,20 +32,20 @@ jobs:
       - name: ⚙️ Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
+          credentials_json: ${{secrets.GCP_SA_KEY_GITHUB_CI}}
       - name: ⚙️ Initialize Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
       - name: ⚙️ Initialize Google Cloud SDK kubectl
         uses: google-github-actions/get-gke-credentials@v2
         with:
-          cluster_name: ${{ inputs.GCP_GKE_NAME }} 
-          location: ${{ inputs.GCP_GKE_ZONE }}
-          project_id: ${{ inputs.GCP_PROJECT }}
+          cluster_name: ${{inputs.GCP_GKE_NAME}}
+          location: ${{inputs.GCP_GKE_ZONE}}
+          project_id: ${{inputs.GCP_PROJECT}}
       - name: ⚓️ Deploy k8s
         run: |
-          echo "@ deploy server! ${{ inputs.GCP_PROJECT }} -> ${{ inputs.GCP_GKE_NAME }} -> ${{ inputs.ZMODE }}"
+          echo "@ deploy server! ${{inputs.GCP_PROJECT}} -> ${{inputs.GCP_GKE_NAME}} -> ${{inputs.ZMODE}}"
           sudo chmod -R 777 ./.github/
-          yq e '.images.[].newTag=''"'"${{ inputs.ZMODE }}-${{ github.run_number }}"'"' -i .github/k8s/overlays/${{ inputs.ZMODE }}/kustomization.yaml
-          yq e .spec.http[].headers.response.add.running-version='"'"${{ inputs.ZMODE }}-${{ github.run_number }}"'"' -i .github/k8s/base/vs.yaml
-          kubectl apply -f ./.github/k8s/setting/
-          kubectl apply -k ./.github/k8s/overlays/${{ inputs.ZMODE }}
+          yq e '.images.[].newTag=''"'"${{inputs.ZMODE}}-${{github.run_number}}"'"' -i ${{inputs.K8S_PATH}}/overlays/${{inputs.ZMODE}}/kustomization.yaml
+          yq e .spec.http[].headers.response.add.running-version='"'"${{inputs.ZMODE}}-${{github.run_number}}"'"' -i ${{inputs.K8S_PATH}}/base/vs.yaml
+          kubectl apply -f ${{inputs.K8S_PATH}}/setting/
+          kubectl apply -k ${{inputs.K8S_PATH}}/overlays/${{inputs.ZMODE}}

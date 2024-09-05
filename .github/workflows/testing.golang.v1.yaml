@@ -2,38 +2,25 @@ name: testing.v1.golang
 on:
   workflow_call:
     inputs:
-      APP_NAME:
-        description: "This app name"
+      DB_TABLE_NAME:
+        description: "DB table name"
         required: true
         type: string
-      APP_DOCKER_REPOSITORIES:
-        description: "Docker repositories name"
-        required: true
-        type: string
-      GCP_PROJECT:
-        description: "GCP project"
-        required: true
-        type: string
-      ZMODE:
-        description: "Mode name [dev, prod, ...]"
-        required: false
-        type: string
-        default: dev
-      GO_VERSION:
-        description: "Vseion 棄用 哪次不棄用"
-        required: false
-        type: string
-        default: "1.19"
       GO_BUILD_PATH:
         description: "File [main.go] path"
         required: false
         type: string
         default: "./cmd/server/"
-      SERVER_NAME:
-        description: "Server name in dockerfile"
+      PRE_TEST_SCRIPT_PATH:
+        description: "Pre test script path"
         required: false
         type: string
-        default: "server"
+        default: ".github/testing"
+      PRE_TEST_SCRIPT_FILE:
+        description: "Pre test script file"
+        required: false
+        type: string
+        default: "psql-init.sh"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -42,28 +29,16 @@ jobs:
       - name: ⚙️ Obtain GitHub App Installation Access Token
         id: githubAppAuth
         run: |
-          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{ secrets.GH_APP_CREDENTIALS_TOKEN }})
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
           echo "::add-mask::$TOKEN"
           echo "::set-output name=token::$TOKEN"
       - name: ⚙️ Setting GitHub Auth
-        run: |
-          git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+        run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         env:
-          GITHUB_TOKEN: ${{ steps.githubAppAuth.outputs.token }}
-      - name: ⚙️ Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
-      - name: ⚙️ Initialize Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-      - name: ⚙️ setting docker auth
-        run: |
-          gcloud auth configure-docker -q
-          gcloud auth configure-docker $(echo ${{ inputs.APP_DOCKER_REPOSITORIES }}  | cut -d "/" -f 1) -q
+          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
       - name: ⚙️ Set up Golang
         uses: actions/setup-go@v5
         with:
-          # go-version: ${{ inputs.GO_VERSION }}
           go-version-file: "./go.mod"
       - name: ⚙️ Setup Golang caches
         uses: actions/cache@v4
@@ -71,9 +46,9 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+          key: ${{runner.os}}-golang-${{hashFiles('**/go.sum')}}
           restore-keys: |
-            ${{ runner.os }}-golang-
+            ${{runner.os}}-golang-
       - name: ⚙️ Init db server
         run: |
           docker run -it --rm -p 6379:6379 redis &
@@ -81,22 +56,20 @@ jobs:
                       -p 5432:5432 \
                       -e POSTGRES_USER=postgres \
                       -e POSTGRES_PASSWORD=12345678 \
-                      -e POSTGRES_DB=jkfstar \
+                      -e POSTGRES_DB=${{inputs.DB_TABLE_NAME}} \
                       -e POSTGRES_ENCODING=UTF8 \
                       -e POSTGRES_LC_ALL=en_US.UTF-8 \
-                      -v $PWD/.github/testing/:/test/ \
-                      -d postgres
-      - name: Sleep for psql
-        run: |
+                      -v ${{inputs.PRE_TEST_SCRIPT_PATH}}/:/test/ \
+                      -d postgres &
           until PGPASSWORD=12345678 psql -U postgres -h 127.0.0.1 -p 5432 -w &>/dev/null
           do
             echo "Waiting for PostgreSQL..."
             sleep 1
           done
-          docker exec -t psql bash /test/psql-init.sh &
+          docker exec -t psql bash /test/${{inputs.PRE_TEST_SCRIPT_FILE}} &
       - name: ⚙️ Build Golang
         run: |
-          cd ${{ inputs.GO_BUILD_PATH }} && go build .          git config --global url."https://${{ secrets.CI_TOKEN }}:x-oauth-basic@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw" 
+          cd ${{inputs.GO_BUILD_PATH}} && go build . && cd -
           cp local.env .env
           go mod vendor
           go test -v ./...

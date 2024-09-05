@@ -36,7 +36,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
       - name: ⚙️ Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
+          credentials_json:  ${{secrets.GCP_SA_KEY_GITHUB_CI}}
       - name: ⚙️ Initialize Google Cloud SDK
         if: always()
         uses: google-github-actions/setup-gcloud@v2
@@ -46,7 +46,7 @@ curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_s
         if: always()
         run: |
           curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
-          if [[ '${{ job.status }}' == 'failure' ]] ;then
+          if [[ '${{job.status}}' == 'failure' ]] ;then
             echo "Run slack on Fail (X)"
             bash ./notify_slack.sh -f
           else

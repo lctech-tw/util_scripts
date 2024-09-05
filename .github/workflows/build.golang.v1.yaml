@@ -3,15 +3,15 @@ on:
   workflow_call:
     inputs:
       APP_NAME:
-        description: 'This app name'
+        description: "App name"
         required: true
         type: string
       APP_DOCKER_REPOSITORIES:
-        description: 'Docker repositories name'
+        description: "Docker repositories name"
         required: true
         type: string
       GCP_PROJECT:
-        description: 'GCP project'
+        description: "GCP project"
         required: true
         type: string
       ZMODE:
@@ -20,17 +20,17 @@ on:
         type: string
         default: dev
       GO_VERSION:
-        description: 'Vseion 棄用 哪次不棄用'
+        description: "Vseion 棄用 哪次不棄用"
         required: false
         type: string
         default: "1.20"
       GO_BUILD_PATH:
-        description: 'main.go path'
+        description: "Build main.go path"
         required: false
         type: string
         default: "./cmd/server/"
       SERVER_NAME:
-        description: 'server name in dockerfile'
+        description: "Server name in dockerfile"
         required: false
         type: string
         default: "server"
@@ -42,47 +42,41 @@ jobs:
       - name: ⚙️ Obtain GitHub App Installation Access Token
         id: githubAppAuth
         run: |
-          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{ secrets.GH_APP_CREDENTIALS_TOKEN }})
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
           echo "::add-mask::$TOKEN"
           echo "::set-output name=token::$TOKEN"
       - name: ⚙️ Setting GitHub Auth
-        run : |
-           git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw" 
+        run: |
+          git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         env:
-          GITHUB_TOKEN: ${{ steps.githubAppAuth.outputs.token }}
+          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
       - name: ⚙️ Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json:  ${{ secrets.GCP_SA_KEY_GITHUB_CI }}
+          credentials_json: ${{secrets.GCP_SA_KEY_GITHUB_CI}}
       - name: ⚙️ Initialize Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
       - name: ⚙️ setting docker auth
-        run: |
-          gcloud auth configure-docker -q
-          gcloud auth configure-docker $(echo ${{ inputs.APP_DOCKER_REPOSITORIES }}  | cut -d "/" -f 1) -q
+        run: gcloud auth configure-docker -q && gcloud auth configure-docker $(echo ${{inputs.APP_DOCKER_REPOSITORIES}}  | cut -d "/" -f 1) -q
       - name: ⚙️ Set up Golang
         uses: actions/setup-go@v5
         with:
-          ## use the version of Go in go.mod
-          # go-version: ${{ inputs.GO_VERSION }}
-          ## use go.mod version
-          go-version-file: './go.mod'
+          go-version-file: "./go.mod"
       - name: ⚙️ Setup Golang caches
         uses: actions/cache@v4
         with:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+          key: ${{runner.os}}-golang-${{hashFiles('**/go.sum')}}
           restore-keys: |
-            ${{ runner.os }}-golang-
+            ${{runner.os}}-golang-
       - name: ⚙️ Build Golang
-        run: |
-          cd ${{ inputs.GO_BUILD_PATH }} && go build .
+        run: cd ${{inputs.GO_BUILD_PATH}} && go build .
       - name: ⚙️ Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: ⛴ Docker build / tag / push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
@@ -90,21 +84,21 @@ jobs:
           cache-from: type=gha
           file: .github/docker/Dockerfile
           tags: |
-            ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ github.sha }}
-            ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ inputs.ZMODE }}-latest
-            ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ inputs.ZMODE }}-${{ github.run_number }}
-            ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ github.ref_name }}-${{ github.run_number }}
+            ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{github.sha}}
+            ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-latest
+            ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}}
+            ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{github.ref_name}}-${{github.run_number}}
           build-args: |
-            SERVER_NAME=${{ inputs.SERVER_NAME }}
-        
+            SERVER_NAME=${{inputs.SERVER_NAME}}
+
         ## Use docker buildx cmd
         # run : |
         #   docker buildx build \
         #     --cache-from=type=gha \
         #     --cache-to=type=gha,mode=max \
         #     -f .github/docker/Dockerfile \
-        #     -t ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }} \
-        #     -t ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }} ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${GITHUB_SHA::7} \
-        #     -t ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }} ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ github.run_number }} \
-        #     -t ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }} ${{ inputs.APP_DOCKER_REPOSITORIES }}/${{ inputs.APP_NAME }}:${{ inputs.ZMODE }}-${{ github.run_number }} \
+        #     -t ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}} \
+        #     -t ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}} ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${GITHUB_SHA::7} \
+        #     -t ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}} ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{github.run_number}} \
+        #     -t ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}} ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}} \
         #     .
