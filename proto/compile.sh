@@ -75,7 +75,7 @@ else
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml buf.lock
     # Modufy golang path
-    sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
+    sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/ || { echo "Error moving go files"; exit 1; }
     # Modify README
     sudo mv ../dist/docs/docs.md ../README.md  || { echo "Error moving README"; exit 1; }
     # Remove temp proto files
