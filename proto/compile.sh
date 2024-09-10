@@ -77,7 +77,7 @@ else
     # Modufy golang path
     sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/
     # Modify README
-    sudo mv ../dist/docs/docs.md ../README.md
+    sudo mv ../dist/docs/docs.md ../README.md  || { echo "Error moving README"; exit 1; }
     # Remove temp proto files
     sudo rm -rf ../dist/go/github.com/*
     # Restore original src
