@@ -11,6 +11,10 @@ on:
         description: "Docker repositories name"
         required: true
         type: string
+      APP_NAME:
+        description: "App name"
+        required: true
+        type: string
       GCP_PROJECT:
         description: "GCP project"
         required: true
@@ -42,7 +46,7 @@ on:
       GCP_CLOUD_RUN_MEM:
         required: false
         type: string
-        default: "1"
+        default: "1Gi"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -58,24 +62,24 @@ jobs:
         run: |
           echo "@ deploy : $GCP_PROJECT -> $GCP_CLOUD_RUN_NAME -> $ZMODE"
           if [ ${{inputs.GCP_CLOUD_RUN_DEPLOY_GRPC_WEB}} ];then
-          echo "@ Deploy gRPC Web"
-          gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-grpc-web \
-            --project ${{inputs.GCP_PROJECT}}  \
-            --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
-            --image "${{inputs.APP_DOCKER_REPOSITORIES}}":"$ZMODE"-"$GITHUB_RUN_NUMBER" \
-            --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
-            --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
-            --port "${{inputs.GCP_CLOUD_RUN_PORT_GRPC_WEB}}" \
-            --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
-            --inputs-vars-file ./.github/config/$ZMODE.yaml &
+            echo "@ Deploy gRPC Web"
+            gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-grpc-web \
+              --project ${{inputs.GCP_PROJECT}}  \
+              --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
+              --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}} \            --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
+              --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
+              --port "${{inputs.GCP_CLOUD_RUN_PORT_GRPC_WEB}}" \
+              --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
+              --env-vars-file ./.github/config/$ZMODE.yaml \
+              --ingress internal-and-cloud-load-balancing &
           fi
           echo "@ Deploy gRPC"
           gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-grpc \
             --project ${{inputs.GCP_PROJECT}}  \
             --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
-            --image "${{inputs.APP_DOCKER_REPOSITORIES}}":"$ZMODE"-"$GITHUB_RUN_NUMBER" \
-            --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
+            --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}} \            --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
             --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
             --port "${{inputs.GCP_CLOUD_RUN_PORT_GRPC}}" \
             --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
-            --inputs-vars-file ./.github/config/$ZMODE.yaml
+            --env-vars-file ./.github/config/$ZMODE.yaml \
+            --ingress internal-and-cloud-load-balancing

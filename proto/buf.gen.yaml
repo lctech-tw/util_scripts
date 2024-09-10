@@ -19,14 +19,14 @@ plugins:
   - remote: buf.build/protocolbuffers/js
     out: dist/node
     opt: import_style=commonjs,binary
-  # - remote: buf.build/timostamm/plugins/protobuf-ts
-  #   out: dist/node
-  #   opt:
-  #     - long_type_number
-  #     - output_javascript_es2015
-  #     - force_optimize_code_size
-  #     - force_disable_services
-  #     - generate_dependencies
+  - remote: buf.build/community/timostamm-protobuf-ts
+    out: dist/node
+    opt:
+      - long_type_number
+      - output_javascript_es2015
+      - force_optimize_code_size
+      - client_generic
+      - generate_dependencies
 
   #! GRPC-WEB
   - remote: buf.build/protocolbuffers/js

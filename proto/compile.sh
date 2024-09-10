@@ -32,6 +32,15 @@ else
     SCRIPT_FILE="build-neo.sh"
 fi
 
+# Golang mod
+if [ -f go.mod ]; then
+    echo "@ Found and remove go.mod"
+    rm -f go.mod
+    echo "module github.com/$GITHUB_REPOSITORY" > go.mod
+    echo "go 1.22" >> go.mod
+fi
+
+# Check out env COMPILE_MODE
 if [ "$COMPILE_MODE" == "Multi" ] || [ "$COMPILE_MODE" == "MULITI" ] || [ "$COMPILE_MODE" == "multi" ] || [ "$COMPILE_MODE" == "v3" ] || [ "$COMPILE_MODE" == "v4" ] || [ "$COMPILE_MODE" == "old" ]; then
     echo -e "@ ENGINE = ${RED}Default${NC}"
     echo -e "@ ENV / COMPILE_MODE = ${COMPILE_MODE:-Default} : SCRIPT_FILE = ${RED}$SCRIPT_FILE${NC}"
@@ -71,11 +80,11 @@ else
     if [ -d "../external" ]; then
         rsync -av ../external/ ./
     fi
-    docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf dep update 
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml buf.lock
     # Modufy golang path
-    sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/ || { echo "Error moving go files"; exit 1; }
+    sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/ 
+    sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/* ../dist/go/ 
     # Modify README
     sudo mv ../dist/docs/docs.md ../README.md  || { echo "Error moving README"; exit 1; }
     # Remove temp proto files
