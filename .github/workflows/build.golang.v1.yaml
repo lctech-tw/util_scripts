@@ -28,7 +28,7 @@ on:
         description: "Build main.go path"
         required: false
         type: string
-        default: "./cmd/server/"
+        default: "./cmd/server"
       SERVER_NAME:
         description: "Server name in dockerfile"
         required: false
@@ -46,8 +46,7 @@ jobs:
           echo "::add-mask::$TOKEN"
           echo "::set-output name=token::$TOKEN"
       - name: ⚙️ Setting GitHub Auth
-        run: |
-          git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+        run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         env:
           GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
       - name: ⚙️ Authenticate to Google Cloud
@@ -56,7 +55,7 @@ jobs:
           credentials_json: ${{secrets.GCP_SA_KEY_GITHUB_CI}}
       - name: ⚙️ Initialize Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
-      - name: ⚙️ setting docker auth
+      - name: ⚙️ Setting docker auth
         run: gcloud auth configure-docker -q && gcloud auth configure-docker $(echo ${{inputs.APP_DOCKER_REPOSITORIES}}  | cut -d "/" -f 1) -q
       - name: ⚙️ Set up Golang
         uses: actions/setup-go@v5
@@ -86,6 +85,7 @@ jobs:
           cache-from: type=gha
           file: .github/docker/Dockerfile
           tags: |
+            ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:latest
             ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{github.sha}}
             ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-latest
             ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}}

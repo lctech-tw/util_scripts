@@ -7,7 +7,6 @@ Description:
   use get secret
 USAGE:
   SHELL.sh sql
-
 EXAMPLE:
     SHELL.sh sql
 

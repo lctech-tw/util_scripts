@@ -1,67 +1,56 @@
 version: v2
 plugins:
-  # GO
+
+  #! GO
   - remote: buf.build/connectrpc/go
     out: dist/go
   - remote: buf.build/protocolbuffers/go
     out: dist/go
-  - remote: buf.build/grpc/go
-    out: dist/go
-    opt:
-      - require_unimplemented_servers=false
   - remote: buf.build/bufbuild/validate-go
     out: dist/go
+  - remote: buf.build/grpc/go
+    out: dist/go
+    opt: require_unimplemented_servers=false
 
-  # Node
-  # - remote: buf.build/community/timostamm-protobuf-ts
-  #   out: dist/node
-  #   opt:
-  #     - long_type_number
-  #     - output_javascript_es2015
-  #     - force_optimize_code_size
-  #     - force_disable_services
+  #! Node
   - remote: buf.build/grpc/node
     out: dist/node
     opt: grpc_js,binary,import_style=commonjs
   - remote: buf.build/protocolbuffers/js
     out: dist/node
     opt: import_style=commonjs,binary
+  - remote: buf.build/timostamm/plugins/protobuf-ts
+    out: dist/node
+    opt:
+      - long_type_number
+      - output_javascript_es2015
+      - force_optimize_code_size
+      - force_disable_services
+      - generate_dependencies
 
-  # GRPC-WEB
+  #! GRPC-WEB
+  - remote: buf.build/protocolbuffers/js
+    out: dist/js
+    opt: import_style=commonjs
   - remote: buf.build/grpc/web
     out: dist/js
     opt:
       - import_style=commonjs+dts
       - mode=grpcwebtext
-  - remote: buf.build/protocolbuffers/js
-    out: dist/js
-    opt: import_style=commonjs
 
-  # C sharp
+  #! C#
   # - remote: buf.build/grpc/csharp
   #   out: dist/csharp
   # - remote: buf.build/protocolbuffers/csharp
   #   out: dist/csharp
 
-  # PHP
-  # - remote: buf.build/grpc/php:v1.63.0
-  #   out: dist/php
-  # - remote: buf.build/protocolbuffers/php
-  #   out: dist/php
-
-  # RUBY
+  #! RUBY
   - remote: buf.build/grpc/ruby
     out: dist/ruby
   - remote: buf.build/protocolbuffers/ruby
     out: dist/ruby
 
-  # PYTHON
-  # - remote: buf.build/grpc/python:v1.63.0
-  #   out: dist/python
-  # - remote: buf.build/protocolbuffers/python
-  #   out: dist/python
-
-  # DOC
+  #! DOC
   - remote: buf.build/community/pseudomuto-doc
     out: dist/docs
     opt: markdown,docs.md

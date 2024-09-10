@@ -10,10 +10,8 @@ Description:
   Use github account look for slack name
 USAGE:
   SHELL.sh $NAME
-
 EXAMPLE:
     SHELL.sh lctech-zeki
-
 EOF
   exit 1
 fi
