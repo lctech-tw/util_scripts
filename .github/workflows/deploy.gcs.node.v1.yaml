@@ -1,0 +1,68 @@
+name: deploy.gcs.node.v1
+
+on:
+  workflow_call:
+    inputs:
+      APP_NAME:
+        description: "App name"
+        required: true
+        type: string
+      APP_DOCKER_REPOSITORIES:
+        description: "Docker repositories name"
+        required: true
+        type: string
+      GCP_PROJECT:
+        description: "GCP project"
+        required: true
+        type: string
+      ZMODE:
+        description: "Mode name [dev, prod, ...]"
+        required: false
+        type: string
+        default: dev
+      NODE_BUILD_PATH:
+        description: "Build main.go path"
+        required: false
+        type: string
+        default: "./cmd/server"
+      NODE_ENV_FILE_PATH:
+        description: "Nodejs env config file path"
+        required: false
+        type: string
+        default: ".env"
+      NODE_RUN_SCRIPT:
+        description: "Nodejs run script"
+        required: false
+        type: string
+        default: "build"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ⚙️ Obtain GitHub App Installation Access Token
+        id: githubAppAuth
+        run: |
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
+          echo "::add-mask::$TOKEN"
+          echo "::set-output name=token::$TOKEN"
+      - name: ⚙️ Setting GitHub Auth
+        run: |
+          git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+        env:
+          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
+      - name: ⚙️ Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{secrets.GCP_SA_KEY_GITHUB_CI}}
+      - name: ⚙️ Initialize Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+      - name: ⚙️ Setting docker auth
+        run: gcloud auth configure-docker -q && gcloud auth configure-docker $(echo ${{inputs.APP_DOCKER_REPOSITORIES}}  | cut -d "/" -f 1) -q
+      - name: ⚙️ Set up Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+      - name: ⚙️ Build Nodejs
+        run: pnpm ci && rm -rf ~/.netrc .env && cp ${{inputs.NODE_ENV_FILE_PATH}} .env && pnpm run ${{inputs.NODE_RUN_SCRIPT}}

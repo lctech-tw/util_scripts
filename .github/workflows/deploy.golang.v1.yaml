@@ -1,4 +1,4 @@
-name: deploy.v1.golang
+name: deploy.golang.v1
 on:
   workflow_call:
     inputs:

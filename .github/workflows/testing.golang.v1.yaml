@@ -1,4 +1,4 @@
-name: testing.v1.golang
+name: testing.golang.v1
 on:
   workflow_call:
     inputs:
