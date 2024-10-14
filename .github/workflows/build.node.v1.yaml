@@ -52,6 +52,8 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
       - name: ⚙️ Setting docker auth
         run: gcloud auth configure-docker -q && gcloud auth configure-docker $(echo ${{inputs.APP_DOCKER_REPOSITORIES}}  | cut -d "/" -f 1) -q
+      - name: ⚙️ Set up Pnpm
+        uses: pnpm/action-setup@v2
       - name: ⚙️ Set up Nodejs
         uses: actions/setup-node@v4
         with:
