@@ -62,7 +62,7 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "pnpm"
       - name: ⚙️ Build Nodejs
-        run: pnpm ci && rm -rf ~/.netrc .env && cp ${{inputs.NODE_ENV_FILE_PATH}} .env && pnpm run ${{inputs.NODE_RUN_SCRIPT}}
+        run: pnpm i && rm -rf ~/.netrc .env && cp ${{inputs.NODE_ENV_FILE_PATH}} .env && pnpm run ${{inputs.NODE_RUN_SCRIPT}}
       - name: ⛴ Set up Docker QEMU
         uses: docker/setup-qemu-action@v3
       - name: ⛴ Set up Docker Buildx
