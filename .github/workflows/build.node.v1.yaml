@@ -44,6 +44,11 @@ jobs:
         run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         env:
           GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
+      - name: Authenticate with GitHub package registry
+        run: |
+          rm -rf .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.CI_TOKEN }}" >> .npmrc 
+          echo "@lctech-tw:registry=https://npm.pkg.github.com/" >> .npmrc
       - name: ⚙️ Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -62,7 +67,7 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "pnpm"
       - name: ⚙️ Build Nodejs
-        run: pnpm i && rm -rf ~/.netrc .env && cp ${{inputs.NODE_ENV_FILE_PATH}} .env && pnpm run ${{inputs.NODE_RUN_SCRIPT}}
+        run: pnpm i && rm -rf ~/.netrc .npmrc && pnpm run ${{inputs.NODE_RUN_SCRIPT}}
       - name: ⛴ Set up Docker QEMU
         uses: docker/setup-qemu-action@v3
       - name: ⛴ Set up Docker Buildx
