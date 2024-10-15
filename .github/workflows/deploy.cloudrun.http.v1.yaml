@@ -57,7 +57,7 @@ jobs:
           credentials_json: ${{secrets.GCP_SA_KEY_GITHUB_CI}}
       - name: ⚙️ Initialize Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
-      - name: Deploy
+      - name: 🌤️ Deploy
         run: |
           echo "@ deploy : ${{inputs.GCP_PROJECT}} -> ${{inputs.GCP_CLOUD_RUN_NAME}} -> ${{inputs.ZMODE}}"
           if [ ${{inputs.GCP_CLOUD_RUN_CONFIG_FILE_PATH}} != "" ];then
