@@ -9,7 +9,7 @@ function clean {
 # build protoc
 function build {
     clean
-    mkdir -p ./external ./dist/external ./dist/go ./temp_proto/go ./dist/js ./dist/php ./dist/ruby ./dist/swift ./dist/docs ./dist/node ./dist/python ./dist/csharp
+    mkdir -p ./external ./dist/external ./dist/go ./temp_proto/go ./dist/js ./dist/php ./dist/ruby ./dist/swift ./dist/docs ./dist/node ./dist/python ./dist/csharp ./dist/java
     
     ls -lha
 
@@ -49,6 +49,13 @@ function build {
         protoc -I=src/ -I=/opt/include "${proto}" \
             -I=external/ \
             --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:./dist/js/
+    done
+
+    echo "🔥 ----- java -----"
+    for proto in $proto_files; do
+        protoc -I=src/ -I=/opt/include "${proto}" \
+            -I=external/ \
+            --java_out=./dist/java/
     done
 
     echo "🔥 ----- php -----"
