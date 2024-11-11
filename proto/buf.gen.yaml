@@ -44,6 +44,12 @@ plugins:
   # - remote: buf.build/protocolbuffers/csharp
   #   out: dist/csharp
 
+  #! JAVA
+  - remote: buf.build/protocolbuffers/java
+    out: dist/java
+  - remote: buf.build/bufbuild/validate-java
+    out: dist/java
+
   #! RUBY
   - remote: buf.build/grpc/ruby
     out: dist/ruby
