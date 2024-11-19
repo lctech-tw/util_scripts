@@ -15,7 +15,7 @@ on:
         description: "Pre test script path"
         required: false
         type: string
-        default: "${{ github.workspace }}/.github/testing"
+        default: "./.github/testing"
       PRE_TEST_SCRIPT_FILE:
         description: "Pre test script file"
         required: false
