@@ -70,6 +70,5 @@ jobs:
       - name: ⚙️ Build Golang
         run: |
           cd ${{inputs.GO_BUILD_PATH}} && go build . && cd -
-          cp local.env .env
           go mod vendor
           go test -v ./...
