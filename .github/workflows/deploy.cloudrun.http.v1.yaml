@@ -27,7 +27,7 @@ on:
         description: "GCP cloudrun zone"
         required: true
         type: string
-      GCP_CLOUD_RUN_PROT:
+      GCP_CLOUD_RUN_PORT:
         required: false
         type: string
         default: "8080"
@@ -68,7 +68,7 @@ jobs:
               --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}}" \
               --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
               --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
-              --port "${{inputs.GCP_CLOUD_RUN_PROT}}" \
+              --port "${{inputs.GCP_CLOUD_RUN_PORT}}" \
               --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
               --ingress internal-and-cloud-load-balancing \
               --env-vars-file ${{inputs.GCP_CLOUD_RUN_CONFIG_FILE_PATH}}/${{inputs.ZMODE}}.yaml
@@ -80,7 +80,7 @@ jobs:
               --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}}" \
               --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
               --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
-              --port "${{inputs.GCP_CLOUD_RUN_PROT}}" \
+              --port "${{inputs.GCP_CLOUD_RUN_PORT}}" \
               --ingress internal-and-cloud-load-balancing \
               --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}"
             fi
