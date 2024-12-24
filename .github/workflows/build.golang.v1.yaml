@@ -91,4 +91,4 @@ jobs:
             ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}}
           build-args: |
             SERVER_NAME=${{inputs.SERVER_NAME}}
-            GITHUB_REF_NAME=${GITHUB_SHA:0:7}
+            GITHUB_REF_NAME=${{github.sha}}
