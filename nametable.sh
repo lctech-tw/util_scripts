@@ -1,9 +1,10 @@
 #!/bin/bash
 
+# 初始化變數
 NAME=""
 SLACKNAME=""
 
-#* help
+# 顯示說明
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
   cat >&2 <<"EOF"
 Description:
@@ -16,6 +17,7 @@ EOF
   exit 1
 fi
 
+# 檢查輸入參數
 if [ "$1" == "" ]; then
   echo " nil , use --help "
   exit 0
@@ -23,97 +25,45 @@ else
   NAME=$1
 fi
 
-# remove 開頭 & 結尾 lctech
-[[ "$1" =~ ^lctech- ]] && SLACKNAME="${NAME/lctech-/}"
-[[ "$1" =~ -lctech ]] && SLACKNAME="${NAME/-lctech/}"
+# 建立 GitHub 名稱到 Slack 名稱的關聯陣列
+NAME_TO_SLACK=(
+  ["Jordan-lctech"]="jordan"
+  ["TreeTzeng"]="U017BFMBZLZ"
+  ["lctech-kin"]="U06AJTT83QS"
+  ["lctech-adam"]="U06T71UMKTL"
+  ["lctech-LeoLioa"]="U0642V9DDMX"
+  ["lctech-stark"]="U069A9CHNTY"
+  ["lctech-sid"]="U07A8E61S4E"
+  ["lctech-Eddy"]="U03AGHT28BZ"
+  ["lctech-erin"]="U03AX65UFH8"
+  ["allisonkuooo"]="U9GLLPYHY"
+  ["Jacky-lctech"]="U03JC9FEXLK"
+  ["lctechArlen"]="U042N9T0G1G"
+  ["freddie9527"]="freddie9527"
+  ["lctech-Arthur"]="U03E4MY00MD"
+  ["lctech-Marc"]="U03E1TAKSMP"
+  ["lctech-Leo"]="U03AGHT74KZ"
+  ["lctech-coco"]="U03EGCNMBDK"
+  ["irir"]="U2BCVHVLG"
+  ["lctech-daniel-hung"]="U04RP3AV02Z"
+  ["Ninja"]="jenkins"
+  ["Jenkins"]="jenkins"
+  ["james-lin00"]="james"
+  ["lct-ponywu"]="ponywu"
+  ["miko0628"]="miko"
+  ["sheepLctech"]="sheep"
+  ["benbenyo"]="U023H76SW2X"
+  ["lctech-Neil"]="U02BSH1Q3FY"
+)
 
-case $NAME in
-Jordan-lctech)
-  SLACKNAME="jordan"
-  ;;
-TreeTzeng)
-  SLACKNAME="U017BFMBZLZ"
-  ;;
-lctech-kin)
-  SLACKNAME="U06AJTT83QS"
-  ;;
-lctech-adam)
-  SLACKNAME="U06T71UMKTL"
-  ;;
-lctech-LeoLioa)
-  SLACKNAME="U0642V9DDMX"
-  ;;
-lctech-stark)
-  SLACKNAME="U069A9CHNTY"
-  ;;
-lctech-sid)
-  SLACKNAME="U07A8E61S4E"
-  ;;
-lctech-Eddy)
-  SLACKNAME="U03AGHT28BZ"
-  ;;
-lctech-erin)
-  SLACKNAME="U03AX65UFH8"
-  ;;
-allisonkuooo)
-  SLACKNAME="U9GLLPYHY"
-  ;;
-Jacky-lctech)
-  SLACKNAME="U03JC9FEXLK"
-  ;;
-lctechArlen)
-  SLACKNAME="U042N9T0G1G"
-  ;;
-freddie9527)
-  SLACKNAME="freddie9527"
-  ;;
-lctech-Arthur)
-  SLACKNAME="U03E4MY00MD"
-  ;;
-lctech-Marc)
-  SLACKNAME="U03E1TAKSMP"
-  ;;
-lctech-Leo)
-  SLACKNAME="U03AGHT74KZ"
-  ;;
-lctech-coco)
-  SLACKNAME="U03EGCNMBDK"
-  ;;
-irir)
-  SLACKNAME="U2BCVHVLG"
-  ;;
-lctech-daniel-hung)
-  SLACKNAME="U04RP3AV02Z"
-  ;;
-Ninja)
-  SLACKNAME="jenkins"
-  ;;
-Jenkins)
-  SLACKNAME="jenkins"
-  ;;
-james-lin00)
-  SLACKNAME="james"
-  ;;
-lct-ponywu)
-  SLACKNAME="ponywu"
-  ;;
-miko0628)
-  SLACKNAME="miko"
-  ;;
-sheepLctech)
-  SLACKNAME="sheep"
-  ;;
-benbenyo)
-  SLACKNAME="U023H76SW2X"
-  ;;
-lctech-Neil)
-  SLACKNAME="U02BSH1Q3FY"
-  ;;
-esac
-
-if [ "$SLACKNAME" == "" ]; then
-  echo "$NAME is not found"
-  exit 0
+# 根據輸入的 GitHub 名稱查找 Slack 名稱
+if [[ "$NAME" =~ ^lctech-(.*) ]]; then
+  # 如果 GitHub 名稱以 "lctech-" 開頭
+  SLACKNAME="${NAME_TO_SLACK[lctech-${BASH_REMATCH[1]}]}"
+elif [[ "$NAME" =~ (.*)-lctech ]]; then
+  # 如果 GitHub 名稱以 "-lctech" 結尾
+  SLACKNAME="${NAME_TO_SLACK[${BASH_REMATCH[1]}-lctech]}"
 else
-  echo "$SLACKNAME"
+  # 如果 GitHub 名稱直接存在於關聯陣列中
+  SLACKNAME="${NAME_TO_SLACK[$NAME]}"
 fi
