@@ -84,7 +84,7 @@ else
 
     # remove TOC
     curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/delete_toc.sh"
-    docker run  -it --rm -v "$(pwd)":/workdir  --workdir /workdir alpine:latest sh delete_toc.sh 
+    docker run  --rm -v "$(pwd)":/workdir  --workdir /workdir alpine:latest sh delete_toc.sh 
 
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml buf.lock
     # Modufy golang path
