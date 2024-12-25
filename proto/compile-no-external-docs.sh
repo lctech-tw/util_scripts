@@ -76,11 +76,15 @@ else
         curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/buf.gen.yaml"
     fi
     mkdir dist
-    # # Copy external proto files to src/external
-    # if [ -d "../external" ]; then
-    #     rsync -av ../external/ ./
-    # fi
+    # Copy external proto files to src/external
+    if [ -d "../external" ]; then
+        rsync -av ../external/ ./
+    fi
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
+
+    # remove TOC
+    curl -sL "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/delete_toc.sh" | bash
+
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml buf.lock
     # Modufy golang path
     sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/ 
