@@ -20,6 +20,7 @@ find ./dist -type f -name "*.md" | while IFS= read -r file; do
 
     # 使用 sed 刪除兩個 <a> 標籤之間的行
     sed -i "${first_a_line},${second_a_line}d" "$file"
+    sed -i 's/<a name=/<a id=/g' "$file"
     echo "Tables removed from: $file"
 
 done
