@@ -25,7 +25,7 @@ function _download_github_proto_folder() {
     git config core.sparseCheckout true
     echo "/src/*" >.git/info/sparse-checkout
     #* push master / main
-    git pull origin master || git pull origin main
+    git pull origin master --ff-only || git pull origin main --ff-only
     #* copy git repo to external folder
     rm -rf ../"$GITHUB_PROTO/"
     cp -r ../tmp_"$GITHUB_PROTO"/src/* ../
