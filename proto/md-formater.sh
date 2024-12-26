@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# 刪除所有 .md 文件中的 Markdown 表格
+# 刪除所有 .md 文件中的 Markdown Tables of Contents
+# replace "<a name" with "<a id"
+# Add header lines 
 
 # 遍歷所有 .md 文件
 find ./dist -type f -name "*.md" | while IFS= read -r file; do
@@ -20,9 +22,15 @@ find ./dist -type f -name "*.md" | while IFS= read -r file; do
 
     # 使用 sed 刪除兩個 <a> 標籤之間的行
     sed -i "${first_a_line},${second_a_line}d" "$file"
-    sed -i 's/<a name=/<a id=/g' "$file"
     echo "Tables removed from: $file"
+
+    # replace "<a name" with "<a id"
+    sed -i 's/<a name=/<a id=/g' "$file"
+    echo "replace <a name with <a id"
+
+    # Add header lines 
+    sed -i '1i---\noutline: deep\n---' "$file"
 
 done
 
-echo "✅ All Markdown tables have been removed!"
+echo "✅ All Markdown TOC have been removed!"
