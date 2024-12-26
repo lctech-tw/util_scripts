@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 #* Before the event: Need login gcloud service account
 
