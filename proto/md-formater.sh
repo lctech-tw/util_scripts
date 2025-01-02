@@ -1,26 +1,25 @@
 #!/bin/bash
 
-# 刪除所有 .md 文件中的 Markdown Tables of Contents
-# replace "<a name" with "<a id"
+# Remove all Markdown Tables of Contents from .md files
+# Replace "<a name" with "<a id"
 # Add header lines 
 
-# 遍歷所有 .md 文件
-find ./dist -type f -name "*.md" | while IFS= read -r file; do
+process_file() {
+    local file=$1
     echo "Processing: $file"
 
-    # 找到第一個 <a> 標籤的行數
-    first_a_line=$(grep -n '<a' "$file" | head -n 1 | cut -d: -f1)
+    # Find the line number of the first <a> tag
+    local first_a_line=$(grep -n '<a' "$file" | head -n 1 | cut -d: -f1)
+    # Find the line number of the second <a> tag
+    local second_a_line=$(grep -n '<a' "$file" | sed -n '2p' | cut -d: -f1)
 
-    # 找到第二個 <a> 標籤的行數
-    second_a_line=$(grep -n '<a' "$file" | sed -n '2p' | cut -d: -f1)
-
-    # 確認兩個 <a> 標籤的行數是否有效
+    # Check if both <a> tag line numbers are valid
     if [ -z "$first_a_line" ] || [ -z "$second_a_line" ]; then
-    echo "未找到兩個 <a> 標籤"
-    exit 1
+        echo "Two <a> tags not found"
+        return 1
     fi
 
-    # 使用 sed 刪除兩個 <a> 標籤之間的行
+    # Use sed to delete lines between the two <a> tags
     sed -i "${first_a_line},${second_a_line}d" "$file"
     echo "Tables removed from: $file"
 
@@ -28,14 +27,23 @@ find ./dist -type f -name "*.md" | while IFS= read -r file; do
     sed -i '/<a href="#top">Top<\/a>/d' "$file"
     echo "Removed <a href=\"#top\">Top</a> from: $file"
 
-    # replace "<a name" with "<a id"
-    sed -i 's/<a name=/<a id=/g' "$file"
-    echo "replace <a name with <a id"
+    # Replace # Protocol Documentation
+    local project_name=$(basename "$(git rev-parse --show-toplevel)")
+    sed -i "s/# Protocol Documentation/# $project_name/g" "$file"
+    echo "Replace # Protocol Documentation with # $project_name"
 
-    # Add header lines 
+    # Replace "<a name" with "<a id"
+    sed -i 's/<a name=/<a id=/g' "$file"
+    echo "Replace <a name with <a id"
+
+    # Add header lines
     sed -i '1i---\noutline: deep\n---' "$file"
     echo "Add header lines to: $file"
+}
 
+# Iterate over all .md files
+find ./dist -type f -name "*.md" | while IFS= read -r file; do
+    process_file "$file"
 done
 
 echo "✅ All Markdown TOC have been removed!"
