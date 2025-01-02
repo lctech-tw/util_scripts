@@ -24,6 +24,10 @@ find ./dist -type f -name "*.md" | while IFS= read -r file; do
     sed -i "${first_a_line},${second_a_line}d" "$file"
     echo "Tables removed from: $file"
 
+    # Remove <a href="#top">Top</a>
+    sed -i '/<a href="#top">Top<\/a>/d' "$file"
+    echo "Removed <a href=\"#top\">Top</a> from: $file"
+
     # replace "<a name" with "<a id"
     sed -i 's/<a name=/<a id=/g' "$file"
     echo "replace <a name with <a id"
