@@ -16,9 +16,9 @@ _download_doc() {
         echo "$line"
         FILENAME=$(echo "$line" | awk -F'/' '{print $NF}')
         git clone "https://github.com/$line.git" --depth 1 tmp/"$FILENAME" || echo "Failed to clone $line"
-        cp tmp/"$FILENAME"/README.md "$FOLDER_PATHS"/"$FILENAME".md || echo "Failed to copy README.md"
+        sudo cp tmp/"$FILENAME"/README.md "$FOLDER_PATHS"/"$FILENAME".md || echo "Failed to copy README.md"
     done
-    rm -rf tmp
+    sudo rm -rf tmp
 }
 
 if [ -f proto-docs.config ]; then
