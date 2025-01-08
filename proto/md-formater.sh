@@ -13,7 +13,7 @@ log_info() {
 # 🎨 Log function for errors
 log_error() {
     echo -e "\033[31m[ERROR] $1\033[0m"
-    exit 1
+    # exit 1
 }
 
 # 🚀 Function to update patch version

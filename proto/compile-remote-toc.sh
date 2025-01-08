@@ -83,11 +83,6 @@ else
     fi
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
 
-    # remove TOC
-    FORMATER="md-formater.sh"
-    curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/$FORMATER"
-    docker run  --rm -v "$(pwd)":/workdir  --workdir /workdir alpine:latest sh "$FORMATER"
-
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml buf.lock
     # Modufy golang path
     sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/ 
@@ -98,6 +93,11 @@ else
     sudo rm -rf ../dist/go/github.com/*
     # Restore original src
     cd .. && rm -rf src && mv tmp_src src
+
+    # remove TOC
+    FORMATER="md-formater.sh"
+    curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/$FORMATER"
+    sudo bash "$FORMATER"
 fi
 
 echo "@ Done 🎉🎉🎉"
