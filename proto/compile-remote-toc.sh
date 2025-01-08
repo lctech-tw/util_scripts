@@ -83,6 +83,11 @@ else
     fi
     docker run --volume "$(pwd):/workspace" --workdir /workspace bufbuild/buf generate
 
+    # remove TOC
+    FORMATER="md-formater.sh"
+    curl -sLJO "https://raw.githubusercontent.com/lctech-tw/util_scripts/main/proto/$FORMATER"
+    docker run  --rm -v "$(pwd)":/workdir  --workdir /workdir bash:5.2 bash "$FORMATER"
+
     mv dist ../dist && rm -rf buf.yaml buf.gen.yaml buf.lock
     # Modufy golang path
     sudo mv ../dist/go/github.com/"$GITHUB_REPOSITORY"/dist/go/* ../dist/go/ 

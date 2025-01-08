@@ -7,10 +7,8 @@
 #* Need gcp auth
 
 #* declare
-# check is GITHUB_ACTIONS
-declare GITHUB_ACTIONS_MODE=true
 # func 0 -> Nothing / 1 -> Do / < 1 -> close
-declare MODECOUNT=0
+declare MODE_COUNT=0
 # test mode
 declare TEST_MODE=false
 # msg tag user
@@ -21,8 +19,6 @@ declare ICON=""
 declare CI_SERVER_NAME="GitHub Actions"
 # setting PROJECT
 declare PROJECT=""
-# setting PRECI
-declare PRECI="false"
 
 #declare "${varia2ble:-10}"
 
@@ -30,36 +26,37 @@ declare PRECI="false"
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
   cat >&2 <<"EOF"
 Description:
-  由原本 jenkins tesk3.sh 調整
+  此腳本用於根據各種條件和模式向 Slack 和 Google Chat 發送通知。
+  最初改編自 Jenkins tesk3.sh 腳本。
 USAGE:
-  SHELL.sh [-acfgpqstux] 
-  @ Mode (only)
-    - a , --ab      AB test mode
-    - s , --secc    succ mode
-    - f , --fail    fail mode
-    - c , --check   check mode
-    - q , --quiet   quiet mode
-  @ Project 
-    - p , --project projectname
-  @ Debug use
-    - t , --test    test mode
-    - x , --x bool  [true] github mode
-  @ Env setting
-    - u , --url     use URL     ( Ex: -u=URL )
-  @ Slack Post Setting
-    - g , --group   post group  ( Ex: -g=jvid )
-          --tag     TAG who  ( Ex: --tag='<!channel> <!here> <@zeki>' )
-  @ Pre-CI
-    --pre-ci
-  @ Arg  
-    --aburl         $AB_LINK   = A/B test's link
-    --abheader      $AB_HEADER = A/B test's header
+  shell.sh [-acfgpqstux] 
+  - REQUIRED:
+    @ Mode (only one mode can be selected at a time) (一次只能選擇一種模式)
+      - a , --ab      AB test mode
+      - s , --seccess    Success mode
+      - f , --fail    Failure mode
+      - c , --check   Check mode
+      - q , --quiet   Quiet mode (No notifications)
+  - OPTIONAL:
+    @ Project 
+      - p , --project Setting project name (Specify the project name)
+    @ Debug use
+      - t , --test    Test mode (mock data for testing)
+      - x , --x bool  [true] GitHub Actions mode
+    @ Env setting
+      - u , --url     Specify a URL (e.g., -u=URL)
+    @ Slack Post Setting
+      - g , --group   Specify the Slack group to post to (e.g., -g=jvid)
+            --tag     Tag users in the Slack message (e.g., --tag='<!channel> <!here> <@zeki>')
+    @ Arg  
+      --aburl         $AB_LINK   = A/B test's link
+      --abheader      $AB_HEADER = A/B test's header
 EXAMPLE:
-  [github action]
+  [GitHub Actions]
     SHELL.sh -s
-  [jenkins,other]
+  [Jenkins, other CI Env]
     SHELL.sh -s -x -p=jkforum
-  [test]
+  [Test]
     SHELL.sh -t -x -u="https://google.com" -s --tag='<@zeki>' -p="projectＡ"
 
 EOF
@@ -82,9 +79,6 @@ for i in "$@"; do
   -p=* | --project=*)
     PROJECT="${i#*=}"
     ;;
-  --pre-ci)
-    PRECI="true"
-    ;;
   -t | --test)
     # mock testing
     TEST_MODE=true
@@ -97,17 +91,17 @@ for i in "$@"; do
     AB_LINK="https://ablink.net"
     AB_HEADER="teststest"
     ;;
-  -s | --secc)
+  -s | --seccess)
     mode="s"
-    MODECOUNT=$((MODECOUNT + 1))
+    MODE_COUNT=$((MODE_COUNT + 1))
     ;;
   -f | --fail)
     mode="f"
-    MODECOUNT=$((MODECOUNT + 1))
+    MODE_COUNT=$((MODE_COUNT + 1))
     ;;
   -a | --ab)
     mode="a"
-    MODECOUNT=$((MODECOUNT + 1))
+    MODE_COUNT=$((MODE_COUNT + 1))
     ;;
   --aburl=*)
     AB_LINK="${i#*=}"
@@ -116,13 +110,12 @@ for i in "$@"; do
     AB_HEADER="${i#*=}"
     ;;
   -c | --check)
-    MODECOUNT=$((MODECOUNT + 1))
+    MODE_COUNT=$((MODE_COUNT + 1))
     ;;
   -q | --quiet)
     mode="q"
-    MODECOUNT=$((MODECOUNT + 1))
-    echo "88"
-    exit 0
+    MODE_COUNT=$((MODE_COUNT + 1))
+    echo "Disable" && exit 0
     ;;
   --tag=*)
     TAG="${i#*=}"
@@ -134,61 +127,59 @@ for i in "$@"; do
 done
 
 #* 檢查 MODE 變數
-if [ $MODECOUNT -gt 1 ]; then
-  echo "@ ERROR - You enter mode the wrong "
-  echo "@ MODECOUNT -> $MODECOUNT"
-  exit 1
+if [ $MODE_COUNT -gt 1 ]; then
+  echo "@ ERROR - You have entered multiple modes"
+  echo "@ 錯誤 - 您輸入了多個模式"
+  echo "@ MODE_COUNT -> $MODE_COUNT" && exit 1
 fi
 
 #* 假日不發通知 by@lctech-zeki
 if [ "$(date +%u)" -gt 5 ] && [ "${GITHUB_ACTOR}" == "lctech-zeki" ]; then
-  echo "@ Skip notify because it's weekend"
+  echo "@ Skip notify because it's weekend !"
   exit 0
 fi
 
 #* 檢查 GITHUB ACTION & 獲取 URL
-if "$GITHUB_ACTIONS_MODE"; then
-  if [ -z ${GITHUB_ACTIONS+x} ]; then
-    echo "🐥 Not from github action"
-    exit 1
+if [ -z ${GITHUB_ACTIONS+x} ]; then
+  echo "🐥 Not from GitHub Actions" && exit 1
+else
+  if $TEST_MODE; then
+    echo "@ TEST"
+    GITHUB_ACTOR="lctech-zeki"
+    # SLACK_URL=""
   else
-    if $TEST_MODE; then
-      echo "@ TEST"
-      GITHUB_ACTOR="lctech-zeki"
-      # SLACK_URL=""
-    else
-      # url -> gcp / secrets
-      # google chat url
-      CHAT_URL=$(gcloud secrets versions access latest --secret=cicd_chat_url --project=jkf-servers)
-      # slack url
-      case $SLACK_GROUP in
-      avplus|rdc02)
-        echo "@ SLACK_GROUP -> rdc02"
-        SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_rdc02-cicd --project=jkf-servers)
-        ICON=":github:"
-        ERROR_USER='freddie9527'
-        ;;
-      jvid|rdc03)
-        echo "@ SLACK_GROUP -> jvid"
-        SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_jvid-cicd --project=jkf-servers)
-        ICON=":jvid-rd:"
-        ERROR_USER=''
-        ;;
-      jkface|rdc04)
-        echo "@ SLACK_GROUP -> jkface"
-        SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_txg-cicd --project=jkf-servers)
-        ICON=":hehe:"
-        ERROR_USER='ray'
-        ;;
-      *)
-        echo "@ SLACK_GROUP -> default"
-        SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
-        ERROR_USER='zeki'
-        ;;
-      esac
-    fi
+    # url -> gcp / secrets
+    # google chat url
+    CHAT_URL=$(gcloud secrets versions access latest --secret=cicd_chat_url --project=jkf-servers)
+    # slack url
+    case $SLACK_GROUP in
+    avplus|rdc02)
+      echo "@ SLACK_GROUP -> rdc02"
+      SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_rdc02-cicd --project=jkf-servers)
+      ICON=":github:"
+      ERROR_USER='freddie9527'
+      ;;
+    jvid|rdc03)
+      echo "@ SLACK_GROUP -> jvid"
+      SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_jvid-cicd --project=jkf-servers)
+      ICON=":jvid-rd:"
+      ERROR_USER=''
+      ;;
+    jkface|rdc04)
+      echo "@ SLACK_GROUP -> jkface"
+      SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_txg-cicd --project=jkf-servers)
+      ICON=":hehe:"
+      ERROR_USER='ray'
+      ;;
+    *)
+      echo "@ SLACK_GROUP -> default"
+      SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
+      ERROR_USER='zeki'
+      ;;
+    esac
   fi
 fi
+
 
 #* 檢查 EVENT MODE ( Use .git info )
 if [ "${GITHUB_EVENT_NAME:-"not-github"}" == 'pull_request' ]; then
@@ -308,194 +299,3 @@ c)
 esac
 fi
 
-function _postline {
-    if [ "$1" == "pre-ci" ]; then
-      local LINE_ALTTEXT="重要通知 - 即將更新版本"
-      local LINE_COLOR="#B5B5B5"
-      local LINE_MSG="${PROJECT:-${PWD##*/}}即將更新版本"
-    elif [ "$1" == "end-ci" ]; then
-      local LINE_ALTTEXT="重要通知 - 版本更新完成"
-      local LINE_COLOR="#CCAFAF"
-      local LINE_MSG="${PROJECT:-${PWD##*/}}新版本更新完成上線"
-    fi
-    echo "$LINE_MSG ,$GITMSG, ${GITMSG_BODY:-nil}, ${GITHUB_REPOSITORY:-nil}"
-    curl -X POST https://api.line.me/v2/bot/message/push \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer { '"$LINE_TOKEN"' }' \
-      -d '{
-    "to": "C5326151f5088938355140be7f339f5c8",
-    "messages":[
-        {
-            "type": "flex",
-            "altText": "'"$LINE_ALTTEXT"'",
-            "contents":  {
-                "type": "bubble",
-                "header": {
-                  "type": "box",
-                  "layout": "horizontal",
-                  "contents": [
-                    {
-                      "type": "text",
-                      "text": "產品更新",
-                      "margin": "md",
-                      "size": "md",
-                      "color": "#240407",
-                      "weight": "bold",
-                      "gravity": "center"
-                    },
-                    {
-                      "type": "image",
-                      "url": "https://www.jkf.net/images/jkflogo.png",
-                      "size": "xxs",
-                      "align": "end",
-                      "offsetBottom": "xs"
-                    }
-                  ],
-                  "paddingBottom": "sm",
-                  "paddingTop": "sm"
-                },
-                "body": {
-                  "type": "box",
-                  "layout": "vertical",
-                  "contents": [
-                    {
-                      "type": "text",
-                      "text": "重要通知",
-                      "color": "#E63946",
-                      "weight": "bold",
-                      "margin": "md"
-                    },
-                    {
-                      "type": "text",
-                      "text": "'"$LINE_MSG"'",
-                      "weight": "regular",
-                      "size": "lg",
-                      "margin": "xs",
-                      "wrap": true
-                    },
-                    {
-                      "type": "text",
-                      "text": "相關資訊標題",
-                      "weight": "bold",
-                      "color": "#E63946",
-                      "margin": "md"
-                    },
-                    {
-                      "type": "text",
-                      "text": "'"$GITMSG"'",
-                      "wrap": true
-                    },
-                    {
-                      "type": "text",
-                      "text": "相關資訊細節",
-                      "weight": "bold",
-                      "color": "#E63946",
-                      "margin": "md"
-                    },
-                    {
-                      "type": "text",
-                      "text": "'"$GITMSG_BODY"'",
-                      "wrap": true
-                    },
-                    {
-                      "type": "text",
-                      "text": "'"$GITHUB_REPOSITORY"'",
-                      "size": "xs",
-                      "color": "#aaaaaa",
-                      "wrap": true,
-                      "margin": "sm"
-                    }
-                  ],
-                  "paddingTop": "sm",
-                  "paddingBottom": "lg"
-                },
-                "size": "mega",
-                "styles": {
-                  "header": {
-                    "backgroundColor": "'"$LINE_COLOR"'"
-                  },
-                  "body": {
-                    "backgroundColor": "#FFFCFC"
-                  },
-                  "footer": {
-                    "separator": true
-                  }
-                }
-              }
-        }
-      ]
-  }'
-}
-
-#* 關閉功能 / Notify to Line (Only main/master branch)
-# LINE_TOKEN=$(gcloud secrets versions access latest --secret=line_token --project=jkf-servers)
-#* json Line post PRE CC  營運 / 客服
-if [ $PRECI == "true" ] ;then 
-  if  [ "$BRANCH_NAME" == "main" ]||[ "$BRANCH_NAME" == "master" ] ; then
-    # 通告營運相關所有人員
-    echo "@ Call lin pre-ci"
-    # _postline pre-ci
-    exit 0
-  fi
-fi
-#* json Line post END CC 營運 / 客服
-if [ "$mode" == "s" ] && [[ $GITHUB_REPOSITORY =~ "proto" ]] ; then
-  echo "@ proto pass~~"
-  exit 0
-fi
-if [ "$mode" == "s" ] && [ "$BRANCH_NAME" == "master" ] ; then
-  echo "@ Call line end-ci"
-  # _postline end-ci
-fi
-if [ "$mode" == "s" ] && [ "$BRANCH_NAME" == "main" ] ; then
-  echo "@ Call line end-ci"
-  # _postline end-ci
-fi
-
-#* -Note--------------------------------------------------------------------
-
-#* TEMPLATE (https://api.slack.com/docs/messages/builder?msg=%7B%22text%22%3A%22I%20am%20a%20test%20message%22%2C%22attachments%22%3A%5B%7B%22text%22%3A%22And%20here%E2%80%99s%20an%20attachment!%22%7D%5D%7D)
-# {
-#     "attachments": [
-#         {
-#             "color": "#36a64f",
-#             "pretext": "[Github Action]\n $BRANCH_NAME / $GITHUB_EVENT_NAME ",
-#             "author_name": "$GITHUB_ACTOR",
-#             "title": "$GITHUB_REPOSITORY",
-#             "title_link": "https://github.com/$GITHUB_REPOSITORY",
-#             "text": "$GITHUB_WORKFLOW / $GITHUB_JOB"
-#         },
-# 		{
-# 		 "color": "#FFBB77",
-# 		 "pretext": "AB Test",
-# 		 "title": " A/B WEB-Link",
-# 		 "title_link": "$AB_LINK",
-# 		 "text": "Inspect Header: $AB_HEADER"
-# 		}
-#     ]
-# }
-#? # GA button
-# {
-#     "attachments": [
-#         {
-#             "color": "#0B6FFF",
-#             "pretext": "[Github Action]\n $BRANCH_NAME / $GITHUB_EVENT_NAME ",
-#             "callback_id": "confirmaction",
-# 			      "text": "Are you sure to confirm deployment to GA?",
-#             "attachment_type": "default",
-#             "actions": [
-# 			        {"name": "reject", "text": "Reject", "type": "button", "style": "danger", "value": "rejectaction"},
-# 		        	{"name": "ga", "text": "GA", "type": "button", "style": "primary", "value": "confirmaction"}
-#             ]
-#         }
-#     ]
-# }
-#? # URL
-# {
-#             "text": "URL : $URL"
-# }
-
-#* ORIGN SHELL
-# curl -X POST -H 'Content-type: application/json' \
-# --data '{"text": "Pipeline has passed.","attachments": [{"text": "Node: '"${NODE_NAME}"'"},{"text": "User: '"${CHANGED_BY_AUTHOR}"'"},{"text": "Version: '"${CODE_VERSION}"'"},{"text": "Inspect Header: '"${AB_VAR_NAME}=${AB_VAR_VALUE}"'"},{"text": "URL: '"${SVC_URL}"'"}]}' \
-# $SLACK_URL

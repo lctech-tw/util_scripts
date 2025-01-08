@@ -18,7 +18,7 @@ log_error() {
 
 # 🚀 Function to update patch version
 update_patch_version() {
-    package_json="package.json"
+    package_json="../package.json"
     
     # Check if package.json exists
     if [ ! -f "$package_json" ]; then
