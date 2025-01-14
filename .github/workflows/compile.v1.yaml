@@ -25,11 +25,6 @@ jobs:
         version: ${{ steps.version_updater.outputs.TAG_VERSION }}
         args-md-formatter: ${{ inputs.args-md-formatter }}
 
-    - name: <GoLang> Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '^1.18.0'
-
     - name: <GoLang> Check go.mod
       run: |
         # Create go.mod if it doesn't exist
@@ -37,12 +32,7 @@ jobs:
             echo "Creating go.mod"
             go mod init github.com/"$GITHUB_REPOSITORY"
         fi
-
-    - name: <NPM> Set Up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
-
+        
     - name: <NPM> Authenticate with GitHub Package Registry
       run: |
         echo "@$GITHUB_REPOSITORY_OWNER=https://npm.pkg.github.com/$GITHUB_REPOSITORY_OWNER"
