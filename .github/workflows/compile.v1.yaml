@@ -11,10 +11,6 @@ on:
 jobs:
   compile:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'Initial commit') && !contains(github.event.head_commit.message, 'ci: ') "
-    permissions:
-      contents: write
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
