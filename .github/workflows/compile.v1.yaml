@@ -1,0 +1,67 @@
+name: compile.v1
+on:
+  workflow_call:
+    inputs:
+      args-md-formatter: 
+        description: "Optional: Use '--remove-toc' to remove table of contents from markdown"
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'Initial commit') && !contains(github.event.head_commit.message, 'ci: ') "
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Update Version
+      uses: lctech-andychuang/version-updater@v0
+      id: version_updater
+
+    - name: Generate Protobuf Code
+      uses: lctech-andychuang/protobuf-codegen-action@main
+      with:
+        version: ${{ steps.version_updater.outputs.TAG_VERSION }}
+        args-md-formatter: ${{ inputs.args-md-formatter }}
+
+    - name: <GoLang> Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '^1.18.0'
+
+    - name: <GoLang> Check go.mod
+      run: |
+        # Create go.mod if it doesn't exist
+        if [ ! -f go.mod ]; then
+            echo "Creating go.mod"
+            go mod init github.com/"$GITHUB_REPOSITORY"
+        fi
+
+    - name: <NPM> Set Up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: <NPM> Authenticate with GitHub Package Registry
+      run: |
+        echo "@$GITHUB_REPOSITORY_OWNER=https://npm.pkg.github.com/$GITHUB_REPOSITORY_OWNER"
+        echo "//npm.pkg.github.com:_authToken=${{ secrets.CI_TOKEN }}" >> .npmrc
+        echo "//npm.pkg.github.com/:_authToken=${{ secrets.CI_TOKEN }}" >> .npmrc
+        echo "@$GITHUB_REPOSITORY_OWNER=https://npm.pkg.github.com/$GITHUB_REPOSITORY_OWNER" >> .npmrc
+
+    - name: <NPM> Install & Publish Package
+      run: |
+        rm -f package-lock.json
+        npm install
+        npm publish
+
+    - name: Auto Commit Changes
+      uses: lctech-andychuang/git-auto-commit-action@v5
+      with:
+        tagging_message: "v${{ steps.version_updater.outputs.TAG_VERSION }}"
+        commit_message:  "Auto-Compile - ${{ github.event.head_commit.message }}"
