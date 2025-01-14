@@ -9,7 +9,7 @@ on:
       GROUP:
         default: "jkf"
         description: "Slack group name, can be [ jkf, jvid, jkface ]"
-        required: true
+        required: false
         type: string
 jobs:
   notify:
