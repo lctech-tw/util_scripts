@@ -2,10 +2,10 @@ name: compile.v1
 on:
   workflow_call:
     inputs:
-      args-md-formatter: 
-        description: "Optional: Use '--remove-toc' to remove table of contents from markdown"
+      stable-mode: 
+        description: "Optional: markdown format"
         required: false
-        default: ''
+        default: 'true'
         type: string
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       uses: lctech-andychuang/protobuf-codegen-action@main
       with:
         version: ${{ steps.version_updater.outputs.TAG_VERSION }}
-        args-md-formatter: ${{ inputs.args-md-formatter }}
+        stable-mode: ${{ github.event.inputs.stable-mode }}
 
     - name: <GoLang> Check go.mod
       run: |
