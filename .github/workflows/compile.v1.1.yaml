@@ -23,7 +23,7 @@ jobs:
       uses: lctech-andychuang/protobuf-codegen-action@main
       with:
         version: ${{ steps.version_updater.outputs.TAG_VERSION }}
-        stable-mode: "false"
+        stable-mode: ${{ inputs.stable-mode }}
 
     - name: <GoLang> Check go.mod
       run: |
