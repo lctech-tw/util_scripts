@@ -148,7 +148,6 @@ else
     GITHUB_ACTOR="lctech-zeki"
     # SLACK_URL=""
   else
-    echo "@ENV_TEST: $ENV_TEST"
     # url -> gcp / secrets
     # google chat url
     CHAT_URL=$(gcloud secrets versions access latest --secret=cicd_chat_url --project=jkf-servers)

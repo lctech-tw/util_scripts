@@ -31,6 +31,9 @@ case $NAME in
 Jordan-lctech)
   SLACKNAME="jordan"
   ;;
+andychuang)
+  SLACKNAME="U083FFBLPPE"
+  ;;
 TreeTzeng)
   SLACKNAME="U017BFMBZLZ"
   ;;
