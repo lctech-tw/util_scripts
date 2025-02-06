@@ -76,5 +76,5 @@ jobs:
     - name: Auto Commit Changes
       uses: lctech-andychuang/git-auto-commit-action@v5
       with:
-        tagging_message: "v${{ steps.version_updater.outputs.TAG_VERSION }}"
+        tagging_message: "v${{ env.TAG_VERSION }}"
         commit_message:  "Auto-Compile - ${{ github.event.head_commit.message }}"
