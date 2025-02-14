@@ -2,7 +2,11 @@ name: Cloud Deploy
 
 on:
   workflow_call:
-
+    secrets:
+      CI_TOKEN:
+        required: false
+      DCI_SCRIPT_TOKEN:
+        required: false
 jobs:
   deploy:
     permissions:
