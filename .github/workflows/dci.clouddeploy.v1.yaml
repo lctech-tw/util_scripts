@@ -5,8 +5,6 @@ on:
     secrets:
       CI_TOKEN:
         required: false
-      DCI_SCRIPT_TOKEN:
-        required: false
         
 jobs:
   deploy:
