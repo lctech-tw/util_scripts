@@ -47,7 +47,7 @@ jobs:
         _RenamePackage
 
     - name: Generate Protobuf Code
-      uses: lctech-andychuang/protobuf-codegen-action@main
+      uses: lctech-tw/protobuf-codegen-action@main
       with:
         version: ${{ env.TAG_VERSION }}
         stable-mode: 'false'
@@ -74,7 +74,7 @@ jobs:
         npm publish
 
     - name: Auto Commit Changes
-      uses: lctech-andychuang/git-auto-commit-action@v5
+      uses: lctech-tw/git-auto-commit-action@v5
       with:
         tagging_message: "v${{ env.TAG_VERSION }}"
         commit_message:  "Auto-Compile - ${{ github.event.head_commit.message }}"
