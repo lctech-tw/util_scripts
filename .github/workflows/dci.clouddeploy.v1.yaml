@@ -5,7 +5,7 @@ on:
     secrets:
       CI_TOKEN:
         required: false
-        
+
 jobs:
   deploy:
     permissions:
@@ -13,135 +13,15 @@ jobs:
         contents: read
 
     runs-on: ubuntu-latest
-    env:
-      BRANCH_NAME: ${{ github.ref_name }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - run: git config --global url."https://${{ secrets.CI_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
-      - name: Download Shellscripts
-        run: |
-          git clone --depth 1 https://github.com/lctech-tw/dci-action.git
-          mkdir -p ./.devops/
-          rsync -vrh dci-action/dci/* ./.devops/
-
-      - name: Set App Environment Variables
-        run: |
-
-          # Loop through all YAML files in the current directory
-          case "${BRANCH_NAME}" in
-            main)    export DEPLOY_TARGET="prod" ;;
-            develop) export DEPLOY_TARGET="beta" ;;
-            alpha)   export DEPLOY_TARGET="alpha" ;;
-          esac
-          echo "DEPLOY_TARGET=${DEPLOY_TARGET}" >> $GITHUB_ENV
-
-          # Process YAML files in both common and environment-specific directories
-          for DIR in ".devops/env" ".devops/${DEPLOY_TARGET}/env"; do
-            [ -d "$DIR" ] || continue  # Skip if directory doesn't exist
-            for FILE in "$DIR"/*.env.yaml; do
-              [ -f "$FILE" ] || continue  # Skip if no matching files exist
-              yq -r 'to_entries | map("echo \(.key)=\"\(.value | tostring)\" >> $GITHUB_ENV") | .[]' "$FILE" | bash
-            done
-          done
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - uses: lctech-tw/dci-action@v0
+        name: dci-action
         with:
-          go-version-file: 'go.mod'
-
-      - name: Build Go Project
-        run: |
-          GOWORK=off
-          go mod tidy
-          go mod vendor
-          cd ${PackageCmd}
-          go build -a -ldflags="-s -w" -o lcgoapp
-        shell: bash
-        env:
-          PackageCmd: "cmd/server"
-          GOPRIVATE: github.com/lctech-tw
-
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
-        with:
-          workload_identity_provider: '${{ vars.WIF_PROVIDER_NAME }}'
-          service_account: '${{ vars.SERVICE_ACCOUNT_EMAIL }}'
-
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
-
-      - name: Set GCP Environment Variables
-        run: |
-            PROJECT_NUMBER=$(gcloud projects list --filter="$(gcloud config get-value project)" --format="value(PROJECT_NUMBER)")
-            PROJECT_ID=$(gcloud projects list --filter="$(gcloud config get-value project)" --format="value(PROJECT_ID)")
-            _CONTAINER_IMAGE=asia-east1-docker.pkg.dev/$PROJECT_ID/cloud-run-artifacts/$REPO/$BRANCH_NAME-go:$COMMIT_SHA
-            _ENVOY_IMAGE=asia-east1-docker.pkg.dev/$PROJECT_ID/cloud-run-artifacts/$REPO/$BRANCH_NAME-envoy:$COMMIT_SHA
-
-            echo "PROJECT_NUMBER=$PROJECT_NUMBER" >> $GITHUB_ENV
-            echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
-            echo "_CONTAINER_IMAGE=$_CONTAINER_IMAGE" >> $GITHUB_ENV
-            echo "_ENVOY_IMAGE=$_ENVOY_IMAGE" >> $GITHUB_ENV
-        env:
-          REPO: ${{ github.event.repository.name }}
-          BRANCH_NAME: ${{ github.ref_name }}
-          COMMIT_SHA: ${{ github.sha }}
-
-      - name: "Docker auth"
-        run: |-
-            gcloud auth configure-docker asia-east1-docker.pkg.dev --quiet
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and Push Go Image
-        run: |
-          echo ${DEPLOY_TARGET} ${BRANCH_NAME} ${ContainerPort} ${RestPort} ${PackageCmd}
-          docker build \
-              --build-arg BUILD_MODE=${DEPLOY_TARGET} \
-              --build-arg BRANCH_NAME=${BRANCH_NAME} \
-              --build-arg ContainerPort=${ContainerPort} \
-              --build-arg RestPort=${RestPort} \
-              --build-arg PackageCmd=${PackageCmd} \
-              -f ./.devops/goapp.dockerfile \
-              -t ${ContainerImage} .
-          docker push ${ContainerImage}
-        env:
-          ContainerPort: "${{ env.ContainerPort }}"
-          RestPort: "${{ env.RestPort }}"
-          BRANCH_NAME: "${{ env.BRANCH_NAME }}"
-          DEPLOY_TARGET: "${{ env.DEPLOY_TARGET }}"
-          PackageCmd: "${{ env.PackageCmd }}"
-          ContainerImage: "${{ env._CONTAINER_IMAGE }}"
-
-      - name: Build and Push Envoy Image
-        run: |
-          envsubst < ./.devops/envoy/envoy.yaml.template > ./.devops/envoy/envoy.yaml
-
-          docker build --build-arg BRANCH_NAME=${BRANCH_NAME} \
-            -f ./.devops/envoy/envoy.dockerfile \
-            -t ${ENVOY_IMAGE} .
-
-          docker push ${ENVOY_IMAGE}
-        env:
-          GRPC_HTTP: "8080"
-          CloudRunAddress: "127.0.0.1"
-          ENVOY_IMAGE: "${{ env._ENVOY_IMAGE }}"
-          ContainerPort: ${{ env.ContainerPort }}
-          RestPort: ${{ env.RestPort }}
-          BRANCH_NAME: ${{ env.BRANCH_NAME }}
-
-      - name: Deploy to Cloud Run
-        run: |
-            SHORT_SHA=$(git rev-parse --short=7 $COMMIT_SHA) ./.devops/shell/cloud_deploy.sh
-        env:
-          BUILD_ID: ${{ github.run_id }}
-          PROJECT_ID: ${{ env.PROJECT_ID }}
-          PROJECT_NUMBER: ${{ env.PROJECT_NUMBER }}
-          REVISION_ID: ${{ github.sha }}
-          COMMIT_SHA: ${{ github.sha }}
-          ContainerImage: "${{ env._CONTAINER_IMAGE }}"
-          ENVOY_IMAGE: "${{ env._ENVOY_IMAGE }}"
-          GRPC_HTTP: "8080"
+          wif_provider_name: ${{ secrets.WIF_PROVIDER_NAME }}
+          service_account_email: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+          project_id: ${{ secrets.PROJECT_ID }}
