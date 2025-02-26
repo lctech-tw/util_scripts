@@ -4,8 +4,12 @@ on:
     inputs:
       stable-mode: 
         description: "Optional: markdown format"
-        required: false
         default: 'true'
+        type: string
+
+      compile-mode:
+        description: "Optional: compile mode"
+        default: 'neo'
         type: string
 
 jobs:
@@ -51,6 +55,7 @@ jobs:
       with:
         version: ${{ env.TAG_VERSION }}
         stable-mode: 'false'
+        compile-mode: ${{ inputs.compile-mode }}
 
     - name: <GoLang> Check go.mod
       run: |
