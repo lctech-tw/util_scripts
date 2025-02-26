@@ -6,6 +6,12 @@ on:
       CI_TOKEN:
         required: false
 
+    inputs:
+      PROJECT_ID:
+        description: "Project ID"
+        type: string
+        required: true
+
 jobs:
   deploy:
     permissions:
@@ -24,4 +30,5 @@ jobs:
         with:
           wif_provider_name: ${{ secrets.WIF_PROVIDER_NAME }}
           service_account_email: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-          project_id: ${{ secrets.PROJECT_ID }}
+          project_id: ${{ inputs.PROJECT_ID }}
+
