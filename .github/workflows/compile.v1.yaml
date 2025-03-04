@@ -77,6 +77,20 @@ jobs:
         rm -f package-lock.json
         npm install
         npm publish
+    - name: .npmignore
+      run: |
+        cat <<EOL > .npmignore
+        echo /doc
+        /.github
+        /dist/csharp
+        /dist/go
+        /dist/php
+        /dist/python
+        /dist/ruby
+        /dist/swift
+        gha-creds-*.json
+        go.mod
+        EOL
 
     - name: Auto Commit Changes
       uses: lctech-tw/git-auto-commit-action@v5
