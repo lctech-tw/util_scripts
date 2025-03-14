@@ -25,16 +25,16 @@ jobs:
         if: always()
         run: |
           curl -sLJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/notify_slack.sh 
-          case ${{inputs.CI_STATUS}} in
-          success)
-            echo "Run slack on Success (O)"
-            bash ./notify_slack.sh -s -g=${{inputs.GROUP}}
-            ;;
-          cancelled)
-            echo "Run slack on Skipped (-) ----------------"
-            ;;
-          failure|skipped)
-            echo "Run slack on Fail (X)"
-            bash ./notify_slack.sh -f -g=${{inputs.GROUP}}
-            ;;
+          case "${{inputs.CI_STATUS}}" in
+            success)
+              echo "Run slack on Success (O)"
+              bash ./notify_slack.sh -s -g=${{inputs.GROUP}}
+              ;;
+            cancelled)
+              echo "Run slack on Skipped (-) ----------------"
+              ;;
+            failure|skipped)
+              echo "Run slack on Fail (X)"
+              bash ./notify_slack.sh -f -g=${{inputs.GROUP}}
+              ;;
           esac
