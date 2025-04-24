@@ -5,7 +5,7 @@ on:
       stable-mode: 
         description: "Optional: markdown format"
         default: 'true'
-        type: string
+        type: string  
 
       compile-mode:
         description: "Optional: compile mode"
@@ -54,7 +54,7 @@ jobs:
       uses: lctech-tw/protobuf-codegen-action@main
       with:
         version: ${{ env.TAG_VERSION }}
-        stable-mode: 'false'
+        stable-mode: ${{ inputs.stable-mode }}
         compile-mode: ${{ inputs.compile-mode }}
 
     - name: <GoLang> Check go.mod
@@ -80,7 +80,7 @@ jobs:
     - name: .npmignore
       run: |
         cat <<EOL > .npmignore
-        echo /doc
+        /doc
         /.github
         /dist/csharp
         /dist/go
