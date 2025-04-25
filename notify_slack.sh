@@ -186,7 +186,7 @@ set_slack_group_config() {
     ;;
   jkface|rdc04)
     echo "@ SLACK_GROUP -> jkface"
-    echo "NOTIFY_SLACK_URL_RDC04: ${{env.NOTIFY_SLACK_URL_RDC04}}"
+    echo "NOTIFY_SLACK_URL_RDC04: ${NOTIFY_SLACK_URL_RDC04}"
     SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url_txg-cicd --project=jkf-servers)
     ICON=":hehe:"
     ERROR_USER='ray'
