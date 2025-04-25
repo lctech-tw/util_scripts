@@ -97,7 +97,7 @@ function update_version() {
 
     # 處理 GitHub Actions 環境變數
     if [ -n "$GITHUB_ACTIONS" ]; then
-        fmt_debug "TAG_VERSION=v$(jq -r '.version' <package.json)" >>"$GITHUB_ENV"
+        echo "TAG_VERSION=v$(jq -r '.version' <package.json)" >>"$GITHUB_ENV"
         fmt_info "已設置GitHub Actions環境變數"
     fi
 }
