@@ -58,7 +58,7 @@ jobs:
             ERROR_USER='ray'
           else
             echo "SLACK_GROUP -> default"
-            SLACK_URL=$NOTIFY_SLACK_URL_DEFAULT
+            SLACK_URL=${{vars.NOTIFY_SLACK_URL_DEFAULT}}
             ERROR_USER='zeki'
           fi
           echo "SLACK_URL=${SLACK_URL}" >> $GITHUB_ENV
