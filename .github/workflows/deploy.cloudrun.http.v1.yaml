@@ -46,6 +46,14 @@ on:
         required: false
         type: string
         default: ""
+      GCP_CLOUD_RUN_SIZE_MIN:
+        required: false
+        type: string
+        default: "1"
+      GCP_CLOUD_RUN_SIZE_MAX:
+        required: false
+        type: string
+        default: "10"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -68,6 +76,8 @@ jobs:
               --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
               --port "${{inputs.GCP_CLOUD_RUN_PORT}}" \
               --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
+              --min-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MIN}}" \
+              --max-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MAX}}" \
               --ingress internal-and-cloud-load-balancing \
               --env-vars-file ${{inputs.GCP_CLOUD_RUN_CONFIG_FILE_PATH}}/${{inputs.ZMODE}}.yaml
           else
@@ -79,6 +89,8 @@ jobs:
               --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
               --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
               --port "${{inputs.GCP_CLOUD_RUN_PORT}}" \
+              --min-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MIN}}" \
+              --max-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MAX}}" \
               --ingress internal-and-cloud-load-balancing \
               --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}"
             fi
