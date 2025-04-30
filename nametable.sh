@@ -34,8 +34,8 @@ Jordan-lctech)
 andychuang)
   SLACKNAME="U083FFBLPPE"
   ;;
-TreeTzeng)
-  SLACKNAME="U017BFMBZLZ"
+lctech-tree)
+  SLACKNAME="U07UBRMAPK7"
   ;;
 lctech-kin)
   SLACKNAME="U06AJTT83QS"
