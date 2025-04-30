@@ -23,7 +23,7 @@ on:
         description: "Vseion 棄用 哪次不棄用"
         required: false
         type: string
-        default: "1.20"
+        default: "1.22"
       GO_BUILD_PATH:
         description: "Build main.go path"
         required: false
