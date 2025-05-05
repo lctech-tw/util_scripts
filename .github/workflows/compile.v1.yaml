@@ -12,6 +12,26 @@ on:
         default: 'neo'
         type: string
 
+      buf-build:
+        description: "Optional: buf build"
+        default: 'false'
+        type: string
+
+      buf-format:
+        description: "Optional: buf format"
+        default: 'false'
+        type: string
+
+      buf-lint:
+        description: "Optional: buf lint"
+        default: 'false'
+        type: string
+
+      buf-breaking:
+        description: "Optional: buf breaking"
+        default: 'false'
+        type: string
+
 jobs:
   compile:
     runs-on: ubuntu-latest
@@ -24,6 +44,13 @@ jobs:
         git config --global url."https://${{ secrets.CI_TOKEN }}:x-oauth-basic@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
+
+    - uses: bufbuild/buf-action@v1
+      if: inputs.buf-build != 'false' 
+      with:
+        format: ${{ inputs.buf-format }}
+        lint: ${{ inputs.buf-lint }}
+        breaking: ${{ inputs.buf-breaking }}
         
     - name: Update Version
       run: |
