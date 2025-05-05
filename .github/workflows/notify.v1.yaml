@@ -1,4 +1,4 @@
-name: notify.v2
+name: notify.v1
 on:
   workflow_call:
     inputs:
@@ -20,7 +20,7 @@ jobs:
       - name: 📨 Notification via Slack
         if: always()
         run: |
-          # New version of notify_slack.sh
+          echo "Nnotify => ${{inputs.CI_STATUS}}"
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             GITMSG=$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }})
             BRANCH_NAME="${{ github.head_ref }}"
