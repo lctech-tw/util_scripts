@@ -22,12 +22,13 @@ jobs:
         run: |
           echo "Nnotify => ${{inputs.CI_STATUS}}"
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            GITMSG=$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }})
             BRANCH_NAME="${{ github.head_ref }}"
+            git checkout ${{ github.head_ref }}
+            GITMSG=$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }})
           else
+            BRANCH_NAME=${{ github.ref_name }}
             GITMSG=$(git log -1 --pretty=format:"%s")
             GITMSG_BODY=$(git log -1 --pretty=format:"%b")
-            BRANCH_NAME=${{ github.ref_name }}
           fi
           GITMSG=${GITMSG:-N/A}
           GITMSG_BODY=${GITMSG_BODY:-N/A}
