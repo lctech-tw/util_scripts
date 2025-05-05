@@ -23,7 +23,7 @@ jobs:
           echo "Nnotify => ${{inputs.CI_STATUS}}"
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             BRANCH_NAME="${{ github.head_ref }}"
-            git checkout ${{ github.head_ref }}
+            git fetch origin ${{ github.head_ref }} && git checkout ${{ github.head_ref }}
             GITMSG=$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }})
           else
             BRANCH_NAME=${{ github.ref_name }}
