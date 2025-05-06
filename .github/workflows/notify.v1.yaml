@@ -55,6 +55,9 @@ jobs:
             SLACK_URL=${{vars.NOTIFY_SLACK_URL_RDC04}}
             ICON=":hehe:"
             ERROR_USER='ray'
+          elif [[ "${{inputs.GROUP}}" == "skip" ]]; then
+            echo "SLACK_GROUP: jkface"
+            SLACK_URL=""
           else
             echo "SLACK_GROUP: default"
             SLACK_URL=${{vars.NOTIFY_SLACK_URL_DEFAULT}}
