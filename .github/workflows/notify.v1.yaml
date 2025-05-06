@@ -20,7 +20,7 @@ jobs:
       - name: 📨 Notification via Slack
         if: always()
         run: |
-          echo "Nnotify => ${{inputs.CI_STATUS}}"
+          echo "Nnotify -> ${{inputs.CI_STATUS}}"
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             BRANCH_NAME="${{ github.head_ref }}"
             git fetch origin ${{ github.head_ref }} && git checkout ${{ github.head_ref }}
@@ -43,42 +43,40 @@ jobs:
           echo "Author: ${{ github.actor }} -> ${AUTHOR_NAME}"
           # NOTIFY_GCHAT_URL_DEFAULT
           if [[ "${{inputs.GROUP}}" == "avplus" || "${{inputs.GROUP}}" == "rdc02" ]]; then
-            echo "SLACK_GROUP -> rdc02"
+            echo "SLACK_GROUP: rdc02"
             SLACK_URL=${{vars.NOTIFY_SLACK_URL_RDC02}}
             ICON=":github:"
             ERROR_USER='freddie9527'
           elif [[ "${{inputs.GROUP}}" == "jvid" || "${{inputs.GROUP}}" == "rdc03" ]]; then
-            echo "SLACK_GROUP -> jvid"
+            echo "SLACK_GROUP: jvid"
             SLACK_URL=${{vars.NOTIFY_SLACK_URL_RDC03}}
             ICON=":jvid-rd:"
             ERROR_USER=''
           elif [[ "${{inputs.GROUP}}" == "jkface" || "${{inputs.GROUP}}" == "rdc04" ]]; then
-            echo "SLACK_GROUP -> jkface"
+            echo "SLACK_GROUP: jkface"
             SLACK_URL=${{vars.NOTIFY_SLACK_URL_RDC04}}
             ICON=":hehe:"
             ERROR_USER='ray'
           else
-            echo "SLACK_GROUP -> default"
+            echo "SLACK_GROUP: default"
             SLACK_URL=${{vars.NOTIFY_SLACK_URL_DEFAULT}}
             ERROR_USER='zeki'
           fi
           echo "SLACK_URL=${SLACK_URL}" >> $GITHUB_ENV
           echo "ICON=${ICON}" >> $GITHUB_ENV
           echo "ERROR_USER=${ERROR_USER}" >> $GITHUB_ENV
-          # Main script logic
-          # --------------------------------------
           case "${{inputs.CI_STATUS}}" in
             success)
-              echo "Run slack on Success (O)"
+              echo "Run: Success (O)"
               curl -s -X POST -H 'Content-type: application/json' \
                 --data '{"attachments":[{"color":"#36a64f","pretext":"[ GitHub Actions ] :approved: \n ${{ github.event_name }} / '"$BRANCH_NAME"'  / ${{ github.workflow }} / ${{ github.run_number }} / <@'"$AUTHOR_NAME"'>","author_name":"'"$ICON"' ${{ github.actor }}","title":"✅ ${{ github.repository }}","title_link":"https://github.com/${{ github.repository }}","text":"💬 '"$GITMSG"' "}]}' \
                 "$SLACK_URL"
               ;;
             cancelled)
-              echo "Run slack on Skipped (-) ----------------"
+              echo "Run: Skipped (-) ----------------"
               ;;
             failure|skipped)
-              echo "Run slack on Fail (X)"
+              echo "Run: Fail (X)"
               curl -s -X POST -H 'Content-type: application/json' \
                 --data '{"attachments":[{"color":"#EA0000","pretext":"[ GitHub Actions ] :github-changes-requested: \n ${{ github.event_name }} / '"$BRANCH_NAME"' / ${{ github.workflow }} / ${{ github.run_number }} / <@'"$AUTHOR_NAME"'> / <@'"$ERROR_USER"'>","author_name":":rdrr_pa: ${{ github.actor }}","title":"⚠️  ${{ github.repository }}","title_link":"https://github.com/${{ github.repository }}","text":"💬 '"$GITMSG"'"}]}' \
                 "$SLACK_URL"
