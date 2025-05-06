@@ -64,7 +64,8 @@ jobs:
             gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-grpc-web \
               --project ${{inputs.GCP_PROJECT}}  \
               --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
-              --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}} \            --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
+              --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}} \            
+              --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
               --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
               --port "${{inputs.GCP_CLOUD_RUN_PORT_GRPC_WEB}}" \
               --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
@@ -75,7 +76,8 @@ jobs:
           gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-grpc \
             --project ${{inputs.GCP_PROJECT}}  \
             --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
-            --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}} \            --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
+            --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}} \            
+            --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
             --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
             --port "${{inputs.GCP_CLOUD_RUN_PORT_GRPC}}" \
             --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
