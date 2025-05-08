@@ -45,13 +45,6 @@ jobs:
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
 
-    - uses: bufbuild/buf-action@v1
-      if: inputs.buf-build != 'false' 
-      with:
-        format: ${{ inputs.buf-format }}
-        lint: ${{ inputs.buf-lint }}
-        breaking: ${{ inputs.buf-breaking }}
-        
     - name: Update Version
       run: |
         function _Update {
@@ -84,6 +77,13 @@ jobs:
         stable-mode: ${{ inputs.stable-mode }}
         compile-mode: ${{ inputs.compile-mode }}
 
+    - uses: bufbuild/buf-action@v0
+      if: inputs.buf-build != 'false' 
+      with:
+        format: ${{ inputs.buf-format }}
+        lint: ${{ inputs.buf-lint }}
+        breaking: ${{ inputs.buf-breaking }}
+        
     - name: <GoLang> Check go.mod
       run: |
         # Create go.mod if it doesn't exist
