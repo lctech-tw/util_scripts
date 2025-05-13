@@ -85,9 +85,6 @@ lctech-coco)
 irir)
   SLACKNAME="U2BCVHVLG"
   ;;
-lctech-daniel-hung)
-  SLACKNAME="U04RP3AV02Z"
-  ;;
 Ninja)
   SLACKNAME="jenkins"
   ;;
@@ -95,7 +92,7 @@ Jenkins)
   SLACKNAME="jenkins"
   ;;
 james-lin00)
-  SLACKNAME="james"
+  SLACKNAME="U2JRDGCUT"
   ;;
 lct-ponywu)
   SLACKNAME="ponywu"
@@ -109,9 +106,25 @@ sheepLctech)
 benbenyo)
   SLACKNAME="U023H76SW2X"
   ;;
-lctech-Neil)
-  SLACKNAME="U02BSH1Q3FY"
+freddie9527)
+  SLACKNAME="UCKQWSCQ3"
   ;;
+lctech-ray)
+  SLACKNAME="U02B281CRDL"
+  ;;
+lctech-hikari)
+  SLACKNAME="U034M2BB5QF"
+  ;;
+lctech-kai)
+  SLACKNAME="U02DZMGTKJS"
+  ;;
+lctech-borg)
+  SLACKNAME="U03UEUXRMLM"
+  ;;
+lctech-aren)
+  SLACKNAME="U035E8FNFUH"
+  ;;
+
 esac
 
 if [ "$SLACKNAME" == "" ]; then
