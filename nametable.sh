@@ -124,6 +124,9 @@ lctech-borg)
 lctech-aren)
   SLACKNAME="U035E8FNFUH"
   ;;
+lctech-kahn)
+  SLACKNAME="U052TP95E7K"
+  ;;
 
 esac
 
