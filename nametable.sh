@@ -73,8 +73,8 @@ freddie9527)
 lctech-Arthur)
   SLACKNAME="U03E4MY00MD"
   ;;
-lctech-Marc)
-  SLACKNAME="U03E1TAKSMP"
+lctech-benwu)
+  SLACKNAME="D0810A4D207"
   ;;
 lctech-Leo)
   SLACKNAME="U03AGHT74KZ"
