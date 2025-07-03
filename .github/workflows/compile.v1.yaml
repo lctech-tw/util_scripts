@@ -2,34 +2,34 @@ name: compile.v1
 on:
   workflow_call:
     inputs:
-      stable-mode: 
+      stable-mode:
         description: "Optional: markdown format"
-        default: 'true'
-        type: string  
+        default: "true"
+        type: string
 
       compile-mode:
         description: "Optional: compile mode"
-        default: 'neo'
+        default: "neo"
         type: string
 
       buf-build:
         description: "Optional: buf build"
-        default: 'false'
+        default: "false"
         type: string
 
       buf-format:
         description: "Optional: buf format"
-        default: 'false'
+        default: "false"
         type: string
 
       buf-lint:
         description: "Optional: buf lint"
-        default: 'false'
+        default: "false"
         type: string
 
       buf-breaking:
         description: "Optional: buf breaking"
-        default: 'false'
+        default: "false"
         type: string
 
 jobs:
@@ -39,91 +39,99 @@ jobs:
       contents: write
       packages: write
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: ⚙️ Obtain GitHub App Installation Access Token
+        id: githubAppAuth
+        run: |
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
+          echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
+      - name: Set up Git
+        run: |
+          git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+        env:
+          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
+      - name: Update Version
+        run: |
+          function _Update {
+              echo "@ ${FUNCNAME[0]}"
+              VERSION_OLD=$(jq <package.json '.version')
+              VERSION_OLD_LAST=$(echo "$VERSION_OLD" | cut -f3 -d"." | cut -f1 -d'"')
+              VERSION_NEW_LAST=$((VERSION_OLD_LAST + 1))
+              VERSION_NEW=$(echo "$VERSION_OLD" | cut -f1,2 -d".")'.'"$VERSION_NEW_LAST"'"'
+              echo "🐥 Update Version : $VERSION_OLD_LAST --> $VERSION_NEW_LAST"
+              echo "🐥 New Version : $VERSION_NEW"
+              cat <<<"$(jq '.version'="$VERSION_NEW" package.json)" >package.json
+              # GITHUB_ENV -> github actions use
+              if [ "$GITHUB_ACTIONS" ]; then
+                  echo "TAG_VERSION=$(jq -r '.version' <package.json)" >>"$GITHUB_ENV"
+              fi
+          }
+          function _RenamePackage {
+              echo "@ ${FUNCNAME[0]}"
+              NAME_NEW=$(git config --get remote.origin.url | sed 's/.*\/\([^ ]*\/[^.]*\).*/\1/')
+              echo "🐹 New Name : @$NAME_NEW"
+              cat <<<"$(jq '.name'='"@'"$NAME_NEW"'"' package.json)" >package.json
+          }
+          _Update
+          _RenamePackage
 
-    - name: Set up Git
-      run: |
-        git config --global url."https://${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
-        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
+      - name: Generate Protobuf Code
+        uses: lctech-tw/protobuf-codegen-action@main
+        with:
+          version: ${{ env.TAG_VERSION }}
+          stable-mode: ${{ inputs.stable-mode }}
+          compile-mode: ${{ inputs.compile-mode }}
 
-    - name: Update Version
-      run: |
-        function _Update {
-            echo "@ ${FUNCNAME[0]}"
-            VERSION_OLD=$(jq <package.json '.version')
-            VERSION_OLD_LAST=$(echo "$VERSION_OLD" | cut -f3 -d"." | cut -f1 -d'"')
-            VERSION_NEW_LAST=$((VERSION_OLD_LAST + 1))
-            VERSION_NEW=$(echo "$VERSION_OLD" | cut -f1,2 -d".")'.'"$VERSION_NEW_LAST"'"'
-            echo "🐥 Update Version : $VERSION_OLD_LAST --> $VERSION_NEW_LAST"
-            echo "🐥 New Version : $VERSION_NEW"
-            cat <<<"$(jq '.version'="$VERSION_NEW" package.json)" >package.json
-            # GITHUB_ENV -> github actions use
-            if [ "$GITHUB_ACTIONS" ]; then
-                echo "TAG_VERSION=$(jq -r '.version' <package.json)" >>"$GITHUB_ENV"
-            fi
-        }
-        function _RenamePackage {
-            echo "@ ${FUNCNAME[0]}"
-            NAME_NEW=$(git config --get remote.origin.url | sed 's/.*\/\([^ ]*\/[^.]*\).*/\1/')
-            echo "🐹 New Name : @$NAME_NEW"
-            cat <<<"$(jq '.name'='"@'"$NAME_NEW"'"' package.json)" >package.json
-        }
-        _Update
-        _RenamePackage
+      - uses: bufbuild/buf-action@v0
+        if: inputs.buf-build != 'false'
+        with:
+          format: ${{ inputs.buf-format }}
+          lint: ${{ inputs.buf-lint }}
+          breaking: ${{ inputs.buf-breaking }}
 
-    - name: Generate Protobuf Code
-      uses: lctech-tw/protobuf-codegen-action@main
-      with:
-        version: ${{ env.TAG_VERSION }}
-        stable-mode: ${{ inputs.stable-mode }}
-        compile-mode: ${{ inputs.compile-mode }}
+      - name: <GoLang> Check go.mod
+        run: |
+          # Create go.mod if it doesn't exist
+          if [ ! -f go.mod ]; then
+              echo "Creating go.mod"
+              go mod init github.com/"$GITHUB_REPOSITORY"
+          fi
 
-    - uses: bufbuild/buf-action@v0
-      if: inputs.buf-build != 'false' 
-      with:
-        format: ${{ inputs.buf-format }}
-        lint: ${{ inputs.buf-lint }}
-        breaking: ${{ inputs.buf-breaking }}
-        
-    - name: <GoLang> Check go.mod
-      run: |
-        # Create go.mod if it doesn't exist
-        if [ ! -f go.mod ]; then
-            echo "Creating go.mod"
-            go mod init github.com/"$GITHUB_REPOSITORY"
-        fi
-        
-    - name: <NPM> Authenticate with GitHub Package Registry
-      run: |
-        echo "@$GITHUB_REPOSITORY_OWNER=https://npm.pkg.github.com/$GITHUB_REPOSITORY_OWNER"
-        echo "//npm.pkg.github.com:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
-        echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
-        echo "@$GITHUB_REPOSITORY_OWNER=https://npm.pkg.github.com/$GITHUB_REPOSITORY_OWNER" >> .npmrc
+      - name: <NPM> Authenticate with GitHub Package Registry
+        run: |
+          echo "@$GITHUB_REPOSITORY_OWNER=https://npm.pkg.github.com/$GITHUB_REPOSITORY_OWNER"
+          echo "//npm.pkg.github.com:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          echo "@$GITHUB_REPOSITORY_OWNER=https://npm.pkg.github.com/$GITHUB_REPOSITORY_OWNER" >> .npmrc
 
-    - name: <NPM> Install & Publish Package
-      run: |
-        rm -f package-lock.json
-        npm install
-        npm publish
-    - name: .npmignore
-      run: |
-        cat <<EOL > .npmignore
-        /doc
-        /.github
-        /dist/csharp
-        /dist/go
-        /dist/php
-        /dist/python
-        /dist/ruby
-        /dist/swift
-        gha-creds-*.json
-        go.mod
-        EOL
+      - name: <NPM> Install & Publish Package
+        run: |
+          rm -f package-lock.json 
+          npm install
+          npm publish
+      - name: Clean Up
+        run: |
+          rm -f .npmrc
+      - name: .npmignore
+        run: |
+          cat <<EOL > .npmignore
+          /doc
+          /.github
+          /dist/csharp
+          /dist/go
+          /dist/php
+          /dist/python
+          /dist/ruby
+          /dist/swift
+          gha-creds-*.json
+          go.mod
+          EOL
 
-    - name: Auto Commit Changes
-      uses: lctech-tw/git-auto-commit-action@v5
-      with:
-        tagging_message: "v${{ env.TAG_VERSION }}"
-        commit_message:  "Auto-Compile - ${{ github.event.head_commit.message }}"
+      - name: Auto Commit Changes
+        uses: lctech-tw/git-auto-commit-action@v5
+        with:
+          tagging_message: "v${{ env.TAG_VERSION }}"
+          commit_message: "Auto-Compile - ${{ github.event.head_commit.message }}"

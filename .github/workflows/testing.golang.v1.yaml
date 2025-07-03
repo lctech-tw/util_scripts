@@ -21,8 +21,32 @@ on:
         required: false
         type: string
         default: "psql-init.sh"
+      TEST_COVERAGE_PATH:
+        description: "Test coverage path for go test command"
+        required: true
+        type: string
+        default: "./transport/...,./internal/service,./internal/repo"
+      TEST_MAIN_PATH:
+        description: "Test path for go test command"
+        required: true
+        type: string
+        default: "./test/integration"
+      TEST_COVERAGE_THRESHOLD:
+        description: "Test coverage threshold percentage"
+        required: false
+        type: number
+        default: 70
 jobs:
-  build:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      - name: 🔍 Run Go security Scanner
+        uses: securego/gosec@master
+        with:
+          args: ./...
+  testing:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,8 +54,7 @@ jobs:
         id: githubAppAuth
         run: |
           TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
-          echo "::add-mask::$TOKEN"
-          echo "::set-output name=token::$TOKEN"
+          echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
       - name: ⚙️ Setting GitHub Auth
         run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         env:
@@ -40,15 +63,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: "./go.mod"
-      - name: ⚙️ Setup Golang caches
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{runner.os}}-golang-${{hashFiles('**/go.sum')}}
-          restore-keys: |
-            ${{runner.os}}-golang-
       - name: ⚙️ Init db server
         run: |
           docker run -it --rm -p 6379:6379 redis &
@@ -67,24 +81,24 @@ jobs:
             sleep 1
           done
           docker exec -t psql bash /test/${{inputs.PRE_TEST_SCRIPT_FILE}} &
-      - name: ⚙️ Build Golang
+      - name: ⚙️ Build Golang / Run Tests
         run: |
           cd ${{inputs.GO_BUILD_PATH}} && go build . && cd -
           go mod vendor
-          go test -cover -coverpkg "./transport/...,./internal/service,./internal/repo" "./test" -coverprofile=coverage.out
+          go test -cover -coverpkg "${{inputs.TEST_COVERAGE_PATH}}" "${{inputs.TEST_MAIN_PATH}}" -coverprofile=coverage.out
           go tool cover -func coverage.out
-      - name: Quality Gate - Test coverage shall be above threshold
+      - name: 🛡️ Quality Gate - Test coverage shall be above threshold
         env:
-          TEST_COVERAGE_THRESHOLD: 60
+          TEST_COVERAGE_THRESHOLD: ${{inputs.TEST_COVERAGE_THRESHOLD}}
         run: |
-          echo "Quality Gate: checking test coverage is above threshold ..."
-          echo "Threshold             : $TEST_COVERAGE_THRESHOLD %"
+          echo "品質門檻：檢查測試覆蓋率是否高於門檻 ..."
+          echo "門檻值             : $TEST_COVERAGE_THRESHOLD %"
           totalCoverage=`go tool cover -func=coverage.out | grep total | grep -Eo '[0-9]+\.[0-9]+'`
-          echo "Current test coverage : $totalCoverage %"
+          echo "目前測試覆蓋率     : $totalCoverage %"
           if (( $(echo "$totalCoverage $TEST_COVERAGE_THRESHOLD" | awk '{print ($1 > $2)}') )); then
-              echo "OK"
+            echo "通過"
           else
-              echo "Current test coverage is below threshold. Please add more unit tests or adjust threshold to a lower value."
-              echo "Failed"
-              exit 1
+            echo "目前測試覆蓋率低於門檻，請增加單元測試或調低門檻值。"
+            echo "未通過"
+            exit 1
           fi

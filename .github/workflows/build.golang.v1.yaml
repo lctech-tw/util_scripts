@@ -3,15 +3,15 @@ on:
   workflow_call:
     inputs:
       APP_NAME:
-        description: "App name"
+        description: "Application name"
         required: true
         type: string
       APP_DOCKER_REPOSITORIES:
-        description: "Docker repositories name"
+        description: "Docker repository URL"
         required: true
         type: string
       GCP_PROJECT:
-        description: "GCP project"
+        description: "Google Cloud Platform project ID"
         required: true
         type: string
       ZMODE:
@@ -20,73 +20,98 @@ on:
         type: string
         default: dev
       GO_VERSION:
-        description: "Vseion 棄用 哪次不棄用"
+        description: "Go version to use"
         required: false
         type: string
-        default: "1.22"
+        default: "1.23"
       GO_BUILD_PATH:
-        description: "Build main.go path"
+        description: "Path to the Go main package"
         required: false
         type: string
         default: "./cmd/server"
       SERVER_NAME:
-        description: "Server name in dockerfile"
+        description: "Server binary name in dockerfile"
         required: false
         type: string
         default: "server"
+      DOCKERFILE_PATH:
+        description: "Path to Dockerfile"
+        required: false
+        type: string
+        default: ".github/docker/Dockerfile"
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - uses: actions/checkout@v4
-      - name: ⚙️ Obtain GitHub App Installation Access Token
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: 🔐 Obtain GitHub App Installation Access Token
         id: githubAppAuth
         run: |
           TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
-          echo "::add-mask::$TOKEN"
-          echo "::set-output name=token::$TOKEN"
-      - name: ⚙️ Setting GitHub Auth
+          echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
+
+      - name: 🔧 Configure GitHub authentication
         run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         env:
           GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
-      - name: ⚙️ Authenticate to Google Cloud
+
+      - name: ☁️ Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{secrets.GCP_SA_KEY_GITHUB_CI}}
-      - name: ⚙️ Setting docker auth
-        run: gcloud auth configure-docker -q && gcloud auth configure-docker $(echo ${{inputs.APP_DOCKER_REPOSITORIES}}  | cut -d "/" -f 1) -q
-      - name: ⚙️ Set up Golang
+
+      - name: 🐳 Configure Docker authentication
+        run: gcloud auth configure-docker $(echo ${{inputs.APP_DOCKER_REPOSITORIES}} | cut -d "/" -f 1) --quiet
+
+      - name: 🐹 Setup Golang
         uses: actions/setup-go@v5
         with:
           go-version-file: "./go.mod"
-      # - name: ⚙️ Setup Golang caches
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       ~/.cache/go-build
-      #       ~/go/pkg/mod
-      #     key: ${{runner.os}}-golang-${{hashFiles('**/go.sum')}}
-      #     restore-keys: |
-      #       ${{runner.os}}-golang-
-      - name: ⚙️ Build Golang
-        run: cd ${{inputs.GO_BUILD_PATH}} && go build .
-      - name: ⛴ Set up Docker QEMU
+          cache: true
+
+      - name: 🔨 Build Go application
+        run: |
+          cd ${{inputs.GO_BUILD_PATH}}
+          go mod tidy && go build .
+
+      - name: 🏗️ Set up Docker QEMU
         uses: docker/setup-qemu-action@v3
-      - name: ⛴ Set up Docker Buildx
+
+      - name: 🏗️ Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: ⛴ Docker build / tag / push
+
+      - name: 🏷️ Generate Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{github.sha}}
+            type=raw,value=${{inputs.ZMODE}}-latest
+            type=raw,value=${{inputs.ZMODE}}-${{github.run_number}}
+            type=ref,event=branch
+            type=ref,event=pr
+
+      - name: 🐳 Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
+          platforms: linux/amd64,linux/arm64
           cache-to: type=gha,mode=max
           cache-from: type=gha
-          file: .github/docker/Dockerfile
-          tags: |
-            ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:latest
-            ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{github.sha}}
-            ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-latest
-            ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}}
+          file: ${{inputs.DOCKERFILE_PATH}}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             SERVER_NAME=${{inputs.SERVER_NAME}}
             GITHUB_REF_NAME=${{github.sha}}
+            BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}

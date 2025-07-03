@@ -29,14 +29,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: ⚙️ Obtain GitHub App Installation Access Token
+        id: githubAppAuth
+        run: |
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
+          echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
+      - name: ⚙️ Setting GitHub Auth
+        run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+        env:
+          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
       - name: Authenticate with GitHub package registry
         run: |
-          echo "machine github.com login lctech-zeki password ${{ secrets.GITHUB_TOKEN }}" >> ~/.netrc
+          echo "machine github.com login lctech-bot password ${{ secrets.GITHUB_TOKEN }}" >> ~/.netrc
           git config --global url."https://${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/lctech-lucy".insteadOf "https://github.com/lctech-lucy"
           rm -rf .npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc 
           echo "@lctech-tw:registry=https://npm.pkg.github.com/" >> .npmrc
           echo "@lctech-lucy:registry=https://npm.pkg.github.com/" >> .npmrc
+        env:
+          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
       - name: ⚙️ Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:

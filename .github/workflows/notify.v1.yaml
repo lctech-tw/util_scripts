@@ -8,22 +8,25 @@ on:
         type: string
       GROUP:
         default: "jkf"
-        description: "Slack group name, can be [ jkf, jvid, jkface ]"
+        description: "Slack group name, can be [ jkf, jvid, jkface, skip ]"
         required: false
         type: string
 jobs:
   notify:
     runs-on: ubuntu-latest
+    if: inputs.GROUP != 'skip'
     steps:
       - name: ⚙️ Checkout code
         uses: actions/checkout@v4
       - name: 📨 Notification via Slack
         if: always()
         run: |
-          echo "Notify -> ${{inputs.CI_STATUS}}"
+          # 發送通知
+          echo "📋 Status: ${{ inputs.CI_STATUS }} | Group: ${{ inputs.GROUP }} | Author: ${{ github.actor }}"
+          # 取得分支和訊息
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             BRANCH_NAME="${{ github.head_ref }}"
-            git fetch origin ${{ github.head_ref }} && git checkout ${{ github.head_ref }}
+            git fetch origin ${{ github.head_ref }} && git checkout ${{ github.head_ref }} --
             GITMSG=$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }})
           else
             BRANCH_NAME=${{ github.ref_name }}
@@ -34,40 +37,42 @@ jobs:
           echo "$GITMSG" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          # 取得作者名稱
           curl -sLJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/nametable.sh
           AUTHOR_NAME=$(bash ./nametable.sh "${{ github.actor }}")
           AUTHOR_NAME="${AUTHOR_NAME}"
           echo "AUTHOR_NAME=$AUTHOR_NAME" >> $GITHUB_ENV
           echo "Author: ${{ github.actor }} -> ${AUTHOR_NAME}"
-          # NOTIFY_GCHAT_URL_DEFAULT
-          if [[ "${{inputs.GROUP}}" == "avplus" || "${{inputs.GROUP}}" == "rdc02" ]]; then
+
+          # 設定通知群組配置
+          if [[ "${{ inputs.GROUP }}" == "avplus" || "${{ inputs.GROUP }}" == "rdc02" ]]; then
             echo "SLACK_GROUP: rdc02"
-            SLACK_URL=${{vars.NOTIFY_SLACK_URL_RDC02}}
+            SLACK_URL=${{ vars.NOTIFY_SLACK_URL_RDC02 }}
             ICON=":github:"
             ERROR_USER='freddie9527'
-          elif [[ "${{inputs.GROUP}}" == "jvid" || "${{inputs.GROUP}}" == "rdc03" ]]; then
+          elif [[ "${{ inputs.GROUP }}" == "jvid" || "${{ inputs.GROUP }}" == "rdc03" ]]; then
             echo "SLACK_GROUP: jvid"
-            SLACK_URL=${{vars.NOTIFY_SLACK_URL_RDC03}}
+            SLACK_URL=${{ vars.NOTIFY_SLACK_URL_RDC03 }}
             ICON=":jvid-rd:"
             ERROR_USER=''
-          elif [[ "${{inputs.GROUP}}" == "jkface" || "${{inputs.GROUP}}" == "rdc04" ]]; then
+          elif [[ "${{ inputs.GROUP }}" == "jkface" || "${{ inputs.GROUP }}" == "rdc04" ]]; then
             echo "SLACK_GROUP: jkface"
-            SLACK_URL=${{vars.NOTIFY_SLACK_URL_RDC04}}
+            SLACK_URL=${{ vars.NOTIFY_SLACK_URL_RDC04 }}
             ICON=":hehe:"
             ERROR_USER='ray'
-          elif [[ "${{inputs.GROUP}}" == "skip" ]]; then
+          elif [[ "${{ inputs.GROUP }}" == "skip" ]]; then
             echo "SLACK_GROUP: skip"
             SLACK_URL=""
             exit 0
           else
             echo "SLACK_GROUP: default"
-            SLACK_URL=${{vars.NOTIFY_SLACK_URL_DEFAULT}}
+            SLACK_URL=${{ vars.NOTIFY_SLACK_URL_DEFAULT }}
             ERROR_USER='zeki'
           fi
           echo "SLACK_URL=${SLACK_URL}" >> $GITHUB_ENV
           echo "ICON=${ICON}" >> $GITHUB_ENV
           echo "ERROR_USER=${ERROR_USER}" >> $GITHUB_ENV
-          case "${{inputs.CI_STATUS}}" in
+          case "${{ inputs.CI_STATUS }}" in
             success)
               echo "Run: Success (O)"
               curl -s -X POST -H 'Content-type: application/json' \
