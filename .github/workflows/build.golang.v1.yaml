@@ -39,12 +39,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: ⚙️ Obtain GitHub App Installation Access Token
+      # - name: ⚙️ Obtain GitHub App Installation Access Token
+      #   id: githubAppAuth
+      #   run: |
+      #     TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
+      #     echo "::add-mask::$TOKEN"
+      #     echo "::set-output name=token::$TOKEN"
+      - uses: actions/create-github-app-token@v2
         id: githubAppAuth
-        run: |
-          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
-          echo "::add-mask::$TOKEN"
-          echo "::set-output name=token::$TOKEN"
+        with:
+          app-id: ${{ vars.IC_BOT_NEO_PRIVATE_KEY }}
+          private-key: ${{ secrets.IC_BOT_NEO_PRIVATE_KEY }}
       - name: ⚙️ Setting GitHub Auth
         run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         env:
