@@ -41,7 +41,7 @@ jobs:
 
     - name: Set up Git
       run: |
-        git config --global url."https://${{ secrets.CI_TOKEN }}:x-oauth-basic@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+        git config --global url."https://${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
 
@@ -95,8 +95,8 @@ jobs:
     - name: <NPM> Authenticate with GitHub Package Registry
       run: |
         echo "@$GITHUB_REPOSITORY_OWNER=https://npm.pkg.github.com/$GITHUB_REPOSITORY_OWNER"
-        echo "//npm.pkg.github.com:_authToken=${{ secrets.CI_TOKEN }}" >> .npmrc
-        echo "//npm.pkg.github.com/:_authToken=${{ secrets.CI_TOKEN }}" >> .npmrc
+        echo "//npm.pkg.github.com:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+        echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
         echo "@$GITHUB_REPOSITORY_OWNER=https://npm.pkg.github.com/$GITHUB_REPOSITORY_OWNER" >> .npmrc
 
     - name: <NPM> Install & Publish Package

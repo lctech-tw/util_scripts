@@ -42,7 +42,7 @@ jobs:
       - name: Authenticate with GitHub package registry
         run: |
           rm -rf .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.CI_TOKEN }}" >> .npmrc 
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc 
           echo "@lctech-tw:registry=https://npm.pkg.github.com/" >> .npmrc
       - name: ⚙️ Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
