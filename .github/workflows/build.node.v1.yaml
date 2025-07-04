@@ -33,8 +33,7 @@ jobs:
         id: githubAppAuth
         run: |
           TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
-          echo "::add-mask::$TOKEN"
-          echo "::set-output name=token::$TOKEN"
+          echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
       - name: ⚙️ Setting GitHub Auth
         run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         env:

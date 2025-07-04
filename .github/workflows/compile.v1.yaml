@@ -41,13 +41,18 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
-
+    - name: ⚙️ Obtain GitHub App Installation Access Token
+      id: githubAppAuth
+      run: |
+        TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
+        echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
     - name: Set up Git
       run: |
-        git config --global url."https://${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+        git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-
+      env:
+        GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
     - name: Update Version
       run: |
         function _Update {
