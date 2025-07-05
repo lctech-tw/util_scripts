@@ -111,8 +111,6 @@ jobs:
             type=raw,value=${{inputs.ZMODE}}-${{github.run_number}}
             type=ref,event=branch
             type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
 
       - name: 🐳 Build and push Docker image
         uses: docker/build-push-action@v6
@@ -129,7 +127,6 @@ jobs:
             SERVER_NAME=${{inputs.SERVER_NAME}}
             GITHUB_REF_NAME=${{github.sha}}
             BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
-            VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
 
       - name: 🔍 Run container security scan
         uses: aquasecurity/trivy-action@master
