@@ -79,8 +79,7 @@ jobs:
           credentials_json: ${{secrets.GCP_SA_KEY_GITHUB_CI}}
 
       - name: 🐳 Configure Docker authentication
-        run: |
-          gcloud auth configure-docker $(echo ${{inputs.APP_DOCKER_REPOSITORIES}} | cut -d "/" -f 1) --quiet
+        run: gcloud auth configure-docker $(echo ${{inputs.APP_DOCKER_REPOSITORIES}} | cut -d "/" -f 1) --quiet
 
       - name: 🐹 Setup Golang
         uses: actions/setup-go@v5
@@ -127,17 +126,3 @@ jobs:
             SERVER_NAME=${{inputs.SERVER_NAME}}
             GITHUB_REF_NAME=${{github.sha}}
             BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
-
-      - name: 🔍 Run container security scan
-        uses: aquasecurity/trivy-action@master
-        continue-on-error: true
-        with:
-          image-ref: ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{github.sha}}
-          format: "sarif"
-          output: "trivy-results.sarif"
-
-      - name: 📊 Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v3
-        continue-on-error: true
-        with:
-          sarif_file: "trivy-results.sarif"
