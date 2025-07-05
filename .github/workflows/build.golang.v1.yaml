@@ -76,10 +76,9 @@ jobs:
         with:
           go-version-file: "./go.mod"
           cache: true
-      
-      - name: 🔍 Run Go security scan
-        uses: securecodewarrior/github-action-gosec@master
-        continue-on-error: true
+
+      - name: 🔍 Run Go security Scanner
+        uses: securego/gosec@master
         with:
           args: ./...
       
