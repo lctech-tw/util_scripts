@@ -21,6 +21,16 @@ on:
         required: false
         type: string
         default: "psql-init.sh"
+      TEST_PATH:
+        description: "Test path for go test command"
+        required: false
+        type: string
+        default: "./test"
+      TEST_COVERAGE_THRESHOLD:
+        description: "Test coverage threshold percentage"
+        required: false
+        type: number
+        default: 60
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,7 +40,7 @@ jobs:
         id: githubAppAuth
         run: |
           TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
-          echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
+          echo "::add-mask::$TOKEN" && echo "token=$TOKEN" >> $GITHUB_OUTPUT
       - name: ⚙️ Setting GitHub Auth
         run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         env:
@@ -39,15 +49,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: "./go.mod"
-      - name: ⚙️ Setup Golang caches
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{runner.os}}-golang-${{hashFiles('**/go.sum')}}
-          restore-keys: |
-            ${{runner.os}}-golang-
       - name: ⚙️ Init db server
         run: |
           docker run -it --rm -p 6379:6379 redis &
@@ -70,11 +71,11 @@ jobs:
         run: |
           cd ${{inputs.GO_BUILD_PATH}} && go build . && cd -
           go mod vendor
-          go test -cover -coverpkg "./transport/...,./internal/service,./internal/repo" "./test" -coverprofile=coverage.out
+          go test -cover -coverpkg "./transport/...,./internal/service,./internal/repo" "${{inputs.TEST_PATH}}" -coverprofile=coverage.out
           go tool cover -func coverage.out
       - name: Quality Gate - Test coverage shall be above threshold
         env:
-          TEST_COVERAGE_THRESHOLD: 60
+          TEST_COVERAGE_THRESHOLD: ${{inputs.TEST_COVERAGE_THRESHOLD}}
         run: |
           echo "Quality Gate: checking test coverage is above threshold ..."
           echo "Threshold             : $TEST_COVERAGE_THRESHOLD %"
