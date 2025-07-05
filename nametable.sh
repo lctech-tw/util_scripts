@@ -28,9 +28,6 @@ fi
 [[ "$1" =~ -lctech ]] && SLACKNAME="${NAME/-lctech/}"
 
 case $NAME in
-Jordan-lctech)
-  SLACKNAME="jordan"
-  ;;
 andychuang)
   SLACKNAME="U083FFBLPPE"
   ;;
@@ -64,12 +61,6 @@ allisonkuooo)
 Jacky-lctech)
   SLACKNAME="U03JC9FEXLK"
   ;;
-lctechArlen)
-  SLACKNAME="U042N9T0G1G"
-  ;;
-freddie9527)
-  SLACKNAME="freddie9527"
-  ;;
 lctech-Arthur)
   SLACKNAME="U03E4MY00MD"
   ;;
@@ -78,9 +69,6 @@ lctech-benwu)
   ;;
 lctech-Leo)
   SLACKNAME="U03AGHT74KZ"
-  ;;
-lctech-coco)
-  SLACKNAME="U03EGCNMBDK"
   ;;
 irir)
   SLACKNAME="U2BCVHVLG"
@@ -96,9 +84,6 @@ james-lin00)
   ;;
 lct-ponywu)
   SLACKNAME="ponywu"
-  ;;
-miko0628)
-  SLACKNAME="miko"
   ;;
 sheepLctech)
   SLACKNAME="sheep"
