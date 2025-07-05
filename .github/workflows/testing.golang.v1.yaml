@@ -67,7 +67,7 @@ jobs:
             sleep 1
           done
           docker exec -t psql bash /test/${{inputs.PRE_TEST_SCRIPT_FILE}} &
-      - name: ⚙️ Build Golang
+      - name: ⚙️ Build Golang / Run Tests
         run: |
           cd ${{inputs.GO_BUILD_PATH}} && go build . && cd -
           go mod vendor
