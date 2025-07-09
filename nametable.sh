@@ -1,7 +1,8 @@
 #!/bin/bash
+# Script to map GitHub usernames to Slack IDs
 
-NAME=""
-SLACK_NAME=""
+declare NAME=""
+declare SLACK_NAME=""
 
 #* help
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
@@ -17,7 +18,7 @@ EOF
 fi
 
 if [ -z "$1" ]; then
-  echo " nil , use --help "
+  echo "Error: No argument provided, use --help "
   exit 0
 else
   NAME=$1
