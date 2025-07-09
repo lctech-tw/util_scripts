@@ -60,6 +60,11 @@ jobs:
             SLACK_URL=${{ vars.NOTIFY_SLACK_URL_RDC04 }}
             ICON=":hehe:"
             ERROR_USER='ray'
+          elif [[ "${{ inputs.GROUP }}" == "alola" ]]; then
+            echo "SLACK_GROUP: alola"
+            SLACK_URL=${{ vars.NOTIFY_SLACK_URL_ALOLA }}
+            ICON=":pokemon-e:"
+            ERROR_USER=''
           elif [[ "${{ inputs.GROUP }}" == "skip" ]]; then
             echo "SLACK_GROUP: skip"
             SLACK_URL=""
