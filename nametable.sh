@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME=""
-SLACKNAME=""
+SLACK_NAME=""
 
 #* help
 if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
@@ -16,7 +16,7 @@ EOF
   exit 1
 fi
 
-if [ "$1" == "" ]; then
+if [ -z "$1" ]; then
   echo " nil , use --help "
   exit 0
 else
@@ -24,100 +24,100 @@ else
 fi
 
 # remove 開頭 & 結尾 lctech
-[[ "$1" =~ ^lctech- ]] && SLACKNAME="${NAME/lctech-/}"
-[[ "$1" =~ -lctech ]] && SLACKNAME="${NAME/-lctech/}"
+[[ "$1" =~ ^lctech- ]] && SLACK_NAME="${NAME/lctech-/}"
+[[ "$1" =~ -lctech ]] && SLACK_NAME="${NAME/-lctech/}"
 
 case $NAME in
 andychuang)
-  SLACKNAME="U083FFBLPPE"
+  SLACK_NAME="U083FFBLPPE"
   ;;
 lctech-tree)
-  SLACKNAME="U07UBRMAPK7"
+  SLACK_NAME="U07UBRMAPK7"
   ;;
 lctech-kin)
-  SLACKNAME="U06AJTT83QS"
+  SLACK_NAME="U06AJTT83QS"
   ;;
 lctech-adam)
-  SLACKNAME="U06T71UMKTL"
+  SLACK_NAME="U06T71UMKTL"
   ;;
 lctech-LeoLioa)
-  SLACKNAME="U0642V9DDMX"
+  SLACK_NAME="U0642V9DDMX"
   ;;
 lctech-stark)
-  SLACKNAME="U069A9CHNTY"
+  SLACK_NAME="U069A9CHNTY"
   ;;
 lctech-sid)
-  SLACKNAME="U07A8E61S4E"
+  SLACK_NAME="U07A8E61S4E"
   ;;
 lctech-Eddy)
-  SLACKNAME="U03AGHT28BZ"
+  SLACK_NAME="U03AGHT28BZ"
   ;;
 lctech-erin)
-  SLACKNAME="U03AX65UFH8"
+  SLACK_NAME="U03AX65UFH8"
   ;;
 allisonkuooo)
-  SLACKNAME="U9GLLPYHY"
+  SLACK_NAME="U9GLLPYHY"
   ;;
 Jacky-lctech)
-  SLACKNAME="U03JC9FEXLK"
+  SLACK_NAME="U03JC9FEXLK"
   ;;
 lctech-Arthur)
-  SLACKNAME="U03E4MY00MD"
+  SLACK_NAME="U03E4MY00MD"
   ;;
 lctech-benwu)
-  SLACKNAME="D0810A4D207"
+  SLACK_NAME="D0810A4D207"
   ;;
 lctech-Leo)
-  SLACKNAME="U03AGHT74KZ"
+  SLACK_NAME="U03AGHT74KZ"
   ;;
 irir)
-  SLACKNAME="U2BCVHVLG"
+  SLACK_NAME="U2BCVHVLG"
   ;;
 Ninja)
-  SLACKNAME="jenkins"
+  SLACK_NAME="jenkins"
   ;;
 Jenkins)
-  SLACKNAME="jenkins"
+  SLACK_NAME="jenkins"
   ;;
 james-lin00)
-  SLACKNAME="U2JRDGCUT"
+  SLACK_NAME="U2JRDGCUT"
   ;;
 lct-ponywu)
-  SLACKNAME="ponywu"
+  SLACK_NAME="ponywu"
   ;;
 sheepLctech)
-  SLACKNAME="sheep"
+  SLACK_NAME="sheep"
   ;;
 benbenyo)
-  SLACKNAME="U023H76SW2X"
+  SLACK_NAME="U023H76SW2X"
   ;;
 freddie9527)
-  SLACKNAME="UCKQWSCQ3"
+  SLACK_NAME="UCKQWSCQ3"
   ;;
 lctech-ray)
-  SLACKNAME="U02B281CRDL"
+  SLACK_NAME="U02B281CRDL"
   ;;
 lctech-hikari)
-  SLACKNAME="U034M2BB5QF"
+  SLACK_NAME="U034M2BB5QF"
   ;;
 lctech-kai)
-  SLACKNAME="U02DZMGTKJS"
+  SLACK_NAME="U02DZMGTKJS"
   ;;
 lctech-borg)
-  SLACKNAME="U03UEUXRMLM"
+  SLACK_NAME="U03UEUXRMLM"
   ;;
 lctech-aren)
-  SLACKNAME="U035E8FNFUH"
+  SLACK_NAME="U035E8FNFUH"
   ;;
 lctech-kahn)
-  SLACKNAME="U052TP95E7K"
+  SLACK_NAME="U052TP95E7K"
   ;;
 
 esac
 
-if [ "$SLACKNAME" == "" ]; then
+if [ "$SLACK_NAME" == "" ]; then
   echo "$NAME is not found"
   exit 0
 else
-  echo "$SLACKNAME"
+  echo "$SLACK_NAME"
 fi
