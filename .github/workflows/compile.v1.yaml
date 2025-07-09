@@ -44,15 +44,15 @@ jobs:
       - name: ⚙️ Obtain GitHub App Installation Access Token
         id: githubAppAuth
         run: |
-          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{ secrets.GH_APP_CREDENTIALS_TOKEN }})
           echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
-      - name: Set up Git
+      - name: Setup Git
         run: |
           git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
         env:
-          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
+          GITHUB_TOKEN: ${{ steps.githubAppAuth.outputs.token }}
       - name: Update Version
         run: |
           function _Update {
@@ -85,7 +85,8 @@ jobs:
           stable-mode: ${{ inputs.stable-mode }}
           compile-mode: ${{ inputs.compile-mode }}
 
-      - uses: bufbuild/buf-action@v0
+      - name: <Buf> Run Buf Build
+        uses: bufbuild/buf-action@v0
         if: inputs.buf-build != 'false'
         with:
           format: ${{ inputs.buf-format }}
@@ -99,26 +100,18 @@ jobs:
               echo "Creating go.mod"
               go mod init github.com/"$GITHUB_REPOSITORY"
           fi
-
       - name: <NPM> Authenticate with GitHub Package Registry
         run: |
-          echo "@$GITHUB_REPOSITORY_OWNER=https://npm.pkg.github.com/$GITHUB_REPOSITORY_OWNER"
           echo "//npm.pkg.github.com:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
           echo "@$GITHUB_REPOSITORY_OWNER=https://npm.pkg.github.com/$GITHUB_REPOSITORY_OWNER" >> .npmrc
-
-      - name: <NPM> Install & Publish Package
+      - name: <NPM> Reset .npmignore file
         run: |
-          rm -f package-lock.json 
-          npm install
-          npm publish
-      - name: Clean Up
-        run: |
-          rm -f .npmrc
-      - name: .npmignore
-        run: |
-          cat <<EOL > .npmignore
+          cat <<EOL >| .npmignore
+          .npmrc
+          .gitignore
           /doc
+          /src
           /.github
           /dist/csharp
           /dist/go
@@ -126,10 +119,32 @@ jobs:
           /dist/python
           /dist/ruby
           /dist/swift
+          /dist/docs
           gha-creds-*.json
           go.mod
+          makefile
+          package-lock.json
+          pnpm-lock.yaml
+          *.md
           EOL
-
+      - name: <NPM> Install & Publish Package
+        run: |
+          echo "🐱 NPM Publish Start"
+          rm -f package-lock.json 
+          npm install
+          npm publish
+          echo "🐱 NPM Publish Done"
+          # Clean up
+          rm -f .npmrc
+      - name: <Git> Setup .gitignore
+        run: |
+          cat << EOF >| .gitignore
+          .npmrc
+          package-lock.json
+          .idea
+          .DS_Store
+          gha-creds-*.json
+          EOF
       - name: Auto Commit Changes
         uses: lctech-tw/git-auto-commit-action@v5
         with:
