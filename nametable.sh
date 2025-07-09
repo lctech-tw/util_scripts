@@ -28,7 +28,7 @@ fi
 [[ "$1" =~ -lctech ]] && SLACK_NAME="${NAME/-lctech/}"
 
 case $NAME in
-andychuang)
+lctech-andychuang)
   SLACK_NAME="U083FFBLPPE"
   ;;
 lctech-tree)
