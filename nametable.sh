@@ -32,6 +32,9 @@ case $NAME in
 lctech-andychuang)
   SLACK_NAME="U083FFBLPPE"
   ;;
+lctech-eason)
+  SLACK_NAME="U07TJ0Z1SF8"
+  ;;
 lctech-tree)
   SLACK_NAME="U07UBRMAPK7"
   ;;
