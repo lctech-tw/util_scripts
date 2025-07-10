@@ -51,6 +51,10 @@ jobs:
         run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
         env:
           GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
+      - name: Pre Scan - Set up Golang
+        run: |
+          go mod tidy
+          go mod vendor
       - name: 🔍 Run Go security Scanner
         uses: securego/gosec@master
         with:
