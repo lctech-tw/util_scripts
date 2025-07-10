@@ -42,6 +42,15 @@ jobs:
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
+      - name: ⚙️ Obtain GitHub App Installation Access Token
+        id: githubAppAuth
+        run: |
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
+          echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
+      - name: ⚙️ Setting GitHub Auth
+        run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+        env:
+          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
       - name: 🔍 Run Go security Scanner
         uses: securego/gosec@master
         with:
