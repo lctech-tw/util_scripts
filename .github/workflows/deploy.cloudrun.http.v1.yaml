@@ -54,6 +54,10 @@ on:
         required: false
         type: string
         default: "3"
+      GCP_CLOUD_RUN_INGRESS_TYPE:
+        required: false
+        type: string
+        default: "internal-and-cloud-load-balancing"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -78,7 +82,7 @@ jobs:
               --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
               --min-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MIN}}" \
               --max-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MAX}}" \
-              --ingress internal-and-cloud-load-balancing \
+              --ingress "${{inputs.GCP_CLOUD_RUN_INGRESS_TYPE}}" \
               --env-vars-file ${{inputs.GCP_CLOUD_RUN_CONFIG_FILE_PATH}}/${{inputs.ZMODE}}.yaml
           else
             gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-http \
@@ -91,6 +95,6 @@ jobs:
               --port "${{inputs.GCP_CLOUD_RUN_PORT}}" \
               --min-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MIN}}" \
               --max-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MAX}}" \
-              --ingress internal-and-cloud-load-balancing \
+              --ingress "${{inputs.GCP_CLOUD_RUN_INGRESS_TYPE}}" \
               --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}"
             fi
