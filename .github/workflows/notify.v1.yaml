@@ -11,6 +11,11 @@ on:
         description: "Slack group name, can be [ jkf, jvid, jkface, skip ]"
         required: false
         type: string
+      TAG_USER:
+        default: ""
+        description: "強制複寫TAG對象"
+        required: false
+        type: string
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -38,12 +43,15 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
           # 取得作者名稱
-          curl -sLJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/nametable.sh
-          AUTHOR_NAME=$(bash ./nametable.sh "${{ github.actor }}")
-          AUTHOR_NAME="${AUTHOR_NAME}"
+          if [[ "${{ inputs.TAG_USER }}" == "" ]]; then
+            echo "Author: ${{ github.actor }} -> ${AUTHOR_NAME}" 
+            curl -sLJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/nametable.sh 
+            AUTHOR_NAME=$(bash ./nametable.sh "${{ github.actor }}")
+          else
+            echo "Force TAG_USER: ${AUTHOR_NAME}" 
+            AUTHOR_NAME="${{ inputs.TAG_USER }}"
+          fi
           echo "AUTHOR_NAME=$AUTHOR_NAME" >> $GITHUB_ENV
-          echo "Author: ${{ github.actor }} -> ${AUTHOR_NAME}"
-
           # 設定通知群組配置
           if [[ "${{ inputs.GROUP }}" == "avplus" || "${{ inputs.GROUP }}" == "rdc02" ]]; then
             echo "SLACK_GROUP: rdc02"
