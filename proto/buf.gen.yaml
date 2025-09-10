@@ -32,7 +32,7 @@ plugins:
   - remote: buf.build/protocolbuffers/js
     out: dist/js
     opt: import_style=commonjs
-  - remote: buf.build/grpc/web
+  - remote: buf.build/grpc/web:v1.5.0
     out: dist/js
     opt:
       - import_style=commonjs+dts
