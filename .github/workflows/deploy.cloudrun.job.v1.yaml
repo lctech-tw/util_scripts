@@ -1,0 +1,92 @@
+name: deploy.cloudrun.job.v1
+on:
+  workflow_call:
+    inputs:
+      ZMODE:
+        description: "mode"
+        required: false
+        type: string
+        default: dev
+      APP_DOCKER_REPOSITORIES:
+        description: "Docker repositories name"
+        required: true
+        type: string
+      APP_NAME:
+        description: "App name"
+        required: true
+        type: string
+      GCP_PROJECT:
+        description: "GCP project"
+        required: true
+        type: string
+      GCP_CLOUD_RUN_NAME:
+        description: "GCP cloudrun name"
+        required: true
+        type: string
+      GCP_CLOUD_RUN_REGION:
+        description: "GCP cloudrun zone"
+        required: true
+        type: string
+      GCP_CLOUD_RUN_SA:
+        description: "GCP Cloud Run Service Account"
+        required: false
+        type: string
+        default: ""
+      GCP_CLOUD_RUN_VPC:
+        required: false
+        type: string
+      GCP_CLOUD_RUN_CPU:
+        required: false
+        type: string
+        default: "1"
+      GCP_CLOUD_RUN_MEM:
+        required: false
+        type: string
+        default: "1Gi"
+      GCP_CLOUD_RUN_TASKS_NUM:
+        required: false
+        type: string
+        default: "1"
+      GCP_CLOUD_RUN_TASK_TIMEOUT:
+        description: "10s, 5m, 1h"
+        required: false
+        type: string
+        default: "10s"
+      GCP_CLOUD_RUN_TASK_RETRIES:
+        description: "Number of retries for failed tasks"
+        required: false
+        type: string
+        default: "0"
+      GCP_CLOUD_RUN_TASKS_PARALLELISM:
+        description: "Number of tasks to run in parallel"
+        required: false
+        type: string
+        default: "1"
+      
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ⚙️ Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{secrets.GCP_SA_KEY_GITHUB_CI}}
+      - name: Deploy
+        run: |
+          echo "@ deploy : $GCP_PROJECT -> $GCP_CLOUD_RUN_NAME -> $ZMODE"
+          echo "@ Deploy job"
+          gcloud run jobs deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-job \
+            --project ${{inputs.GCP_PROJECT}} \
+            --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
+            --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}}" \
+            --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
+            --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
+            --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
+            --tasks="${{inputs.GCP_CLOUD_RUN_TASKS_NUM}}" \
+            --task-timeout="${{inputs.GCP_CLOUD_RUN_TASK_TIMEOUT}}" \
+            --parallelism "${{inputs.GCP_CLOUD_RUN_TASKS_PARALLELISM}}" \
+            --max-retries "${{inputs.GCP_CLOUD_RUN_TASK_RETRIES}}" \
+            $(if [ -n "${{inputs.GCP_CLOUD_RUN_SA}}" ]; then echo "--service-account=\"${{inputs.GCP_CLOUD_RUN_SA}}\""; fi) \
+            --env-vars-file ./.github/config/$ZMODE.yaml \
+            --ingress internal-and-cloud-load-balancing
