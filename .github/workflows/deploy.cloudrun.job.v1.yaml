@@ -66,6 +66,10 @@ on:
         description: "Override container command"
         required: false
         type: string
+      GCP_CLOUD_ARGS:
+        description: "Override container args"
+        required: false
+        type: string
       
 jobs:
   deploy:
@@ -93,5 +97,5 @@ jobs:
             --max-retries "${{inputs.GCP_CLOUD_RUN_TASK_RETRIES}}" \
             $(if [ -n "${{inputs.GCP_CLOUD_RUN_SA}}" ]; then echo "--service-account=\"${{inputs.GCP_CLOUD_RUN_SA}}\""; fi) \
             $(if [ -n "${{inputs.GCP_CLOUD_COMMAND}}" ]; then echo "--command=${{inputs.GCP_CLOUD_COMMAND}}"; fi) \
-            --env-vars-file ./.github/config/${{inputs.ZMODE}}.yaml \
-            --ingress internal-and-cloud-load-balancing
+            $(if [ -n "${{inputs.GCP_CLOUD_ARGS}}" ]; then echo "--args='${{inputs.GCP_CLOUD_ARGS}}'"; fi) \
+            --env-vars-file ./.github/config/${{inputs.ZMODE}}.yaml 
