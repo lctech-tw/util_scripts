@@ -92,5 +92,5 @@ jobs:
             --parallelism "${{inputs.GCP_CLOUD_RUN_TASKS_PARALLELISM}}" \
             --max-retries "${{inputs.GCP_CLOUD_RUN_TASK_RETRIES}}" \
             $(if [ -n "${{inputs.GCP_CLOUD_RUN_SA}}" ]; then echo "--service-account=\"${{inputs.GCP_CLOUD_RUN_SA}}\""; fi) \
-            $(if [ "${{inputs.GCP_CLOUD_COMMAND}}" != "" ]; then echo "--command="${{inputs.GCP_CLOUD_COMMAND}}"; fi) \
+            $(if [ "${{inputs.GCP_CLOUD_COMMAND}}" != "" ]; then echo '--command="${{inputs.GCP_CLOUD_COMMAND}}"''; fi) \
             --env-vars-file ./.github/config/${{inputs.ZMODE}}.yaml 
