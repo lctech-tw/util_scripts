@@ -67,7 +67,7 @@ on:
         required: false
         type: string
       GCP_CLOUD_ARGS:
-        description: "Override container args"
+        description: "Override container args "
         required: false
         type: string
       
