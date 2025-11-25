@@ -78,7 +78,7 @@ jobs:
           credentials_json: ${{secrets.GCP_SA_KEY_GITHUB_CI}}
       - name: Deploy
         run: |
-          echo "@ deploy : $GCP_PROJECT -> $GCP_CLOUD_RUN_NAME -> $ZMODE"
+          echo "@ deploy : ${{inputs.GCP_PROJECT}} -> ${{inputs.GCP_CLOUD_RUN_NAME}} -> ${{inputs.ZMODE}}"
           echo "@ Deploy job"
           gcloud run jobs deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-job \
             --project ${{inputs.GCP_PROJECT}} \
@@ -93,5 +93,5 @@ jobs:
             --max-retries "${{inputs.GCP_CLOUD_RUN_TASK_RETRIES}}" \
             $(if [ -n "${{inputs.GCP_CLOUD_RUN_SA}}" ]; then echo "--service-account=\"${{inputs.GCP_CLOUD_RUN_SA}}\""; fi) \
             $(if [ -n "${{inputs.GCP_CLOUD_COMMAND}}" ]; then echo "--command=${{inputs.GCP_CLOUD_COMMAND}}"; fi) \
-            --env-vars-file ./.github/config/$ZMODE.yaml \
+            --env-vars-file ./.github/config/${{inputs.ZMODE}}.yaml \
             --ingress internal-and-cloud-load-balancing
