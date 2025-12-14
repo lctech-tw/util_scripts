@@ -605,9 +605,3 @@ A: 金絲雀部署分為兩個階段：
 - 主要變更（破壞性更改）：遞增版本號（如 v1 → v2）
 - 次要變更（新功能）：更新文檔
 - 修復（bug fixes）：直接更新現有版本
-
----
-
-## 聯絡方式
-
-如有問題或建議，請在 [GitHub Issues](https://github.com/lctech-tw/util_scripts/issues) 中提出。
