@@ -74,16 +74,16 @@ jobs:
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `APP_NAME` | ✅ | - | 應用程式名稱 |
-| `APP_DOCKER_REPOSITORIES` | ✅ | - | Docker registry URL |
-| `GCP_PROJECT` | ✅ | - | GCP 專案 ID |
-| `ZMODE` | ❌ | `dev` | 環境模式 (dev/prod/staging) |
-| `GO_VERSION` | ❌ | `1.23` | Go 版本 |
-| `GO_BUILD_PATH` | ❌ | `./cmd/server` | main.go 路徑 |
-| `SERVER_NAME` | ❌ | `server` | 伺服器二進位檔名稱 |
-| `DOCKERFILE_PATH` | ❌ | `.github/docker/Dockerfile` | Dockerfile 路徑 |
+| 參數                      | 必填 | 預設值                      | 說明                        |
+|---------------------------|------|-----------------------------|-----------------------------|
+| `APP_NAME`                | ✅    | -                           | 應用程式名稱                |
+| `APP_DOCKER_REPOSITORIES` | ✅    | -                           | Docker registry URL         |
+| `GCP_PROJECT`             | ✅    | -                           | GCP 專案 ID                 |
+| `ZMODE`                   | ❌    | `dev`                       | 環境模式 (dev/prod/staging) |
+| `GO_VERSION`              | ❌    | `1.23`                      | Go 版本                     |
+| `GO_BUILD_PATH`           | ❌    | `./cmd/server`              | main.go 路徑                |
+| `SERVER_NAME`             | ❌    | `server`                    | 伺服器二進位檔名稱          |
+| `DOCKERFILE_PATH`         | ❌    | `.github/docker/Dockerfile` | Dockerfile 路徑             |
 
 **功能：**
 
@@ -115,13 +115,13 @@ jobs:
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `APP_NAME` | ✅ | - | 應用程式名稱 |
-| `APP_DOCKER_REPOSITORIES` | ✅ | - | Docker registry URL |
-| `GCP_PROJECT` | ✅ | - | GCP 專案 ID |
-| `ZMODE` | ❌ | `dev` | 環境模式 |
-| `NODE_RUN_SCRIPT` | ❌ | `build` | 建置腳本名稱 |
+| 參數                      | 必填 | 預設值  | 說明                |
+|---------------------------|------|---------|---------------------|
+| `APP_NAME`                | ✅    | -       | 應用程式名稱        |
+| `APP_DOCKER_REPOSITORIES` | ✅    | -       | Docker registry URL |
+| `GCP_PROJECT`             | ✅    | -       | GCP 專案 ID         |
+| `ZMODE`                   | ❌    | `dev`   | 環境模式            |
+| `NODE_RUN_SCRIPT`         | ❌    | `build` | 建置腳本名稱        |
 
 **功能：**
 
@@ -152,15 +152,15 @@ jobs:
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `APP_NAME` | ✅ | - | 應用程式名稱 |
-| `APP_DOCKER_REPOSITORIES` | ✅ | - | Docker registry URL |
-| `GCP_PROJECT` | ✅ | - | GCP 專案 ID |
-| `ZMODE` | ❌ | `dev` | 環境模式 |
-| `PYTHON_VERSION` | ❌ | `3.11` | Python 版本 |
-| `REQUIREMENTS_FILE` | ❌ | `requirements.txt` | 依賴文件路徑 |
-| `DOCKERFILE_PATH` | ❌ | `.github/docker/Dockerfile` | Dockerfile 路徑 |
+| 參數                      | 必填 | 預設值                      | 說明                |
+|---------------------------|------|-----------------------------|---------------------|
+| `APP_NAME`                | ✅    | -                           | 應用程式名稱        |
+| `APP_DOCKER_REPOSITORIES` | ✅    | -                           | Docker registry URL |
+| `GCP_PROJECT`             | ✅    | -                           | GCP 專案 ID         |
+| `ZMODE`                   | ❌    | `dev`                       | 環境模式            |
+| `PYTHON_VERSION`          | ❌    | `3.11`                      | Python 版本         |
+| `REQUIREMENTS_FILE`       | ❌    | `requirements.txt`          | 依賴文件路徑        |
+| `DOCKERFILE_PATH`         | ❌    | `.github/docker/Dockerfile` | Dockerfile 路徑     |
 
 **功能：**
 
@@ -179,22 +179,22 @@ jobs:
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `APP_NAME` | ✅ | - | 應用程式名稱 |
-| `APP_DOCKER_REPOSITORIES` | ✅ | - | Docker registry URL |
-| `GCP_PROJECT` | ✅ | - | GCP 專案 ID |
-| `GCP_CLOUD_RUN_NAME` | ✅ | - | Cloud Run 服務名稱 |
-| `GCP_CLOUD_RUN_REGION` | ✅ | - | Cloud Run 區域 |
-| `ZMODE` | ❌ | `dev` | 環境模式 |
-| `GCP_CLOUD_RUN_PORT` | ❌ | `8080` | 服務埠號 |
-| `GCP_CLOUD_RUN_VPC` | ❌ | - | VPC connector |
-| `GCP_CLOUD_RUN_CPU` | ❌ | `1` | CPU 配置 |
-| `GCP_CLOUD_RUN_MEM` | ❌ | `1Gi` | 記憶體配置 |
-| `GCP_CLOUD_RUN_SIZE_MIN` | ❌ | `1` | 最小實例數 |
-| `GCP_CLOUD_RUN_SIZE_MAX` | ❌ | `3` | 最大實例數 |
-| `GCP_CLOUD_RUN_INGRESS_TYPE` | ❌ | `internal-and-cloud-load-balancing` | Ingress 類型 |
-| `GCP_CLOUD_RUN_CONFIG_FILE_PATH` | ❌ | - | 環境變數檔案路徑 |
+| 參數                             | 必填 | 預設值                              | 說明                |
+|----------------------------------|------|-------------------------------------|---------------------|
+| `APP_NAME`                       | ✅    | -                                   | 應用程式名稱        |
+| `APP_DOCKER_REPOSITORIES`        | ✅    | -                                   | Docker registry URL |
+| `GCP_PROJECT`                    | ✅    | -                                   | GCP 專案 ID         |
+| `GCP_CLOUD_RUN_NAME`             | ✅    | -                                   | Cloud Run 服務名稱  |
+| `GCP_CLOUD_RUN_REGION`           | ✅    | -                                   | Cloud Run 區域      |
+| `ZMODE`                          | ❌    | `dev`                               | 環境模式            |
+| `GCP_CLOUD_RUN_PORT`             | ❌    | `8080`                              | 服務埠號            |
+| `GCP_CLOUD_RUN_VPC`              | ❌    | -                                   | VPC connector       |
+| `GCP_CLOUD_RUN_CPU`              | ❌    | `1`                                 | CPU 配置            |
+| `GCP_CLOUD_RUN_MEM`              | ❌    | `1Gi`                               | 記憶體配置          |
+| `GCP_CLOUD_RUN_SIZE_MIN`         | ❌    | `1`                                 | 最小實例數          |
+| `GCP_CLOUD_RUN_SIZE_MAX`         | ❌    | `3`                                 | 最大實例數          |
+| `GCP_CLOUD_RUN_INGRESS_TYPE`     | ❌    | `internal-and-cloud-load-balancing` | Ingress 類型        |
+| `GCP_CLOUD_RUN_CONFIG_FILE_PATH` | ❌    | -                                   | 環境變數檔案路徑    |
 
 **使用範例：**
 
@@ -223,15 +223,15 @@ jobs:
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| 基本參數同 HTTP 部署 | - | - | - |
-| `GCP_CLOUD_RUN_TASKS_NUM` | ❌ | `1` | 任務數量 |
-| `GCP_CLOUD_RUN_TASK_TIMEOUT` | ❌ | `10s` | 任務超時時間 |
-| `GCP_CLOUD_RUN_TASK_RETRIES` | ❌ | `0` | 重試次數 |
-| `GCP_CLOUD_RUN_TASKS_PARALLELISM` | ❌ | `1` | 並行任務數 |
-| `GCP_CLOUD_COMMAND` | ❌ | - | 覆寫容器命令 |
-| `GCP_CLOUD_RUN_SA` | ❌ | - | 服務帳號 |
+| 參數                              | 必填 | 預設值 | 說明         |
+|-----------------------------------|------|--------|--------------|
+| 基本參數同 HTTP 部署              | -    | -      | -            |
+| `GCP_CLOUD_RUN_TASKS_NUM`         | ❌    | `1`    | 任務數量     |
+| `GCP_CLOUD_RUN_TASK_TIMEOUT`      | ❌    | `10s`  | 任務超時時間 |
+| `GCP_CLOUD_RUN_TASK_RETRIES`      | ❌    | `0`    | 重試次數     |
+| `GCP_CLOUD_RUN_TASKS_PARALLELISM` | ❌    | `1`    | 並行任務數   |
+| `GCP_CLOUD_COMMAND`               | ❌    | -      | 覆寫容器命令 |
+| `GCP_CLOUD_RUN_SA`                | ❌    | -      | 服務帳號     |
 
 ---
 
@@ -248,10 +248,10 @@ jobs:
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| 基本參數同 HTTP 部署 | - | - | - |
-| `CANARY_TRAFFIC_PERCENT` | ❌ | `10` | 金絲雀流量百分比 (0-100) |
+| 參數                     | 必填 | 預設值 | 說明                     |
+|--------------------------|------|--------|--------------------------|
+| 基本參數同 HTTP 部署     | -    | -      | -                        |
+| `CANARY_TRAFFIC_PERCENT` | ❌    | `10`   | 金絲雀流量百分比 (0-100) |
 
 **使用範例：**
 
@@ -276,14 +276,14 @@ jobs:
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `FIREBASE_PROJECT` | ✅ | - | Firebase 專案 ID |
-| `ZMODE` | ❌ | `dev` | 環境模式 |
-| `FIREBASE_HOSTING_CHANNEL` | ❌ | `live` | Hosting 頻道 |
-| `BUILD_SCRIPT` | ❌ | `build` | NPM 建置腳本 |
-| `BUILD_OUTPUT_DIR` | ❌ | `dist` | 建置輸出目錄 |
-| `USE_PNPM` | ❌ | `true` | 使用 pnpm |
+| 參數                       | 必填 | 預設值  | 說明             |
+|----------------------------|------|---------|------------------|
+| `FIREBASE_PROJECT`         | ✅    | -       | Firebase 專案 ID |
+| `ZMODE`                    | ❌    | `dev`   | 環境模式         |
+| `FIREBASE_HOSTING_CHANNEL` | ❌    | `live`  | Hosting 頻道     |
+| `BUILD_SCRIPT`             | ❌    | `build` | NPM 建置腳本     |
+| `BUILD_OUTPUT_DIR`         | ❌    | `dist`  | 建置輸出目錄     |
+| `USE_PNPM`                 | ❌    | `true`  | 使用 pnpm        |
 
 ---
 
@@ -293,13 +293,13 @@ jobs:
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `GCP_PROJECT` | ✅ | - | GCP 專案 ID |
-| `GCP_GKE_NAME` | ✅ | - | GKE 集群名稱 |
-| `GCP_GKE_ZONE` | ✅ | - | GKE 區域 |
-| `K8S_PATH` | ❌ | `.github/k8s` | Kubernetes 配置路徑 |
-| `ZMODE` | ❌ | `dev` | 環境模式 |
+| 參數           | 必填 | 預設值        | 說明                |
+|----------------|------|---------------|---------------------|
+| `GCP_PROJECT`  | ✅    | -             | GCP 專案 ID         |
+| `GCP_GKE_NAME` | ✅    | -             | GKE 集群名稱        |
+| `GCP_GKE_ZONE` | ✅    | -             | GKE 區域            |
+| `K8S_PATH`     | ❌    | `.github/k8s` | Kubernetes 配置路徑 |
+| `ZMODE`        | ❌    | `dev`         | 環境模式            |
 
 **功能：**
 
@@ -317,15 +317,15 @@ Go 應用程式測試與覆蓋率檢查。
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `DB_TABLE_NAME` | ✅ | - | 資料庫名稱 |
-| `GO_BUILD_PATH` | ❌ | `./cmd/server/` | main.go 路徑 |
-| `PRE_TEST_SCRIPT_PATH` | ❌ | `./.github/testing` | 測試前腳本路徑 |
-| `PRE_TEST_SCRIPT_FILE` | ❌ | `psql-init.sh` | 測試前腳本檔名 |
-| `TEST_COVERAGE_PATH` | ✅ | `./transport/...,./internal/service,./internal/repo` | 覆蓋率檢測路徑 |
-| `TEST_MAIN_PATH` | ✅ | `./test/integration` | 測試主路徑 |
-| `TEST_COVERAGE_THRESHOLD` | ❌ | `70` | 覆蓋率門檻 (%) |
+| 參數                      | 必填 | 預設值                                               | 說明           |
+|---------------------------|------|------------------------------------------------------|----------------|
+| `DB_TABLE_NAME`           | ✅    | -                                                    | 資料庫名稱     |
+| `GO_BUILD_PATH`           | ❌    | `./cmd/server/`                                      | main.go 路徑   |
+| `PRE_TEST_SCRIPT_PATH`    | ❌    | `./.github/testing`                                  | 測試前腳本路徑 |
+| `PRE_TEST_SCRIPT_FILE`    | ❌    | `psql-init.sh`                                       | 測試前腳本檔名 |
+| `TEST_COVERAGE_PATH`      | ✅    | `./transport/...,./internal/service,./internal/repo` | 覆蓋率檢測路徑 |
+| `TEST_MAIN_PATH`          | ✅    | `./test/integration`                                 | 測試主路徑     |
+| `TEST_COVERAGE_THRESHOLD` | ❌    | `70`                                                 | 覆蓋率門檻 (%) |
 
 **功能：**
 
@@ -356,13 +356,13 @@ Node.js/TypeScript 測試與覆蓋率檢查。
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `NODE_VERSION` | ❌ | - | Node.js 版本（空則使用 .nvmrc） |
-| `TEST_SCRIPT` | ❌ | `test` | 測試腳本名稱 |
-| `LINT_SCRIPT` | ❌ | `lint` | Lint 腳本名稱 |
-| `COVERAGE_THRESHOLD` | ❌ | `80` | 覆蓋率門檻 (%) |
-| `USE_PNPM` | ❌ | `true` | 使用 pnpm |
+| 參數                 | 必填 | 預設值 | 說明                          |
+|----------------------|------|--------|-------------------------------|
+| `NODE_VERSION`       | ❌    | -      | Node.js 版本（空則使用 .nvmrc） |
+| `TEST_SCRIPT`        | ❌    | `test` | 測試腳本名稱                  |
+| `LINT_SCRIPT`        | ❌    | `lint` | Lint 腳本名稱                 |
+| `COVERAGE_THRESHOLD` | ❌    | `80`   | 覆蓋率門檻 (%)                |
+| `USE_PNPM`           | ❌    | `true` | 使用 pnpm                     |
 
 **功能：**
 
@@ -381,11 +381,11 @@ Node.js/TypeScript 測試與覆蓋率檢查。
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `SCAN_TYPE` | ❌ | `all` | 掃描類型：go/node/python/docker/all |
-| `FAIL_ON_SEVERITY` | ❌ | `HIGH` | 失敗嚴重等級：CRITICAL/HIGH/MEDIUM/LOW |
-| `DOCKER_IMAGE` | ❌ | - | Docker 映像（docker 掃描需要） |
+| 參數               | 必填 | 預設值 | 說明                                  |
+|--------------------|------|--------|---------------------------------------|
+| `SCAN_TYPE`        | ❌    | `all`  | 掃描類型：go/node/python/docker/all    |
+| `FAIL_ON_SEVERITY` | ❌    | `HIGH` | 失敗嚴重等級：CRITICAL/HIGH/MEDIUM/LOW |
+| `DOCKER_IMAGE`     | ❌    | -      | Docker 映像（docker 掃描需要）          |
 
 **掃描項目：**
 
@@ -418,12 +418,12 @@ jobs:
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `VERSION_TYPE` | ❌ | `patch` | 版本類型：major/minor/patch |
-| `CREATE_RELEASE` | ❌ | `true` | 創建 GitHub release |
-| `UPDATE_CHANGELOG` | ❌ | `true` | 更新 CHANGELOG |
-| `RELEASE_BRANCH` | ❌ | `main` | 發佈分支 |
+| 參數               | 必填 | 預設值  | 說明                       |
+|--------------------|------|---------|----------------------------|
+| `VERSION_TYPE`     | ❌    | `patch` | 版本類型：major/minor/patch |
+| `CREATE_RELEASE`   | ❌    | `true`  | 創建 GitHub release        |
+| `UPDATE_CHANGELOG` | ❌    | `true`  | 更新 CHANGELOG             |
+| `RELEASE_BRANCH`   | ❌    | `main`  | 發佈分支                   |
 
 **功能：**
 
@@ -455,11 +455,11 @@ Slack 通知工作流程。
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `CI_STATUS` | ✅ | - | CI 狀態：success/failure/skipped/cancelled |
-| `GROUP` | ❌ | `jkf` | Slack 群組：jkf/jvid/jkface/alola/skip |
-| `TAG_USER` | ❌ | - | 強制標記使用者 |
+| 參數        | 必填 | 預設值 | 說明                                      |
+|-------------|------|--------|-------------------------------------------|
+| `CI_STATUS` | ✅    | -      | CI 狀態：success/failure/skipped/cancelled |
+| `GROUP`     | ❌    | `jkf`  | Slack 群組：jkf/jvid/jkface/alola/skip     |
+| `TAG_USER`  | ❌    | -      | 強制標記使用者                            |
 
 **支援的群組：**
 
@@ -493,14 +493,14 @@ Protocol Buffer 編譯工作流程。
 
 **輸入參數：**
 
-| 參數 | 必填 | 預設值 | 說明 |
-|------|------|--------|------|
-| `stable-mode` | ❌ | `true` | Markdown 格式 |
-| `compile-mode` | ❌ | `neo` | 編譯模式：neo/Multi/v3/v4/old |
-| `buf-build` | ❌ | `false` | 執行 buf build |
-| `buf-format` | ❌ | `false` | 執行 buf format |
-| `buf-lint` | ❌ | `false` | 執行 buf lint |
-| `buf-breaking` | ❌ | `false` | 執行 buf breaking |
+| 參數           | 必填 | 預設值  | 說明                         |
+|----------------|------|---------|------------------------------|
+| `stable-mode`  | ❌    | `true`  | Markdown 格式                |
+| `compile-mode` | ❌    | `neo`   | 編譯模式：neo/Multi/v3/v4/old |
+| `buf-build`    | ❌    | `false` | 執行 buf build               |
+| `buf-format`   | ❌    | `false` | 執行 buf format              |
+| `buf-lint`     | ❌    | `false` | 執行 buf lint                |
+| `buf-breaking` | ❌    | `false` | 執行 buf breaking            |
 
 **功能：**
 
