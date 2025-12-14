@@ -1,0 +1,153 @@
+name: release.version.v1
+on:
+  workflow_call:
+    inputs:
+      VERSION_TYPE:
+        description: "Version bump type: major, minor, patch"
+        required: false
+        type: string
+        default: "patch"
+      CREATE_RELEASE:
+        description: "Create GitHub release"
+        required: false
+        type: boolean
+        default: true
+      UPDATE_CHANGELOG:
+        description: "Auto-generate changelog"
+        required: false
+        type: boolean
+        default: true
+      RELEASE_BRANCH:
+        description: "Branch to release from"
+        required: false
+        type: string
+        default: "main"
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{inputs.RELEASE_BRANCH}}
+
+      - name: 🔐 Obtain GitHub App Installation Access Token
+        id: githubAppAuth
+        run: |
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
+          echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
+
+      - name: ⚙️ Configure Git
+        run: |
+          git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+        env:
+          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
+
+      - name: 📦 Check package.json
+        id: check-package
+        run: |
+          if [ -f "package.json" ]; then
+            echo "has_package=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_package=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🏷️ Bump version in package.json
+        if: steps.check-package.outputs.has_package == 'true'
+        run: |
+          curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/modify_version.sh
+
+          case "${{inputs.VERSION_TYPE}}" in
+            major)
+              # Extract and increment major version
+              VERSION_OLD=$(jq -r '.version' package.json)
+              MAJOR=$(echo "$VERSION_OLD" | cut -f1 -d".")
+              NEW_MAJOR=$((MAJOR + 1))
+              VERSION_NEW="$NEW_MAJOR.0.0"
+              ;;
+            minor)
+              # Extract and increment minor version
+              VERSION_OLD=$(jq -r '.version' package.json)
+              MAJOR=$(echo "$VERSION_OLD" | cut -f1 -d".")
+              MINOR=$(echo "$VERSION_OLD" | cut -f2 -d".")
+              NEW_MINOR=$((MINOR + 1))
+              VERSION_NEW="$MAJOR.$NEW_MINOR.0"
+              ;;
+            *)
+              # Default: patch version
+              bash ./modify_version.sh -v
+              VERSION_NEW=$(jq -r '.version' package.json)
+              ;;
+          esac
+
+          if [ "${{inputs.VERSION_TYPE}}" != "patch" ]; then
+            jq ".version=\"$VERSION_NEW\"" package.json > tmp-package.json && mv tmp-package.json package.json
+          fi
+
+          echo "NEW_VERSION=$VERSION_NEW" >> $GITHUB_ENV
+          echo "📦 New version: v$VERSION_NEW"
+
+      - name: 📝 Update CHANGELOG
+        if: inputs.UPDATE_CHANGELOG
+        run: |
+          curl -LJO https://raw.githubusercontent.com/lctech-tw/util_scripts/main/changelog.sh
+          bash ./changelog.sh
+
+          if [ -f "CHANGELOG.md" ]; then
+            DATE=$(date +"%Y-%m-%d")
+            sed -i "1s/^/## v${NEW_VERSION} - ${DATE}\n\n/" CHANGELOG.md
+
+            # Generate changelog from commits
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [ -n "$LAST_TAG" ]; then
+              echo "### Changes since $LAST_TAG" >> /tmp/changes.md
+              git log --pretty=format:"- %s (%h)" $LAST_TAG..HEAD >> /tmp/changes.md
+              sed -i "2r /tmp/changes.md" CHANGELOG.md
+            fi
+          fi
+
+      - name: 💾 Commit version bump
+        run: |
+          git add .
+          git commit -m "chore(release): bump version to v${NEW_VERSION}
+
+          🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+          Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>" || echo "No changes to commit"
+
+          git tag -a "v${NEW_VERSION}" -m "Release v${NEW_VERSION}"
+          git push origin ${{inputs.RELEASE_BRANCH}}
+          git push origin "v${NEW_VERSION}"
+
+      - name: 📋 Generate Release Notes
+        if: inputs.CREATE_RELEASE
+        id: release_notes
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+          if [ -n "$LAST_TAG" ]; then
+            echo "## What's Changed" > /tmp/release_notes.md
+            git log --pretty=format:"- %s by @%an in %h" $LAST_TAG..HEAD >> /tmp/release_notes.md
+            echo "" >> /tmp/release_notes.md
+            echo "**Full Changelog**: https://github.com/${{github.repository}}/compare/$LAST_TAG...v${NEW_VERSION}" >> /tmp/release_notes.md
+          else
+            echo "## Initial Release" > /tmp/release_notes.md
+            echo "First release of the project." >> /tmp/release_notes.md
+          fi
+
+          cat /tmp/release_notes.md
+
+      - name: 🚀 Create GitHub Release
+        if: inputs.CREATE_RELEASE
+        run: |
+          gh release create "v${NEW_VERSION}" \
+            --title "Release v${NEW_VERSION}" \
+            --notes-file /tmp/release_notes.md
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}

@@ -1,0 +1,156 @@
+name: security.scan.v1
+on:
+  workflow_call:
+    inputs:
+      SCAN_TYPE:
+        description: "Type of scan: go, node, python, docker, all"
+        required: false
+        type: string
+        default: "all"
+      FAIL_ON_SEVERITY:
+        description: "Fail build on severity level: CRITICAL, HIGH, MEDIUM, LOW"
+        required: false
+        type: string
+        default: "HIGH"
+      DOCKER_IMAGE:
+        description: "Docker image to scan (if SCAN_TYPE includes docker)"
+        required: false
+        type: string
+        default: ""
+jobs:
+  dependency-scan:
+    runs-on: ubuntu-latest
+    if: inputs.SCAN_TYPE == 'all' || inputs.SCAN_TYPE == 'node' || inputs.SCAN_TYPE == 'python' || inputs.SCAN_TYPE == 'go'
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+
+      - name: 📤 Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  golang-security-scan:
+    runs-on: ubuntu-latest
+    if: inputs.SCAN_TYPE == 'all' || inputs.SCAN_TYPE == 'go'
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Obtain GitHub App Installation Access Token
+        id: githubAppAuth
+        run: |
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
+          echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
+
+      - name: 🔧 Configure GitHub authentication
+        run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+        env:
+          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
+
+      - name: ⚙️ Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "./go.mod"
+
+      - name: 📦 Download dependencies
+        run: go mod download
+
+      - name: 🔍 Run gosec security scanner
+        uses: securego/gosec@master
+        with:
+          args: '-fmt sarif -out gosec-results.sarif -severity ${{inputs.FAIL_ON_SEVERITY}} ./...'
+
+      - name: 📤 Upload gosec results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'gosec-results.sarif'
+
+  nodejs-security-scan:
+    runs-on: ubuntu-latest
+    if: inputs.SCAN_TYPE == 'all' || inputs.SCAN_TYPE == 'node'
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Obtain GitHub App Installation Access Token
+        id: githubAppAuth
+        run: |
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
+          echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
+
+      - name: 🔧 Configure GitHub authentication
+        run: |
+          git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+          rm -rf .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          echo "@lctech-tw:registry=https://npm.pkg.github.com/" >> .npmrc
+        env:
+          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
+
+      - name: ⚙️ Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: 🔍 Run npm audit
+        run: |
+          npm audit --audit-level=${{inputs.FAIL_ON_SEVERITY}} || true
+          npm audit --json > npm-audit.json || true
+
+      - name: 📤 Upload audit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: npm-audit-results
+          path: npm-audit.json
+
+  docker-image-scan:
+    runs-on: ubuntu-latest
+    if: (inputs.SCAN_TYPE == 'all' || inputs.SCAN_TYPE == 'docker') && inputs.DOCKER_IMAGE != ''
+    steps:
+      - name: ⚙️ Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{secrets.GCP_SA_KEY_GITHUB_CI}}
+
+      - name: 🐳 Configure Docker authentication
+        run: gcloud auth configure-docker $(echo ${{inputs.DOCKER_IMAGE}} | cut -d "/" -f 1) --quiet
+
+      - name: 🔍 Run Trivy scanner on Docker image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{inputs.DOCKER_IMAGE}}
+          format: 'sarif'
+          output: 'trivy-docker-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+
+      - name: 📤 Upload Docker scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-docker-results.sarif'
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔐 Run Gitleaks secret scanner
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

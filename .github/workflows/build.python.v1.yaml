@@ -1,0 +1,124 @@
+name: build.python.v1
+on:
+  workflow_call:
+    inputs:
+      APP_NAME:
+        description: "Application name"
+        required: true
+        type: string
+      APP_DOCKER_REPOSITORIES:
+        description: "Docker repository URL"
+        required: true
+        type: string
+      GCP_PROJECT:
+        description: "Google Cloud Platform project ID"
+        required: true
+        type: string
+      ZMODE:
+        description: "Mode name [dev, prod, ...]"
+        required: false
+        type: string
+        default: dev
+      PYTHON_VERSION:
+        description: "Python version to use"
+        required: false
+        type: string
+        default: "3.11"
+      REQUIREMENTS_FILE:
+        description: "Path to requirements file"
+        required: false
+        type: string
+        default: "requirements.txt"
+      DOCKERFILE_PATH:
+        description: "Path to Dockerfile"
+        required: false
+        type: string
+        default: ".github/docker/Dockerfile"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: 🔐 Obtain GitHub App Installation Access Token
+        id: githubAppAuth
+        run: |
+          TOKEN=$(npx obtain-github-app-installation-access-token ci ${{secrets.GH_APP_CREDENTIALS_TOKEN}})
+          echo "::add-mask::$TOKEN" && echo "::set-output name=token::$TOKEN"
+
+      - name: 🔧 Configure GitHub authentication
+        run: git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/lctech-tw".insteadOf "https://github.com/lctech-tw"
+        env:
+          GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
+
+      - name: ☁️ Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{secrets.GCP_SA_KEY_GITHUB_CI}}
+
+      - name: 🐳 Configure Docker authentication
+        run: gcloud auth configure-docker $(echo ${{inputs.APP_DOCKER_REPOSITORIES}} | cut -d "/" -f 1) --quiet
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{inputs.PYTHON_VERSION}}
+          cache: 'pip'
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ${{inputs.REQUIREMENTS_FILE}}
+
+      - name: 🧪 Run linting and tests
+        run: |
+          if [ -f "requirements-dev.txt" ]; then
+            pip install -r requirements-dev.txt
+          fi
+          if command -v flake8 &> /dev/null; then
+            flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          fi
+          if command -v pytest &> /dev/null; then
+            pytest
+          fi
+
+      - name: 🏗️ Set up Docker QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: 🏗️ Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🏷️ Generate Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{github.sha}}
+            type=raw,value=${{inputs.ZMODE}}-latest
+            type=raw,value=${{inputs.ZMODE}}-${{github.run_number}}
+            type=ref,event=branch
+            type=ref,event=pr
+
+      - name: 🐳 Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          cache-to: type=gha,mode=max
+          cache-from: type=gha
+          file: ${{inputs.DOCKERFILE_PATH}}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            PYTHON_VERSION=${{inputs.PYTHON_VERSION}}
+            GITHUB_REF_NAME=${{github.sha}}
+            BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
