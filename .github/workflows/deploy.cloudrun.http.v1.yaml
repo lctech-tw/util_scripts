@@ -70,31 +70,27 @@ jobs:
       - name: 🌤️ Deploy
         run: |
           echo "@ deploy : ${{inputs.GCP_PROJECT}} -> ${{inputs.GCP_CLOUD_RUN_NAME}} -> ${{inputs.ZMODE}}"
-          if [ ${{inputs.GCP_CLOUD_RUN_CONFIG_FILE_PATH}} != "" ];then
-            gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-http \
-              --allow-unauthenticated \
-              --project ${{inputs.GCP_PROJECT}}  \
-              --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
-              --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}}" \
-              --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
-              --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
-              --port "${{inputs.GCP_CLOUD_RUN_PORT}}" \
-              --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}" \
-              --min-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MIN}}" \
-              --max-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MAX}}" \
-              --ingress "${{inputs.GCP_CLOUD_RUN_INGRESS_TYPE}}" \
-              --env-vars-file ${{inputs.GCP_CLOUD_RUN_CONFIG_FILE_PATH}}/${{inputs.ZMODE}}.yaml
-          else
-            gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-http \
-              --allow-unauthenticated \
-              --project ${{inputs.GCP_PROJECT}}  \
-              --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
-              --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}}" \
-              --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
-              --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
-              --port "${{inputs.GCP_CLOUD_RUN_PORT}}" \
-              --min-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MIN}}" \
-              --max-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MAX}}" \
-              --ingress "${{inputs.GCP_CLOUD_RUN_INGRESS_TYPE}}" \
-              --vpc-connector "${{inputs.GCP_CLOUD_RUN_VPC}}"
-            fi
+          VARS_VPC=""
+          VARS_CONFIG_FILE=""
+          # 
+          if [ "${{inputs.GCP_CLOUD_RUN_VPC}}" != "" ]; then
+            VARS_VPC="--vpc-connector ${{inputs.GCP_CLOUD_RUN_VPC}}"
+          fi
+          # 
+          if [ "${{inputs.GCP_CLOUD_RUN_CONFIG_FILE_PATH}}" != "" ];then
+            VARS_CONFIG_FILE="--env-vars-file ${{inputs.GCP_CLOUD_RUN_CONFIG_FILE_PATH}}/${{inputs.ZMODE}}.yaml"
+          fi
+
+          gcloud run deploy ${{inputs.GCP_CLOUD_RUN_NAME}}-http \
+            --allow-unauthenticated \
+            --project ${{inputs.GCP_PROJECT}}  \
+            --region ${{inputs.GCP_CLOUD_RUN_REGION}} \
+            --image "${{inputs.APP_DOCKER_REPOSITORIES}}/${{inputs.APP_NAME}}:${{inputs.ZMODE}}-${{github.run_number}}" \
+            --cpu "${{inputs.GCP_CLOUD_RUN_CPU}}" \
+            --memory "${{inputs.GCP_CLOUD_RUN_MEM}}" \
+            --port "${{inputs.GCP_CLOUD_RUN_PORT}}" \
+            $VARS_VPC \
+            $VARS_CONFIG_FILE \
+            --min-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MIN}}" \
+            --max-instances "${{inputs.GCP_CLOUD_RUN_SIZE_MAX}}" \
+            --ingress "${{inputs.GCP_CLOUD_RUN_INGRESS_TYPE}}" 
