@@ -72,11 +72,13 @@ jobs:
           echo "@ deploy : ${{inputs.GCP_PROJECT}} -> ${{inputs.GCP_CLOUD_RUN_NAME}} -> ${{inputs.ZMODE}}"
           VARS_VPC=""
           VARS_CONFIG_FILE=""
-          # 
+
+          # Setting VPC Connector
           if [ "${{inputs.GCP_CLOUD_RUN_VPC}}" != "" ]; then
             VARS_VPC="--vpc-connector ${{inputs.GCP_CLOUD_RUN_VPC}}"
           fi
-          # 
+          
+          # Setting Env Vars File
           if [ "${{inputs.GCP_CLOUD_RUN_CONFIG_FILE_PATH}}" != "" ];then
             VARS_CONFIG_FILE="--env-vars-file ${{inputs.GCP_CLOUD_RUN_CONFIG_FILE_PATH}}/${{inputs.ZMODE}}.yaml"
           fi
