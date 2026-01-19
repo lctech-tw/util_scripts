@@ -113,7 +113,7 @@ lctech-borg)
 lctech-aren)
   SLACK_NAME="U035E8FNFUH"
   ;;
-jay-hsieh)
+lctech-jay-hsieh)
   SLACK_NAME="U09KARWQQHY"
   ;;
 lctech-kahn)
