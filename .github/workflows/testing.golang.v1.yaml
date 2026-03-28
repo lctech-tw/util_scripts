@@ -36,9 +36,15 @@ on:
         required: false
         type: number
         default: 70
+      IS_NEED_SCAN_FLOW:
+        description: "run scan"
+        required: false
+        type: boolean
+        default: true
 jobs:
   scan:
     runs-on: ubuntu-latest
+    if: inputs.IS_NEED_SCAN_FLOW
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
