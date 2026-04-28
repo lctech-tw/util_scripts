@@ -194,7 +194,7 @@ set_slack_group_config() {
   *)
     echo "@ SLACK_GROUP -> default"
     SLACK_URL=$(gcloud secrets versions access latest --secret=slack_url --project=jkf-servers)
-    ERROR_USER='zeki'
+    ERROR_USER='bang.wang'
     ;;
   esac
 }
