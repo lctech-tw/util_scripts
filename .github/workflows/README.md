@@ -191,7 +191,7 @@ jobs:
 | `GCP_CLOUD_RUN_VPC`              | ❌    | -                                   | VPC connector       |
 | `GCP_CLOUD_RUN_CPU`              | ❌    | `1`                                 | CPU 配置            |
 | `GCP_CLOUD_RUN_MEM`              | ❌    | `1Gi`                               | 記憶體配置          |
-| `GCP_CLOUD_RUN_SIZE_MIN`         | ❌    | `1`                                 | 最小實例數          |
+| `GCP_CLOUD_RUN_SIZE_MIN`         | ❌    | `0`                                 | 最小實例數          |
 | `GCP_CLOUD_RUN_SIZE_MAX`         | ❌    | `3`                                 | 最大實例數          |
 | `GCP_CLOUD_RUN_INGRESS_TYPE`     | ❌    | `internal-and-cloud-load-balancing` | Ingress 類型        |
 | `GCP_CLOUD_RUN_CONFIG_FILE_PATH` | ❌    | -                                   | 環境變數檔案路徑    |
