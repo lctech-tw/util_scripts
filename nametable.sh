@@ -72,7 +72,7 @@ lctech-Arthur)
   SLACK_NAME="U03E4MY00MD"
   ;;
 lctech-benwu)
-  SLACK_NAME="D0810A4D207"
+  SLACK_NAME="U07EFPM9LQ2"
   ;;
 lctech-Leo)
   SLACK_NAME="U03AGHT74KZ"
@@ -94,6 +94,9 @@ lct-ponywu)
   ;;
 sheepLctech)
   SLACK_NAME="sheep"
+  ;;
+lctech-mg)
+  SLACK_NAME="U09J6LCK0MB"
   ;;
 benbenyo)
   SLACK_NAME="U023H76SW2X"
