@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 🔐 Obtain GitHub App Installation Access Token
         id: githubAppAuth
@@ -51,12 +51,12 @@ jobs:
 
       - name: ⚙️ Set up Pnpm
         if: inputs.USE_PNPM
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v6
         with:
           version: latest
 
       - name: ⚙️ Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ inputs.NODE_VERSION != '' && inputs.NODE_VERSION || null }}
           node-version-file: ${{ inputs.NODE_VERSION == '' && '.nvmrc' || null }}
@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 🔐 Obtain GitHub App Installation Access Token
         id: githubAppAuth
@@ -101,12 +101,12 @@ jobs:
 
       - name: ⚙️ Set up Pnpm
         if: inputs.USE_PNPM
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v6
         with:
           version: latest
 
       - name: ⚙️ Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ inputs.NODE_VERSION != '' && inputs.NODE_VERSION || null }}
           node-version-file: ${{ inputs.NODE_VERSION == '' && '.nvmrc' || null }}

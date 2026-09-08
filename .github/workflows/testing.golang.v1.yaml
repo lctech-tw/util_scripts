@@ -47,7 +47,7 @@ jobs:
     if: inputs.IS_NEED_SCAN_FLOW
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: ⚙️ Obtain GitHub App Installation Access Token
         id: githubAppAuth
         run: |
@@ -68,7 +68,7 @@ jobs:
   testing:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: ⚙️ Obtain GitHub App Installation Access Token
         id: githubAppAuth
         run: |

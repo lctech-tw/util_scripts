@@ -23,7 +23,7 @@ jobs:
     if: inputs.SCAN_TYPE == 'all' || inputs.SCAN_TYPE == 'node' || inputs.SCAN_TYPE == 'python' || inputs.SCAN_TYPE == 'go'
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 🔍 Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -45,7 +45,7 @@ jobs:
     if: inputs.SCAN_TYPE == 'all' || inputs.SCAN_TYPE == 'go'
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 🔐 Obtain GitHub App Installation Access Token
         id: githubAppAuth
@@ -82,7 +82,7 @@ jobs:
     if: inputs.SCAN_TYPE == 'all' || inputs.SCAN_TYPE == 'node'
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 🔐 Obtain GitHub App Installation Access Token
         id: githubAppAuth
@@ -100,7 +100,7 @@ jobs:
           GITHUB_TOKEN: ${{steps.githubAppAuth.outputs.token}}
 
       - name: ⚙️ Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: ".nvmrc"
 
@@ -146,7 +146,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
