@@ -51,8 +51,6 @@ jobs:
         run: gcloud auth configure-docker -q && gcloud auth configure-docker $(echo ${{inputs.APP_DOCKER_REPOSITORIES}}  | cut -d "/" -f 1) -q
       - name: ⚙️ Set up Pnpm
         uses: pnpm/action-setup@v6
-        with:
-          version: latest
       - name: ⚙️ Set up Nodejs
         uses: actions/setup-node@v7
         with:
